@@ -35,7 +35,6 @@ namespace Umbraco.Community.SkrivLet.Converters
             }
 
             var block = new SkrivLetBlock<ListBlockData>(id, type);
-            block.Data = new ListBlockData();
             while (reader.Read())
             {
                 if (reader.TokenType == JsonTokenType.EndObject)
@@ -49,7 +48,7 @@ namespace Umbraco.Community.SkrivLet.Converters
                     throw new JsonException();
                 }
 
-                string? propertyName = reader.GetString() ?? "";
+                var propertyName = reader.GetString() ?? "";
                 switch (propertyName.ToLower())
                 {
                     case "style":
@@ -74,6 +73,8 @@ namespace Umbraco.Community.SkrivLet.Converters
             }
             return block;
         }
+
+        // TODO Duplicate code - also in ParagraphBlockDataConverter
         private string ConvertUrls(string text)
         {
             return Regex.Replace(text, UmbLinkPattern, ConvertUdiUrl);
@@ -85,12 +86,11 @@ namespace Umbraco.Community.SkrivLet.Converters
 
             var udi = UdiParser.Parse(udiText);
 
-            if (!_umbracoContextAccessor.TryGetUmbracoContext(out var context)
-                || context.Content == null)
+            if (!_umbracoContextAccessor.TryGetUmbracoContext(out var context))
             {
                 return string.Empty;
             }
-            var content = context.Content.GetById(udi);
+            var content = context.Content.GetById(udi.AsGuid());
             if (content == null)
             {
                 return string.Empty;
@@ -101,7 +101,7 @@ namespace Umbraco.Community.SkrivLet.Converters
 
     public class ListBlockData
     {
-        public string Style { get; set; }
-        public List<string> Items { get; set; } = new List<string>();
+        public string? Style { get; set; }
+        public List<string> Items { get; set; } = [];
     }
 }

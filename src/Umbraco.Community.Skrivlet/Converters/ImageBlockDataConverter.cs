@@ -19,7 +19,6 @@ namespace Umbraco.Community.SkrivLet.Converters
             }
 
             var block = new SkrivLetBlock<ImageBlockData>(id, type);
-            block.Data = new ImageBlockData();
             while (reader.Read())
             {
                 if (reader.TokenType == JsonTokenType.EndObject)
@@ -27,13 +26,12 @@ namespace Umbraco.Community.SkrivLet.Converters
                     return block;
                 }
 
-                // Get the key.
                 if (reader.TokenType != JsonTokenType.PropertyName)
                 {
                     throw new JsonException();
                 }
 
-                string? propertyName = reader.GetString() ?? "";
+                var propertyName = reader.GetString() ?? "";
                 switch (propertyName.ToLower())
                 {
                     case "url":
@@ -46,7 +44,11 @@ namespace Umbraco.Community.SkrivLet.Converters
                         break;
                     case "udi":
                         reader.Read();
-                        block.Data.Udi = UdiParser.Parse(reader.GetString());
+                        var udiString = reader.GetString();
+                        if (udiString != null)
+                        {
+                            block.Data.Udi = UdiParser.Parse(udiString);
+                        }
                         break;
                     case "width":
                         reader.Read();
@@ -64,10 +66,10 @@ namespace Umbraco.Community.SkrivLet.Converters
 
     public class ImageBlockData
     {
-        public string Url { get; set; }
-        public string Alt { get; set; }
-        public Udi Udi { get; set; }
-        public int Height { get; set; }
-        public int Width { get; set; }
+        public string? Url { get; set; }
+        public string? Alt { get; set; }
+        public Udi? Udi { get; set; }
+        public int? Height { get; set; }
+        public int? Width { get; set; }
     }
 }

@@ -18,7 +18,6 @@ namespace Umbraco.Community.SkrivLet.Converters
             }
 
             var block = new SkrivLetBlock<CheckListBlockData>(id, type);
-            block.Data = new CheckListBlockData();
             while (reader.Read())
             {
                 if (reader.TokenType == JsonTokenType.EndObject)
@@ -26,13 +25,12 @@ namespace Umbraco.Community.SkrivLet.Converters
                     return block;
                 }
 
-                // Get the key.
                 if (reader.TokenType != JsonTokenType.PropertyName)
                 {
                     throw new JsonException();
                 }
 
-                string? propertyName = reader.GetString() ?? "";
+                var propertyName = reader.GetString() ?? "";
                 switch (propertyName.ToLower())
                 {
                     case "items":
@@ -56,7 +54,7 @@ namespace Umbraco.Community.SkrivLet.Converters
             return block;
         }
 
-        private CheckListItem ReadCheckListItem(ref Utf8JsonReader reader)
+        private CheckListItem? ReadCheckListItem(ref Utf8JsonReader reader)
         {
             if (reader.TokenType != JsonTokenType.StartObject)
             {
@@ -71,7 +69,7 @@ namespace Umbraco.Community.SkrivLet.Converters
                 {
                     return item;
                 }
-                string? propertyName = reader.GetString() ?? "";
+                var propertyName = reader.GetString() ?? "";
                 switch (propertyName.ToLower())
                 {
                     case "text":
@@ -96,7 +94,7 @@ namespace Umbraco.Community.SkrivLet.Converters
 
     public class CheckListItem
     {
-        public string Text { get; set; }
+        public string? Text { get; set; }
         public bool Checked { get; set; }
 
     }

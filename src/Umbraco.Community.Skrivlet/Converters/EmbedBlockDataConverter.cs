@@ -18,7 +18,6 @@ namespace Umbraco.Community.SkrivLet.Converters
             }
 
             var block = new SkrivLetBlock<EmbedBlockData>(id, type);
-            block.Data = new EmbedBlockData();
             while (reader.Read())
             {
                 if (reader.TokenType == JsonTokenType.EndObject)
@@ -26,13 +25,12 @@ namespace Umbraco.Community.SkrivLet.Converters
                     return block;
                 }
 
-                // Get the key.
                 if (reader.TokenType != JsonTokenType.PropertyName)
                 {
                     throw new JsonException();
                 }
 
-                string? propertyName = reader.GetString() ?? "";
+                var propertyName = reader.GetString() ?? "";
                 switch (propertyName.ToLower())
                 {
                     case "service":
@@ -67,11 +65,11 @@ namespace Umbraco.Community.SkrivLet.Converters
 
     public class EmbedBlockData
     {
-        public string Service { get; set; }
-        public string Source { get; set; }
-        public string Embed { get; set; }
+        public string? Service { get; set; }
+        public string? Source { get; set; }
+        public string? Embed { get; set; }
         public int Height { get; set; }
         public int Width { get; set; }
-        public string Caption { get; set; }
+        public string? Caption { get; set; }
     }
 }
