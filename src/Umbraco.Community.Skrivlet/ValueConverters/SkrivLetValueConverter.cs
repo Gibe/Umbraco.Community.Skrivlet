@@ -34,14 +34,14 @@ namespace Umbraco.Community.SkrivLet.ValueConverters
 		public override object? ConvertSourceToIntermediate(IPublishedElement owner, IPublishedPropertyType propertyType, object? source,
 			bool preview)
 		{
-			if (source == null) return null;
+			if (source == null)
+            {
+                return null;
+            }
 
-			var attemptConvertString = source.TryConvertTo<string>();
-			if (attemptConvertString.Success)
-				return attemptConvertString.Result;
-
-			return null;
-		}
+            var attemptConvertString = source.TryConvertTo<string>();
+            return attemptConvertString.Success ? attemptConvertString.Result : null;
+        }
 
 		public override object? ConvertIntermediateToObject(IPublishedElement owner, IPublishedPropertyType propertyType,
 			PropertyCacheLevel referenceCacheLevel, object? inter, bool preview)
@@ -56,7 +56,8 @@ namespace Umbraco.Community.SkrivLet.ValueConverters
 				Converters = { _converter }
 			};
 
-			return JsonSerializer.Deserialize<SkrivLetModel>(Convert.ToString(inter), options);
-		}	
+            var str = Convert.ToString(inter);
+            return str != null ? JsonSerializer.Deserialize<SkrivLetModel>(str, options) : null;
+        }	
 	}
 }

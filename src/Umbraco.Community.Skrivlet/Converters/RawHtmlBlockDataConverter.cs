@@ -17,8 +17,11 @@ namespace Umbraco.Community.SkrivLet.Converters
                 throw new JsonException();
             }
 
-            var block = new SkrivLetBlock<RawHtmlBlockData>(id, type);
-            block.Data = new RawHtmlBlockData();
+            var block = new SkrivLetBlock<RawHtmlBlockData>(id, type)
+            {
+                Data = new RawHtmlBlockData()
+            };
+            
             while (reader.Read())
             {
                 if (reader.TokenType == JsonTokenType.EndObject)
@@ -32,7 +35,7 @@ namespace Umbraco.Community.SkrivLet.Converters
                     throw new JsonException();
                 }
 
-                string? propertyName = reader.GetString() ?? "";
+                var propertyName = reader.GetString() ?? "";
                 switch (propertyName.ToLower())
                 {
                     case "html":
@@ -47,6 +50,6 @@ namespace Umbraco.Community.SkrivLet.Converters
 
     public class RawHtmlBlockData
     {
-        public string Html { get; set; }
+        public string? Html { get; set; }
     }
 }

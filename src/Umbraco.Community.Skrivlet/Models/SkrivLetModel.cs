@@ -6,9 +6,11 @@ namespace Umbraco.Community.SkrivLet.Models
 	{
 		[JsonPropertyName("time")]
 		public long LastModified { get; set; }
-		[JsonPropertyName("blocks")]
-		public IEnumerable<SkrivLetBlockBase> Blocks { get; set; }
+
+        [JsonPropertyName("blocks")]
+        public IEnumerable<SkrivLetBlockBase> Blocks { get; set; } = [];
+        
 		[JsonPropertyName("version")]
-		public string Version { get; set; }
+		public string? Version { get; set; }
 	}
 }

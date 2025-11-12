@@ -14,14 +14,14 @@ namespace Umbraco.Community.SkrivLet.JsonConverters
 			_converters = converters;
 		}
 
-		public override SkrivLetBlockBase? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override SkrivLetBlockBase Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
 			if (reader.TokenType != JsonTokenType.StartObject)
 			{
 				throw new JsonException();
 			}
 
-			SkrivLetBlockBase baseObj = new SkrivLetBlockBase();
+			SkrivLetBlockBase baseObj = new();
 			while (reader.Read())
 			{
 				if (reader.TokenType == JsonTokenType.EndObject)
@@ -29,13 +29,12 @@ namespace Umbraco.Community.SkrivLet.JsonConverters
 					return baseObj;
 				}
 
-				// Get the key.
-				if (reader.TokenType != JsonTokenType.PropertyName)
+                if (reader.TokenType != JsonTokenType.PropertyName)
 				{
 					throw new JsonException();
 				}
 
-				string? propertyName = reader.GetString();
+				var propertyName = reader.GetString() ?? "";
 				switch (propertyName.ToLower())
 				{
 					case "id":
@@ -48,7 +47,9 @@ namespace Umbraco.Community.SkrivLet.JsonConverters
 						break;
 					case "data":
 						reader.Read();
-						var validConverters = _converters.Where(x => x.CanConvert(baseObj.Type));
+						var validConverters = _converters.Where(x => x.CanConvert(baseObj.Type)).ToList();
+                        // TODO: This relies on type and id always being before data
+                        
 						if (validConverters.Any())
 						{
 							baseObj = validConverters.First().Convert(ref reader, baseObj.Id, baseObj.Type);

@@ -48,7 +48,7 @@ namespace Umbraco.Community.SkrivLet.Converters
                     throw new JsonException();
                 }
 
-                string propertyName = reader.GetString() ?? "";
+                var propertyName = reader.GetString() ?? "";
                 switch (propertyName.ToLower())
                 {
                     case "text":
@@ -71,12 +71,11 @@ namespace Umbraco.Community.SkrivLet.Converters
 
             var udi = UdiParser.Parse(udiText);
 
-            if (!_umbracoContextAccessor.TryGetUmbracoContext(out var context)
-                || context.Content == null)
+            if (!_umbracoContextAccessor.TryGetUmbracoContext(out var context))
             {
                 return string.Empty;
             }
-            var content = context.Content.GetById(udi);
+            var content = context.Content.GetById(udi.AsGuid());
             if (content == null)
             {
                 return string.Empty;

@@ -18,7 +18,6 @@ namespace Umbraco.Community.SkrivLet.Converters
             }
 
             var block = new SkrivLetBlock<QuoteBlockData>(id, type);
-            block.Data = new QuoteBlockData();
             while (reader.Read())
             {
                 if (reader.TokenType == JsonTokenType.EndObject)
@@ -32,7 +31,7 @@ namespace Umbraco.Community.SkrivLet.Converters
                     throw new JsonException();
                 }
 
-                string? propertyName = reader.GetString() ?? "";
+                var propertyName = reader.GetString() ?? "";
                 switch (propertyName.ToLower())
                 {
                     case "text":
@@ -55,8 +54,8 @@ namespace Umbraco.Community.SkrivLet.Converters
 
     public class QuoteBlockData
     {
-        public string Text { get; set; }
-        public string Caption { get; set; }
-        public string Alignment { get; set; }
+        public string? Text { get; set; }
+        public string? Caption { get; set; }
+        public string? Alignment { get; set; }
     }
 }

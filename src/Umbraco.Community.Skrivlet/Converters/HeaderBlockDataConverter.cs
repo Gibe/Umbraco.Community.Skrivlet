@@ -18,7 +18,6 @@ namespace Umbraco.Community.SkrivLet.Converters
             }
 
             var block = new SkrivLetBlock<HeaderBlockData>(id, type);
-            block.Data = new HeaderBlockData();
             while (reader.Read())
             {
                 if (reader.TokenType == JsonTokenType.EndObject)
@@ -26,13 +25,12 @@ namespace Umbraco.Community.SkrivLet.Converters
                     return block;
                 }
 
-                // Get the key.
                 if (reader.TokenType != JsonTokenType.PropertyName)
                 {
                     throw new JsonException();
                 }
 
-                string? propertyName = reader.GetString() ?? "";
+                var propertyName = reader.GetString() ?? "";
                 switch (propertyName.ToLower())
                 {
                     case "text":
@@ -51,7 +49,7 @@ namespace Umbraco.Community.SkrivLet.Converters
 
     public class HeaderBlockData
     {
-        public string Text { get; set; }
+        public string? Text { get; set; }
         public int Level { get; set; }
     }
 }
