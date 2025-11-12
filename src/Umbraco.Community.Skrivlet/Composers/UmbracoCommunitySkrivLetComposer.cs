@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Community.SkrivLet.Converters;
-using Umbraco.Community.Skrivlet.JsonConverters;
+using Umbraco.Community.SkrivLet.JsonConverters;
 
 namespace Umbraco.Community.SkrivLet.Composers
 {

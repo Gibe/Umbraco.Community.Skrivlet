@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Web;
-using Umbraco.Community.Skrivlet.Models;
+using Umbraco.Community.SkrivLet.Models;
 using Umbraco.Extensions;
 
 namespace Umbraco.Community.SkrivLet.Converters

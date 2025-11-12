@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Umbraco.Community.Skrivlet.Models;
+using Umbraco.Community.SkrivLet.Models;
 
 namespace Umbraco.Community.SkrivLet.Converters
 {
