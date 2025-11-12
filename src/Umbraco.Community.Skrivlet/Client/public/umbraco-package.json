@@ -1,0 +1,14 @@
+{
+  "id": "Umbraco.Community.Skrivlet",
+  "name": "Umbraco.Community.Skrivlet",
+  "version": "0.0.0",
+  "allowTelemetry": true,
+  "extensions": [
+    {
+      "name": "Umbraco Community Skrivlet Bundle",
+      "alias": "Umbraco.Community.Skrivlet.Bundle",
+      "type": "bundle",
+      "js": "/App_Plugins/UmbracoCommunitySkrivlet/umbraco-community-skrivlet.js"
+    }
+  ]
+}
