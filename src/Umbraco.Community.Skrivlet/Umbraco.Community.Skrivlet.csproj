@@ -7,15 +7,15 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Product>Umbraco.Community.Umbraco.Community.Skrivlet</Product>
-    <PackageId>Umbraco.Community.Umbraco.Community.Skrivlet</PackageId>
-    <Title>Umbraco .Community .Skrivlet </Title>
+    <Product>Umbraco.Community.Umbraco.Community.SkrivLet</Product>
+    <PackageId>Umbraco.Community.Umbraco.Community.SkrivLet</PackageId>
+    <Title>Umbraco.Community.Skrivlet</Title>
     <Description>...</Description>
     <PackageTags>umbraco;umbraco-marketplace</PackageTags>
     <Authors>Steve Temple</Authors>
     <Copyright>$([System.DateTime]::UtcNow.ToString(`yyyy`)) © Steve Temple</Copyright>
-    <PackageProjectUrl>https://github.com/stevetemple/Umbraco.Community.Skrivlet</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/stevetemple/Umbraco.Community.Skrivlet</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/gibe/Umbraco.Community.Skrivlet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/gibe/Umbraco.Community.Skrivlet</RepositoryUrl>
     <PackageReadmeFile>README_nuget.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

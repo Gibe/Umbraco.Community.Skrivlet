@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Umbraco.Community.Skrivlet\Umbraco.Community.Skrivlet.csproj" />
+    <ProjectReference Include="..\Umbraco.Community.SkrivLet\Umbraco.Community.SkrivLet.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

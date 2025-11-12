@@ -11,9 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\umbraco-marketplace.json = ..\umbraco-marketplace.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Community.Skrivlet.TestSite", "Umbraco.Community.Skrivlet.TestSite\Umbraco.Community.Skrivlet.TestSite.csproj", "{A8BA4BFE-2AC4-474F-AFEE-583304F5DA2A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Community.SkrivLet.TestSite", "Umbraco.Community.Skrivlet.TestSite\Umbraco.Community.SkrivLet.TestSite.csproj", "{A8BA4BFE-2AC4-474F-AFEE-583304F5DA2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Community.Skrivlet", "Umbraco.Community.Skrivlet\Umbraco.Community.Skrivlet.csproj", "{A13932EC-AE8F-4F19-86DF-22A024883679}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.Community.SkrivLet", "Umbraco.Community.Skrivlet\Umbraco.Community.SkrivLet.csproj", "{A13932EC-AE8F-4F19-86DF-22A024883679}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
