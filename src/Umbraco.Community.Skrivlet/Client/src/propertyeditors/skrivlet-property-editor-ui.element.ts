@@ -3,22 +3,19 @@ import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/property-editor';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
 
-// EditorJS imports (these will need to be available globally or imported differently)
-declare global {
-  const EditorJS: any;
-  const Header: any;
-  const Quote: any;
-  const CodeTool: any;
-  const RawTool: any;
-  const List: any;
-  const Checklist: any;
-  const Embed: any;
-  const DragDrop: any;
-
-  interface Window {
-    editorService: any;
-  }
-}
+import EditorJS, { OutputData } from '@editorjs/editorjs';
+import Header from '@editorjs/header';
+import Quote from '@editorjs/quote';
+import CodeTool from '@editorjs/code';
+//@ts-ignore
+import RawTool from '@editorjs/raw';
+import EditorjsList from '@editorjs/list';
+//@ts-ignore
+import Checklist from '@editorjs/checklist';
+//@ts-ignore
+import Embed from '@editorjs/embed';
+//@ts-ignore
+import DragDrop from "editorjs-drag-drop";
 
 @customElement('skrivlet-property-editor-ui')
 export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPropertyEditorUiElement {
@@ -74,25 +71,22 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
         console.error('Error parsing SkrivLet initial data JSON:', e);
       }
     } else {
-      initialData = this.value ? this.value : {};
+      initialData = this.value ? this.value as OutputData : {} as OutputData;
     }
     return initialData;
   }
 
   private async _initializeEditor() {
     const editorContainer = this.shadowRoot?.getElementById(this._editorId);
-    if (!editorContainer || !window.EditorJS) {
+    if (!editorContainer) {
       console.error('EditorJS or container not available');
       return;
     }
 
-    // Wait for EditorJS and tools to be available
-    await this._waitForEditorJS();
-
     this._editor = new EditorJS({
       holder: editorContainer,
       placeholder: "Type '/' to insert a block or just start typing something super...",
-      data: this._getInitialData(),
+      data: this._getInitialData() as OutputData,
       inlineToolbar: true,
       readOnly: this.readonly,
       tools: {
@@ -111,13 +105,13 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
         code: CodeTool,
         raw: RawTool,
         list: {
-          class: List,
+          class: EditorjsList,
           inlineToolbar: true
         },
-        checklist: Checklist,
+        //checklist: Checklist,
         link: this._createUmbracoLinkTool()
       },
-      onChange: (api: any, event: any) => {
+      onChange: () => {
         this._stopUmbracosInterferingHotKeys();
         this._editor.save().then((outputData: any) => {
           this.value = JSON.stringify(outputData);
@@ -127,38 +121,41 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
         });
       },
       onReady: () => {
-        if (window.DragDrop) {
+        if (DragDrop) {
           new DragDrop(this._editor);
         }
         this._stopUmbracosInterferingHotKeys();
+        this._cloneEditorStylesToShadowDom();
+
+
       }
     });
   }
 
-  private async _waitForEditorJS(): Promise<void> {
-    let attempts = 0;
-    const maxAttempts = 50;
-
-    while (!window.EditorJS && attempts < maxAttempts) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      attempts++;
-    }
-
-    if (!window.EditorJS) {
-      throw new Error('EditorJS failed to load');
+  private _cloneEditorStylesToShadowDom() {
+    // Editor JS injects styles into the document head, we need to clone them into our shadow DOM
+    const styleElements = document?.querySelectorAll("style");
+    if(styleElements) {
+      styleElements.forEach(style => {
+        const clonedStyle = style.cloneNode(true);
+        this.shadowRoot?.appendChild(clonedStyle);
+      });
     }
   }
 
   private _createUmbracoLinkTool() {
-    const self = this;
-
     return class UmbracoLinkTool {
+      api: any;
+      button: HTMLButtonElement | null;
+      element: HTMLElement | null;
+      tag: string;
+      class: string;
       static get isInline() { return true; }
 
       constructor({ api }: any) {
         this.api = api;
         this.button = null;
-        this._state = false;
+        this.state = false;
         this.element = null;
         this.tag = 'A';
         this.class = 'cdx-link';
@@ -173,7 +170,7 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
       }
 
       surround(range: any) {
-        if (this._state) {
+        if (this.state) {
           this.unwrap(range);
           return;
         }
@@ -181,24 +178,26 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
       }
 
       openLinkPicker(range: any) {
+        console.log(range);
+        alert('Open link picker to select a link URL!');
         // For now, we'll need to integrate with Umbraco's modern link picker
         // This will need to be updated when we have access to the new service APIs
-        if (window.editorService && window.editorService.linkPicker) {
-          window.editorService.linkPicker({
-            multiPicker: false,
-            submit: (result: any) => {
-              window.editorService.close();
-              if (result.target.udi) {
-                this.wrap(range, result.target.udi);
-              } else {
-                this.wrap(range, result.target.url);
-              }
-            },
-            close: () => {
-              window.editorService.close();
-            }
-          });
-        }
+        // if (window.editorService && window.editorService.linkPicker) {
+        //   window.editorService.linkPicker({
+        //     multiPicker: false,
+        //     submit: (result: any) => {
+        //       window.editorService.close();
+        //       if (result.target.udi) {
+        //         this.wrap(range, result.target.udi);
+        //       } else {
+        //         this.wrap(range, result.target.url);
+        //       }
+        //     },
+        //     close: () => {
+        //       window.editorService.close();
+        //     }
+        //   });
+        // }
       }
 
       wrap(range: any, url: string) {
@@ -221,13 +220,13 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
 
       checkState() {
         const link = this.api.selection.findParentTag(this.tag);
-        this._state = !!link;
-        this.button.classList.toggle(this.api.styles.inlineToolButtonActive, this._state);
+        this.state = !!link;
+        this.button?.classList.toggle(this.api.styles.inlineToolButtonActive, this.state);
       }
 
-      get state() { return this._state; }
+      get state() { return this.state; }
       set state(state: boolean) {
-        this._state = state;
+        this.state = state;
         if (this.button) {
           this.button.classList.toggle(this.api.styles.inlineToolButtonActive, state);
         }
@@ -240,9 +239,10 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
   }
 
   private _createUmbracoImageTool() {
-    const self = this;
-
     return class UmbracoImageTool {
+      api: any;
+      config: any;
+      data: { url: any; alt: any; udi: any; width?: number; height?: number; };
       static get toolbox() {
         return {
           title: 'Image',
@@ -283,25 +283,26 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
       }
 
       _openMediaPicker() {
-        if (window.editorService && window.editorService.mediaPicker) {
-          window.editorService.mediaPicker({
-            onlyImages: true,
-            multiPicker: false,
-            submit: (item: any) => {
-              const imageUrl = item.selection[0].image;
-              const imageAlt = item.selection[0].name;
-              this.data.url = imageUrl;
-              this.data.alt = imageAlt;
-              this.data.udi = item.selection[0].udi;
-              this.data.width = parseInt(item.selection[0].width);
-              this.data.height = parseInt(item.selection[0].height);
-              window.editorService.close();
-            },
-            close: () => {
-              window.editorService.close();
-            }
-          });
-        }
+        alert('Open media picker to select an image!');
+        // if (window.editorService && window.editorService.mediaPicker) {
+        //   window.editorService.mediaPicker({
+        //     onlyImages: true,
+        //     multiPicker: false,
+        //     submit: (item: any) => {
+        //       const imageUrl = item.selection[0].image;
+        //       const imageAlt = item.selection[0].name;
+        //       this.data.url = imageUrl;
+        //       this.data.alt = imageAlt;
+        //       this.data.udi = item.selection[0].udi;
+        //       this.data.width = parseInt(item.selection[0].width);
+        //       this.data.height = parseInt(item.selection[0].height);
+        //       window.editorService.close();
+        //     },
+        //     close: () => {
+        //       window.editorService.close();
+        //     }
+        //   });
+        // }
       }
 
       save() {
@@ -330,6 +331,7 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
       }
 
       render() {
+        //@ts-ignore
         if (!this.data.service) {
           const container = document.createElement('div');
           const label = document.createElement('label');
@@ -344,6 +346,7 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
             const url = event.clipboardData.getData('text');
             const service = Object.keys(Embed.services).find((key) => Embed.services[key].regex.test(url));
             if (service) {
+              //@ts-ignore
               this.onPaste({detail: {key: service, data: url}});
             }
           });
@@ -402,7 +405,7 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
           look="outline"
           label="Open editor in fullscreen"
         >
-          <uui-icon name="icon-expand"></uui-icon>
+          <uui-icon name="icon-fullscreen" aria-hidden="true"></uui-icon>
           <span class="sr-only">Open editor in fullscreen</span>
         </uui-button>
       </div>
@@ -413,21 +416,184 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
     UmbTextStyles,
     css`
       .skriv-let {
-        position: relative;
+          position: relative;
+          background-color: white;
+          max-width: 920px;
+          margin: 0 auto;
       }
 
-      .skriv-let__container {
-        min-height: 200px;
-        border: 1px solid var(--uui-color-border);
-        border-radius: var(--uui-border-radius);
-        padding: var(--uui-size-space-4);
+      .skriv-let.cdx-search-field__input {
+          width: auto;
       }
+
+      .ce-popover__container {
+          width: 250px;
+      }
+
+      @media (min-width: 651px) {
+          .ce-block__content {
+              max-width: calc(100% - 120px) !important;
+              margin: 0 60px;
+          }
+      }
+
+      @media (min-width: 651px) {
+          .ce-toolbar__content {
+              width: 0px !important;
+              margin: 0 50px;
+          }
+      }
+
+      .cdx-block {
+          max-width: 100% !important;
+      }
+
+      @media (min-width: 651px) {
+          .codex-editor--narrow .ce-toolbox .ce-popover {
+              left: 0;
+              right: 0;
+          }
+      }
+
+      @media (min-width: 651px) {
+          .codex-editor--narrow .ce-settings .ce-popover {
+              right: 0;
+              left: 0;
+          }
+      }
+
+      .ce-popover {
+          width: auto !important;
+      }
+
+      .ce-popover--inline .ce-popover--nested .ce-popover__container {
+          width: 250px;
+      }
+
+          .skriv-let-data {
+              margin: 0 auto;
+              max-width: 800px;
+          }
+
+      .cdx-label {
+          font-weight: 700;
+      }
+
+      .ce-paragraph,
+      .cdx-list__item,
+      .cdx-quote__text,
+      .cdx-checklist__item-text,
+      .embed-tool__caption {
+          font-size: 1.0675rem;
+          line-height: 1.5;
+      }
+
+      /* Image */
+      .simple-image {
+          padding: 20px 0;
+      }
+
+      .simple-image img {
+          scroll-margin-top: 20px;
+          cursor: pointer;
+      }
+
+      .simple-image input,
+      .simple-image [contenteditable] {
+          width: 100%;
+          padding: 10px 12px;
+          border: 1px solid #e4e4e4;
+          background: #fff;
+          box-sizing: border-box;
+          border-radius: 3px;
+          outline: none;
+          font-size: 1.125rem;
+          height: auto;
+      }
+
+      .simple-image input {
+          margin-bottom: 7px;
+      }
+
+      .simple-image img {
+          max-width: 100%;
+          margin-bottom: 15px;
+      }
+
+      .simple-image.withBorder img {
+          border: 1px solid #e8e8eb;
+      }
+
+      .simple-image.withBackground {
+          background: #eff2f5;
+          padding: 10px;
+      }
+
+      .simple-image.withBackground img {
+          display: block;
+          max-width: 60%;
+          margin: 0 auto 15px;
+      }
+
+      /* Fullscreen */
 
       .skriv-let__fullscreen-button {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        z-index: 10;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: absolute;
+          top: 0;
+          right: 0;
+          padding: 0;
+          height: 50px;
+          width: 50px;
+          background-color: transparent;
+          color: #1d202b;
+          border: none;
+          appearance: none;
+          cursor: pointer;
+          z-index: 100;
+          border-radius: 7px;
+      }
+
+      @media (max-width: 650px) {
+          .skriv-let__fullscreen-button {
+              background-color: #fff;
+              border: 1px solid #E8E8EB;
+          }
+      }
+
+      .skriv-let__fullscreen-button:hover {
+          background-color: #eff2f5;
+      }
+
+      .skriv-let__container:fullscreen {
+          background-color: white;
+          color: #242424;
+          line-height: 1.5;
+          padding: 20px;
+          height: 100dvh;
+          overflow-y: scroll;
+      }
+
+      .skriv-let__container:fullscreen .codex-editor {
+          max-width: 1080px;
+          margin: 0 auto;
+      }
+
+      /* Hide elements that won't work in fullscreen */
+      .skriv-let__container:fullscreen .skriv-let__add-image-button,
+      .skriv-let__container:fullscreen .ce-popover-item[data-item-name="image"],
+      .skriv-let__container:fullscreen .ce-popover-item-html[data-item-name="link"] {
+          display: none;
+      }
+
+      .skriv-let__container:fullscreen .ce-paragraph,
+      .skriv-let__container:fullscreen .cdx-list__item,
+      .skriv-let__container:fullscreen .cdx-quote__text,
+      .skriv-let__container:fullscreen .cdx-checklist__item-text,
+      .skriv-let__container:fullscreen .embed-tool__caption {
+          font-size: 1.25rem;
       }
 
       .sr-only {
@@ -439,20 +605,6 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
         overflow: hidden;
         clip: rect(0, 0, 0, 0);
         white-space: nowrap;
-        border: 0;
-      }
-
-      /* EditorJS styling integration */
-      .skriv-let__container :global(.cdx-block) {
-        padding: 0.4em 0;
-      }
-
-      .skriv-let__container :global(.ce-block__content) {
-        max-width: none;
-      }
-
-      .skriv-let__container :global(.ce-toolbar__content) {
-        max-width: none;
       }
     `
   ];

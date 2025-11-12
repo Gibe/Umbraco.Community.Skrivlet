@@ -7,7 +7,7 @@ export const manifests: Array<UmbExtensionManifest> = [
     meta: {
       label: "SkrivLet",
       icon: "icon-autofill",
-      group: "common",
+      group: "richContent",
       "propertyEditorSchemaAlias": "Umbraco.Plain.String"
     }
   },
