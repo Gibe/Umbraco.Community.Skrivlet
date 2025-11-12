@@ -1,12 +1,11 @@
 using System.Text.Json;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.PropertyEditors;
-using Umbraco.Community.SkrivLet;
 using Umbraco.Community.SkrivLet.JsonConverters;
 using Umbraco.Community.SkrivLet.Models;
 using Umbraco.Extensions;
 
-namespace Umbraco.Community.Skrivlet.ValueConverters
+namespace Umbraco.Community.SkrivLet.ValueConverters
 {
 	public class SkrivLetValueConverter : PropertyValueConverterBase
 	{
@@ -59,18 +58,5 @@ namespace Umbraco.Community.Skrivlet.ValueConverters
 
 			return JsonSerializer.Deserialize<SkrivLetModel>(Convert.ToString(inter), options);
 		}	
-
-		public override object? ConvertIntermediateToXPath(IPublishedElement owner, IPublishedPropertyType propertyType,
-			PropertyCacheLevel referenceCacheLevel, object? inter, bool preview)
-		{
-			if (inter == null) return null;
-			return inter.ToString();
-		}
 	}
-
-	
-
-	
-
-	
 }

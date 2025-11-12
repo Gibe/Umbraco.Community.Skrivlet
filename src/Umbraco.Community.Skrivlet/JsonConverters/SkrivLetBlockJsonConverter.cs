@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Umbraco.Community.SkrivLet.Converters;
-using Umbraco.Community.Skrivlet.Models;
+using Umbraco.Community.SkrivLet.Models;
 
 namespace Umbraco.Community.SkrivLet.JsonConverters
 {

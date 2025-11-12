@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Umbraco.Community.Skrivlet.Models;
+using Umbraco.Community.SkrivLet.Models;
 
 namespace Umbraco.Community.SkrivLet.Extensions
 {
