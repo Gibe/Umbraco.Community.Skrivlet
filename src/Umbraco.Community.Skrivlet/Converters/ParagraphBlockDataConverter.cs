@@ -1,25 +1,16 @@
 using System.Text.Json;
-using System.Text.RegularExpressions;
-using Umbraco.Cms.Core;
-using Umbraco.Cms.Core.Routing;
-using Umbraco.Cms.Core.Web;
 using Umbraco.Community.SkrivLet.Models;
-using Umbraco.Extensions;
 
 namespace Umbraco.Community.SkrivLet.Converters
 {
     public class ParagraphBlockDataConverter : IBlockDataConverter
     {
-        private const string UmbLinkPattern = "(<a\\s+(?:[^>]*?\\s+)?href=\")(umb:\\/\\/[^\"]*)\"";
-        private readonly IUmbracoContextAccessor _umbracoContextAccessor;
-        private readonly IPublishedUrlProvider _publishedUrlProvider;
-        
+        private readonly IUmbracoUrlConverter _umbracoUrlConverter;
+
         public ParagraphBlockDataConverter(
-            IUmbracoContextAccessor umbracoContextAccessor,
-            IPublishedUrlProvider publishedUrlProvider)
+            IUmbracoUrlConverter umbracoUrlConverter)
         {
-            _umbracoContextAccessor = umbracoContextAccessor;
-            _publishedUrlProvider = publishedUrlProvider;
+            _umbracoUrlConverter = umbracoUrlConverter;
         }
 
         public bool CanConvert(string type)
@@ -53,35 +44,14 @@ namespace Umbraco.Community.SkrivLet.Converters
                 {
                     case "text":
                         reader.Read();
-                        block.Data = new ParagraphBlockData { Text = ConvertUrls(reader.GetString() ?? "") };
+                        block.Data = new ParagraphBlockData { Text = _umbracoUrlConverter.ConvertUrls(reader.GetString() ?? "") };
                         break;
                 }
             }
             return block;
         }
         
-        private string ConvertUrls(string text)
-        {
-            return Regex.Replace(text, UmbLinkPattern, ConvertUdiUrl);
-        }
-
-        private string ConvertUdiUrl(Match match)
-        {
-            var udiText = match.Groups[2].Value;
-
-            var udi = UdiParser.Parse(udiText);
-
-            if (!_umbracoContextAccessor.TryGetUmbracoContext(out var context))
-            {
-                return string.Empty;
-            }
-            var content = context.Content.GetById(udi.AsGuid());
-            if (content == null)
-            {
-                return string.Empty;
-            }
-            return $"{match.Groups[1].Value}{content.Url(_publishedUrlProvider)}\"";
-        }
+       
     }
 
     public class ParagraphBlockData
