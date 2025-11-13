@@ -1,0 +1,10 @@
+@model Umbraco.Community.SkrivLet.SkrivLetModel;
+
+<article class="sl-article">
+@foreach (var block in Model.Blocks)
+{
+	<div id="@block.Id" class="sl-block">
+		@await Html.PartialAsync($"~/Views/Partials/SkrivLet/{block.Type}.cshtml", block)
+	</div>
+}
+</article>

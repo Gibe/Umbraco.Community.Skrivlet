@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+        <StaticWebAssetBasePath>/</StaticWebAssetBasePath>
+    </PropertyGroup>
+
+    <!-- NuGet package metadata -->
+    <PropertyGroup>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <Product>Umbraco.Community.SkrivLet</Product>
+        <Title>SkrivLet</Title>
+        <Description>SkrivLet, A clean WYSIWYG property editor for distraction free writing in Umbraco.</Description>
+        <Version>0.6.1</Version>
+        <Authors>Matt Begent, Steve Temple</Authors>
+        <Company>Matt Begent, Steve Temple</Company>
+        <Copyright>$([System.DateTime]::Now.Year) © $(Company)</Copyright>
+        <PackageId>Umbraco.Community.SkrivLet</PackageId>
+        <PackageLicenseExpression>MPL-2.0</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/mattbegent/Umbraco.Community.SkrivLet</PackageProjectUrl>
+        <PackageTags>umbraco umbraco-marketplace</PackageTags>
+        <RepositoryUrl>https://github.com/mattbegent/Umbraco.Community.SkrivLet</RepositoryUrl>
+        <PackageIcon>skriv-let-logo.png</PackageIcon>
+        <RepositoryType>git</RepositoryType>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <RootNamespace>Umbraco.Community.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="readme.md" />
+      <None Include="..\images\skriv-let-logo.png" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <PackageReference Include="Microsoft.AspNetCore.Html.Abstractions" Version="2.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
+        <PackageReference Include="Umbraco.Cms.Core" Version="13.3.2" />
+    </ItemGroup>
+
+</Project>
