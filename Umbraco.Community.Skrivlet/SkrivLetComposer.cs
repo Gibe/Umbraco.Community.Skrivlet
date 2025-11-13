@@ -10,6 +10,7 @@ namespace Umbraco.Community.SkrivLet
 		public void Compose(IUmbracoBuilder builder)
 		{
 			builder.Services.AddTransient<SkrivLetBlockJsonConverter>();
+            builder.Services.AddTransient<IUmbracoUrlConverter, UmbracoUrlConverter>();
 			builder.Services.AddTransient<IBlockDataConverter, ParagraphBlockDataConverter>();
 			builder.Services.AddTransient<IBlockDataConverter, HeaderBlockDataConverter>();
 			builder.Services.AddTransient<IBlockDataConverter, CodeBlockDataConverter>();
