@@ -30,8 +30,7 @@ namespace Umbraco.Community.SkrivLet.Tests.Converters
             publishedContentMock.Setup(x => x.Key).Returns(Guid.NewGuid());
             publishedContentMock.Setup(x => x.ContentType).Returns(new PublishedContentType(Guid.NewGuid(), 1, "context", PublishedItemType.Content, [], x => [], ContentVariation.Nothing, false));
             var publishedContent = publishedContentMock.Object;
-
-
+            
             Mock<IPublishedContentCache> contentCacheMock = new Mock<IPublishedContentCache>();
             contentCacheMock.Setup(x => x.GetById(It.IsAny<Guid>()))
                 .Returns(publishedContent);
@@ -49,39 +48,47 @@ namespace Umbraco.Community.SkrivLet.Tests.Converters
         }
 
         [Test]
-        public void ConvertsSingleUmbracoUrl()
+        public void ConvertUrlsConvertsSingleUmbracoUrl()
         {
-            var converted = Converter().ConvertUrls(
-                "This is some <a href=\"umb://document/4fed18d8c5e34d5e88cfff3a5b457bf2\">example</a> text");
+            var original = "This is some <a href=\"umb://document/4fed18d8c5e34d5e88cfff3a5b457bf2\">example</a> text";
+            var expected = "This is some <a href=\"https://www.google.com\">example</a> text";
 
-            Assert.That(converted, Is.EqualTo("This is some <a href=\"https://www.google.com\">example</a> text"));
+            var converted = Converter().ConvertUrls(original);
+
+            Assert.That(converted, Is.EqualTo(expected));
         }
 
         [Test]
-        public void ConvertsMultipleUmbracoUrls()
+        public void ConvertUrlsConvertsMultipleUmbracoUrls()
         {
-            var converted = Converter().ConvertUrls(
-                "This <a href=\"umb://document/4fed18d8c5e34d5e88cfff3a5b457bf3\">is</a> some <a href=\"umb://document/4fed18d8c5e34d5e88cfff3a5b457bf2\">example</a> text");
+            var original = "This <a href=\"umb://document/4fed18d8c5e34d5e88cfff3a5b457bf3\">is</a> some <a href=\"umb://document/4fed18d8c5e34d5e88cfff3a5b457bf2\">example</a> text";
+            var expected = "This <a href=\"https://www.google.com\">is</a> some <a href=\"https://www.google2.com\">example</a> text";
 
-            Assert.That(converted, Is.EqualTo("This <a href=\"https://www.google.com\">is</a> some <a href=\"https://www.google2.com\">example</a> text"));
+            var converted = Converter().ConvertUrls(original);
+
+            Assert.That(converted, Is.EqualTo(expected));
         }
 
         [Test]
-        public void LeavesNonUmbracoUrlsAlone()
+        public void ConvertUrlsLeavesNonUmbracoUrlsAlone()
         {
-            var converted = Converter().ConvertUrls(
-                "This <a href=\"https://www.google.com\">is</a> some <a href=\"umb://document/4fed18d8c5e34d5e88cfff3a5b457bf2\">example</a> text");
+            var original = "This <a href=\"https://www.google.com\">is</a> some <a href=\"umb://document/4fed18d8c5e34d5e88cfff3a5b457bf2\">example</a> text";
+            var expected = "This <a href=\"https://www.google.com\">is</a> some <a href=\"https://www.google.com\">example</a> text";
 
-            Assert.That(converted, Is.EqualTo("This <a href=\"https://www.google.com\">is</a> some <a href=\"https://www.google.com\">example</a> text"));
+            var converted = Converter().ConvertUrls(original);
+
+            Assert.That(converted, Is.EqualTo(expected));
         }
 
         [Test]
-        public void LeavesMailtoUrlsAlone()
+        public void ConvertUrlsLeavesMailtoUrlsAlone()
         {
-            var converted = Converter().ConvertUrls(
-                "This <a href=\"mailto:test@test.com\">is</a> some <a href=\"umb://document/4fed18d8c5e34d5e88cfff3a5b457bf2\">example</a> text");
+            var original = "This <a href=\"mailto:test@test.com\">is</a> some <a href=\"umb://document/4fed18d8c5e34d5e88cfff3a5b457bf2\">example</a> text";
+            var expected = "This <a href=\"mailto:test@test.com\">is</a> some <a href=\"https://www.google.com\">example</a> text";
 
-            Assert.That(converted, Is.EqualTo("This <a href=\"mailto:test@test.com\">is</a> some <a href=\"https://www.google.com\">example</a> text"));
+            var converted = Converter().ConvertUrls(original);
+
+            Assert.That(converted, Is.EqualTo(expected));
         }
     }
 }
