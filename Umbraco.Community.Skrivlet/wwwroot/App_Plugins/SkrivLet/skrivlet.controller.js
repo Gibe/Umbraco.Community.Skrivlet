@@ -52,7 +52,8 @@ angular.module('umbraco').controller('SkrivLetController', function ($scope, edi
         static get sanitize() {
             return {
                 a: {
-                    href: true
+                    href: true,
+                    target: true
                 }
             };
         }
@@ -84,18 +85,25 @@ angular.module('umbraco').controller('SkrivLetController', function ($scope, edi
             this.openLinkPicker(range);
         }
 
-        wrap(range, url) {
+        wrap(range, url, target) {
 
             const selectedText = range.extractContents();
             const link = document.createElement(this.tag);
 
             link.classList.add(this.class);
             link.setAttribute('href', url);
+            if (target) {
+                link.setAttribute('target', target);
+            }
             link.appendChild(selectedText);
+
+            console.log(link);
             range.insertNode(link);
 
             this.api.selection.expandToTag(link);
             this.element = link;
+
+            console.log(this.element);
         }
 
         unwrap(range) {
@@ -118,10 +126,11 @@ angular.module('umbraco').controller('SkrivLetController', function ($scope, edi
                 multiPicker: false,
                 submit: (result) => {
                     editorService.close();
+
                     if (result.target.udi) {
-                        this.wrap(range, result.target.udi);
+                        this.wrap(range, result.target.udi, result.target.target);
                     } else {
-                        this.wrap(range, result.target.url);
+                        this.wrap(range, result.target.url, result.target.target);
                     }
 
                 },
