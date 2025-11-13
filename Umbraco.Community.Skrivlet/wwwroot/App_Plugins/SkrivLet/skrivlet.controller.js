@@ -97,13 +97,10 @@ angular.module('umbraco').controller('SkrivLetController', function ($scope, edi
             }
             link.appendChild(selectedText);
 
-            console.log(link);
             range.insertNode(link);
 
             this.api.selection.expandToTag(link);
             this.element = link;
-
-            console.log(this.element);
         }
 
         unwrap(range) {
