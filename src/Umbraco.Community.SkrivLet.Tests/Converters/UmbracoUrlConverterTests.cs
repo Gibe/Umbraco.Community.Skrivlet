@@ -58,12 +58,30 @@ namespace Umbraco.Community.SkrivLet.Tests.Converters
         }
 
         [Test]
-        public void ConvertsMulipleUmbracoUrl()
+        public void ConvertsMultipleUmbracoUrls()
         {
             var converted = Converter().ConvertUrls(
                 "This <a href=\"umb://document/4fed18d8c5e34d5e88cfff3a5b457bf3\">is</a> some <a href=\"umb://document/4fed18d8c5e34d5e88cfff3a5b457bf2\">example</a> text");
 
             Assert.That(converted, Is.EqualTo("This <a href=\"https://www.google.com\">is</a> some <a href=\"https://www.google2.com\">example</a> text"));
+        }
+
+        [Test]
+        public void LeavesNonUmbracoUrlsAlone()
+        {
+            var converted = Converter().ConvertUrls(
+                "This <a href=\"https://www.google.com\">is</a> some <a href=\"umb://document/4fed18d8c5e34d5e88cfff3a5b457bf2\">example</a> text");
+
+            Assert.That(converted, Is.EqualTo("This <a href=\"https://www.google.com\">is</a> some <a href=\"https://www.google.com\">example</a> text"));
+        }
+
+        [Test]
+        public void LeavesMailtoUrlsAlone()
+        {
+            var converted = Converter().ConvertUrls(
+                "This <a href=\"mailto:test@test.com\">is</a> some <a href=\"umb://document/4fed18d8c5e34d5e88cfff3a5b457bf2\">example</a> text");
+
+            Assert.That(converted, Is.EqualTo("This <a href=\"mailto:test@test.com\">is</a> some <a href=\"https://www.google.com\">example</a> text"));
         }
     }
 }
