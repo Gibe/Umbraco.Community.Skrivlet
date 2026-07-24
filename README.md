@@ -4,7 +4,7 @@
 
 ![SkrivLet Logo](https://raw.githubusercontent.com/mattbegent/Umbraco.Community.SkrivLet/main/images/skriv-let-logo.png)
 
-A clean WYSIWYG property editor for distraction free writing in Umbraco. Designed for Umbraco 13 (v14+ version coming soon)
+A clean WYSIWYG property editor for distraction free writing in Umbraco. Built for Umbraco 17+.
 
 ## Demo
 
@@ -30,11 +30,11 @@ To use SkrivLet in your views you can use the RenderSkrivLet extension, for exam
 
 You'll need to add 
 
-    @using Umbraco.Community.SkrivLet
+    @using Umbraco.Community.SkrivLet.Extensions
 
 For the view to be able to use the extensions
 
-SkrivLet comes with some basic views, If you want to override the defaults your can put a replacement in your project in `Views/Partials/SkrivLet/` and this will override the built in views. Refer to the [basic built in views](https://github.com/mattbegent/Umbraco.Community.SkrivLet/tree/main/Umbraco.Community.Skrivlet/Views/Partials/SkrivLet) to get an example of the code required
+SkrivLet comes with some basic views. If you want to override one, put a replacement with the same filename in your project at `Views/Partials/SkrivLet/` (not in a `Default` subfolder) and it will take priority over the built-in one - for example `Views/Partials/SkrivLet/Paragraph.cshtml` overrides the paragraph block, and `Views/Partials/SkrivLet/Blocks.cshtml` overrides the overall wrapper. Refer to the [basic built in views](https://github.com/mattbegent/Umbraco.Community.SkrivLet/tree/main/Umbraco.Community.Skrivlet/Views/Partials/SkrivLet/Default) to get an example of the code required. If your own `Blocks.cshtml` needs to render individual blocks, use `@await Html.RenderSkrivLetBlock(block)` so per-block overrides keep working.
 
 ## Styling
 

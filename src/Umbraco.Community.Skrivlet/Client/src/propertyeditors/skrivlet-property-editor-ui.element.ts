@@ -139,12 +139,13 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
       element: HTMLElement | null;
       tag: string;
       class: string;
+      private _state: boolean;
       static get isInline() { return true; }
 
       constructor({ api }: any) {
         this.api = api;
         this.button = null;
-        this.state = false;
+        this._state = false;
         this.element = null;
         this.tag = 'A';
         this.class = 'cdx-link';
@@ -213,9 +214,9 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
         this.button?.classList.toggle(this.api.styles.inlineToolButtonActive, this.state);
       }
 
-      get state() { return this.state; }
+      get state() { return this._state; }
       set state(state: boolean) {
-        this.state = state;
+        this._state = state;
         if (this.button) {
           this.button.classList.toggle(this.api.styles.inlineToolButtonActive, state);
         }

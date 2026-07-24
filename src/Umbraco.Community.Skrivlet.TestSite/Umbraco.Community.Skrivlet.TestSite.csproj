@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms" Version="17.4.2" />
+    <PackageReference Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="17.4.2" Condition="'$(Configuration)' == 'Debug'" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Umbraco.Community.SkrivLet\Umbraco.Community.SkrivLet.csproj" />
+    <ProjectReference Include="..\Umbraco.Community.Skrivlet\Umbraco.Community.SkrivLet.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -15663,7 +15663,7 @@ let xe = class extends wa {
         return !0;
       }
       constructor({ api: e }) {
-        this.api = e, this.button = null, this.state = !1, this.element = null, this.tag = "A", this.class = "cdx-link";
+        this.api = e, this.button = null, this._state = !1, this.element = null, this.tag = "A", this.class = "cdx-link";
       }
       render() {
         return this.button = document.createElement("button"), this.button.type = "button", this.button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7.69998 12.6L7.67896 12.62C6.53993 13.7048 6.52012 15.5155 7.63516 16.625V16.625C8.72293 17.7073 10.4799 17.7102 11.5712 16.6314L13.0263 15.193C14.0703 14.1609 14.2141 12.525 13.3662 11.3266L13.22 11.12"></path><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16.22 11.12L16.3564 10.9805C17.2895 10.0265 17.3478 8.5207 16.4914 7.49733V7.49733C15.5691 6.39509 13.9269 6.25143 12.8271 7.17675L11.3901 8.38588C10.0935 9.47674 9.95706 11.4241 11.0888 12.6852L11.12 12.72"></path></svg>', this.button.classList.add(this.api.styles.inlineToolButton), this.button;
@@ -15691,10 +15691,10 @@ let xe = class extends wa {
         this.state = !!e, this.button?.classList.toggle(this.api.styles.inlineToolButtonActive, this.state);
       }
       get state() {
-        return this.state;
+        return this._state;
       }
       set state(e) {
-        this.state = e, this.button && this.button.classList.toggle(this.api.styles.inlineToolButtonActive, e);
+        this._state = e, this.button && this.button.classList.toggle(this.api.styles.inlineToolButtonActive, e);
       }
       static get sanitize() {
         return { a: { href: !0 } };
@@ -16015,4 +16015,4 @@ export {
   xe as SkrivLetPropertyEditorUIElement,
   vg as default
 };
-//# sourceMappingURL=skrivlet-property-editor-ui.element-Y6vi_fcg.js.map
+//# sourceMappingURL=skrivlet-property-editor-ui.element-CvrkZQro.js.map

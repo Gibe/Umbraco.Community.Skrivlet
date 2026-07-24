@@ -1,0 +1,10 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Community.SkrivLet;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.AnotherPage>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+
+@{
+	Layout = null;
+}
+
+@await Html.RenderSkrivLet(Model.Content)

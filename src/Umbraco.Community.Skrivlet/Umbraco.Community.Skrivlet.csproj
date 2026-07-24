@@ -4,11 +4,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <StaticWebAssetBasePath>/</StaticWebAssetBasePath>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Product>Umbraco.Community.Umbraco.Community.SkrivLet</Product>
-    <PackageId>Umbraco.Community.Umbraco.Community.SkrivLet</PackageId>
+    <Product>Umbraco.Community.SkrivLet</Product>
+    <PackageId>Umbraco.Community.SkrivLet</PackageId>
     <Title>Umbraco.Community.Skrivlet</Title>
     <Description>...</Description>
     <PackageTags>umbraco;umbraco-marketplace</PackageTags>

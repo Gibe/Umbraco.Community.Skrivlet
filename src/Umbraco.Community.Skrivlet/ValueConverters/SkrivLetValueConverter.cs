@@ -18,7 +18,7 @@ namespace Umbraco.Community.SkrivLet.ValueConverters
 		
 		public override bool IsConverter(IPublishedPropertyType propertyType)
 		{
-			return propertyType.EditorAlias.Equals(Constants.EditorName);
+			return propertyType.EditorUiAlias.Equals(Constants.EditorName);
 		}
 
 		public override Type GetPropertyValueType(IPublishedPropertyType propertyType)
