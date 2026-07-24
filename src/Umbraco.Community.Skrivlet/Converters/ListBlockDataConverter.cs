@@ -90,7 +90,7 @@ namespace Umbraco.Community.SkrivLet.Converters
             {
                 return string.Empty;
             }
-            var content = context.Content.GetById(udi.AsGuid());
+            var content = context.Content.GetById(((GuidUdi)udi).Guid);
             if (content == null)
             {
                 return string.Empty;

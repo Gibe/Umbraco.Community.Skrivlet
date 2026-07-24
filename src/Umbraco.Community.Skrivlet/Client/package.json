@@ -20,7 +20,7 @@
   "dependencies": {
     "@editorjs/checklist": "^1.6.0",
     "@editorjs/code": "^2.9.3",
-    "@editorjs/editorjs": "github:mattbegent/editor.js-web-component-support#next",
+    "@editorjs/editorjs": "github:mattbegent/editor.js-web-component-shadow-dom#feature/web-component",
     "@editorjs/embed": "^2.7.6",
     "@editorjs/header": "^2.8.8",
     "@editorjs/list": "^2.0.8",

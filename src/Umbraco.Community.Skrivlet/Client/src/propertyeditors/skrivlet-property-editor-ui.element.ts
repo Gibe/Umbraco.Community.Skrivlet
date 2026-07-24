@@ -89,6 +89,7 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
       data: this._getInitialData() as OutputData,
       inlineToolbar: true,
       readOnly: this.readonly,
+      shadowRoot: this.shadowRoot || undefined,
       tools: {
         header: Header,
         image: this._createUmbracoImageTool(),
@@ -125,22 +126,10 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
           new DragDrop(this._editor);
         }
         this._stopUmbracosInterferingHotKeys();
-        this._cloneEditorStylesToShadowDom();
 
 
       }
     });
-  }
-
-  private _cloneEditorStylesToShadowDom() {
-    // Editor JS injects styles into the document head, we need to clone them into our shadow DOM
-    const styleElements = document?.querySelectorAll("style");
-    if(styleElements) {
-      styleElements.forEach(style => {
-        const clonedStyle = style.cloneNode(true);
-        this.shadowRoot?.appendChild(clonedStyle);
-      });
-    }
   }
 
   private _createUmbracoLinkTool() {
@@ -385,6 +374,12 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
   private _handleKeyDown = (event: KeyboardEvent) => {
     // Prevent certain keyboard shortcuts from interfering with editor
     if (event.ctrlKey || event.metaKey) {
+      event.stopPropagation();
+    }
+    // Prevent Enter from being intercepted by Umbraco's backoffice block handlers,
+    // which causes the selected block to shift down instead of EditorJS creating a new block.
+    // EditorJS has already handled Enter inside the shadow DOM before it crosses the boundary.
+    if (event.key === 'Enter') {
       event.stopPropagation();
     }
   };
