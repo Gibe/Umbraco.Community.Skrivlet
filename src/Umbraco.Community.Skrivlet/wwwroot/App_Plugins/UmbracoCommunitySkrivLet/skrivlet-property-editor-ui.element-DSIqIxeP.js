@@ -1,11 +1,16 @@
-import { LitElement as wa, html as xa, css as Ea, property as bi, state as vi, customElement as Ca } from "@umbraco-cms/backoffice/external/lit";
-import { UmbTextStyles as Ta } from "@umbraco-cms/backoffice/style";
-import { UmbChangeEvent as Sa } from "@umbraco-cms/backoffice/event";
+import { html as Ca, css as Sa, property as yi, state as ki, customElement as Ta } from "@umbraco-cms/backoffice/external/lit";
+import { UmbLitElement as Ba } from "@umbraco-cms/backoffice/lit-element";
+import { UmbTextStyles as _a } from "@umbraco-cms/backoffice/style";
+import { UmbChangeEvent as Oa } from "@umbraco-cms/backoffice/event";
+import { umbOpenModal as Yr } from "@umbraco-cms/backoffice/modal";
+import { UMB_LINK_PICKER_MODAL as Ia } from "@umbraco-cms/backoffice/multi-url-picker";
+import { UMB_MEDIA_PICKER_MODAL as Ma, UmbMediaItemRepository as La, UmbMediaUrlRepository as Pa } from "@umbraco-cms/backoffice/media";
+import { getGuidFromUdi as Aa, imageSize as Na } from "@umbraco-cms/backoffice/utils";
 var Ge = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
 function It(o) {
   return o && o.__esModule && Object.prototype.hasOwnProperty.call(o, "default") ? o.default : o;
 }
-function Ba(o) {
+function ja(o) {
   if (o.__esModule)
     return o;
   var e = o.default;
@@ -79,14 +84,14 @@ window.requestIdleCallback = window.requestIdleCallback || function(o) {
 window.cancelIdleCallback = window.cancelIdleCallback || function(o) {
   clearTimeout(o);
 };
-let Oa = (o = 21) => crypto.getRandomValues(new Uint8Array(o)).reduce((e, t) => (t &= 63, t < 36 ? e += t.toString(36) : t < 62 ? e += (t - 26).toString(36).toUpperCase() : t > 62 ? e += "-" : e += "_", e), ""), le = null;
-function _a(o) {
-  le = o;
+let Da = (o = 21) => crypto.getRandomValues(new Uint8Array(o)).reduce((e, t) => (t &= 63, t < 36 ? e += t.toString(36) : t < 62 ? e += (t - 26).toString(36).toUpperCase() : t > 62 ? e += "-" : e += "_", e), ""), le = null;
+function Ra(o) {
+  le = o, o && Ha();
 }
-function Ia() {
+function $a() {
   return le;
 }
-function Yr(o) {
+function Vr(o) {
   return le ? le.getElementById(o) : document.getElementById(o);
 }
 function co(o, e) {
@@ -94,25 +99,41 @@ function co(o, e) {
 }
 function Y() {
   if (le) {
-    const o = Ma();
+    const o = wi() || le;
     return o && typeof o.getSelection == "function" ? o.getSelection() : document.getSelection();
   }
   return window.getSelection();
 }
-function Ma() {
-  let o = document.activeElement;
-  for (; o && o.shadowRoot && o.shadowRoot.activeElement; )
-    o = o.shadowRoot.activeElement;
-  return le;
+function wi() {
+  let o = document.activeElement, e = null;
+  for (; o && o.shadowRoot; ) {
+    e = o.shadowRoot;
+    const t = o.shadowRoot.activeElement;
+    if (!t)
+      break;
+    o = t;
+  }
+  return e;
+}
+let Xr = !1;
+function Ha() {
+  if (Xr || typeof window > "u")
+    return;
+  Xr = !0;
+  const o = document.getSelection.bind(document), e = () => {
+    const t = wi();
+    return t && typeof t.getSelection == "function" ? t.getSelection() : o();
+  };
+  window.getSelection = e, Document.prototype.getSelection = e;
 }
 function pe() {
   return le || document;
 }
-function La(o) {
+function Fa(o) {
   return le && o ? o : document.body;
 }
-var yi = /* @__PURE__ */ ((o) => (o.VERBOSE = "VERBOSE", o.INFO = "INFO", o.WARN = "WARN", o.ERROR = "ERROR", o))(yi || {});
-const S = {
+var xi = /* @__PURE__ */ ((o) => (o.VERBOSE = "VERBOSE", o.INFO = "INFO", o.WARN = "WARN", o.ERROR = "ERROR", o))(xi || {});
+const T = {
   BACKSPACE: 8,
   TAB: 9,
   ENTER: 13,
@@ -122,7 +143,7 @@ const S = {
   DOWN: 40,
   RIGHT: 39,
   DELETE: 46
-}, Pa = {
+}, Ua = {
   LEFT: 0
 };
 function Je(o, e, t = "log", n, r = "color: inherit") {
@@ -161,35 +182,35 @@ function Je(o, e, t = "log", n, r = "color: inherit") {
   }
 }
 Je.logLevel = "VERBOSE";
-function Aa(o) {
+function za(o) {
   Je.logLevel = o;
 }
 const L = Je.bind(window, !1), ee = Je.bind(window, !0);
-function Oe(o) {
+function _e(o) {
   return Object.prototype.toString.call(o).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 }
 function D(o) {
-  return Oe(o) === "function" || Oe(o) === "asyncfunction";
+  return _e(o) === "function" || _e(o) === "asyncfunction";
 }
 function z(o) {
-  return Oe(o) === "object";
+  return _e(o) === "object";
 }
 function ge(o) {
-  return Oe(o) === "string";
+  return _e(o) === "string";
 }
-function Na(o) {
-  return Oe(o) === "boolean";
+function Wa(o) {
+  return _e(o) === "boolean";
 }
-function Vr(o) {
-  return Oe(o) === "number";
+function Gr(o) {
+  return _e(o) === "number";
 }
-function Xr(o) {
-  return Oe(o) === "undefined";
+function Zr(o) {
+  return _e(o) === "undefined";
 }
 function J(o) {
   return o ? Object.keys(o).length === 0 && o.constructor === Object : !0;
 }
-function ki(o) {
+function Ei(o) {
   return o > 47 && o < 58 || // number keys
   o === 32 || o === 13 || // Space bar & return key(s)
   o === 229 || // processing key input for certain languages — Chinese, Japanese, etc.
@@ -198,19 +219,19 @@ function ki(o) {
   o > 185 && o < 193 || // ;=,-./` (in order)
   o > 218 && o < 223;
 }
-async function ja(o, e = () => {
+async function qa(o, e = () => {
 }, t = () => {
 }) {
   async function n(r, i, s) {
     try {
-      await r.function(r.data), await i(Xr(r.data) ? {} : r.data);
+      await r.function(r.data), await i(Zr(r.data) ? {} : r.data);
     } catch {
-      s(Xr(r.data) ? {} : r.data);
+      s(Zr(r.data) ? {} : r.data);
     }
   }
   return o.reduce(async (r, i) => (await r, n(i, e, t)), Promise.resolve());
 }
-function wi(o) {
+function Ci(o) {
   return Array.prototype.slice.call(o);
 }
 function yt(o, e) {
@@ -219,13 +240,13 @@ function yt(o, e) {
     window.setTimeout(() => o.apply(t, n), e);
   };
 }
-function Da(o) {
+function Ka(o) {
   return o.name.split(".").pop();
 }
-function Ra(o) {
+function Ya(o) {
   return /^[-\w]+\/([-+\w]+|\*)$/.test(o);
 }
-function Gr(o, e, t) {
+function Qr(o, e, t) {
   let n;
   return (...r) => {
     const i = this, s = () => {
@@ -247,7 +268,7 @@ function uo(o, e, t = void 0) {
     return n = this, r = arguments, d <= 0 || d > e ? (s && (clearTimeout(s), s = null), a = c, i = o.apply(n, r), s || (n = r = null)) : !s && t.trailing !== !1 && (s = setTimeout(l, d)), i;
   };
 }
-function $a() {
+function Va() {
   const o = {
     win: !1,
     mac: !1,
@@ -269,23 +290,23 @@ function ho(o, ...e) {
   return ho(o, ...e);
 }
 function Co(o) {
-  const e = $a();
+  const e = Va();
   return o = o.replace(/shift/gi, "⇧").replace(/backspace/gi, "⌫").replace(/enter/gi, "⏎").replace(/up/gi, "↑").replace(/left/gi, "→").replace(/down/gi, "↓").replace(/right/gi, "←").replace(/escape/gi, "⎋").replace(/insert/gi, "Ins").replace(/delete/gi, "␡").replace(/\+/gi, " + "), e.mac ? o = o.replace(/ctrl|cmd/gi, "⌘").replace(/alt/gi, "⌥") : o = o.replace(/cmd/gi, "Ctrl").replace(/windows/gi, "WIN"), o;
 }
-function Ha(o) {
+function Xa(o) {
   try {
     return new URL(o).href;
   } catch {
   }
   return o.substring(0, 2) === "//" ? window.location.protocol + o : window.location.origin + o;
 }
-function Fa() {
-  return Oa(10);
+function Ga() {
+  return Da(10);
 }
-function Ua(o) {
+function Za(o) {
   window.open(o, "_blank");
 }
-function za(o = "") {
+function Qa(o = "") {
   return `${o}${Math.floor(Math.random() * 1e8).toString(16)}`;
 }
 function po(o, e, t) {
@@ -304,12 +325,12 @@ function He(o, e, t) {
   }
   return t;
 }
-const xi = 650;
+const Si = 650;
 function Fe() {
-  return window.matchMedia(`(max-width: ${xi}px)`).matches;
+  return window.matchMedia(`(max-width: ${Si}px)`).matches;
 }
 const fo = typeof window < "u" && window.navigator && window.navigator.platform && (/iP(ad|hone|od)/.test(window.navigator.platform) || window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1);
-function Wa(o, e) {
+function Ja(o, e) {
   const t = Array.isArray(o) || z(o), n = Array.isArray(e) || z(e);
   return t || n ? JSON.stringify(o) === JSON.stringify(e) : o === e;
 }
@@ -428,7 +449,7 @@ let f = class K {
    * @returns {HTMLElement | null}
    */
   static get(e) {
-    return Yr(e);
+    return Vr(e);
   }
   /**
    * Selector Decorator.
@@ -454,7 +475,7 @@ let f = class K {
    * @param holder - element where to find inputs
    */
   static findAllInputs(e) {
-    return wi(e.querySelectorAll(K.allInputsSelector)).reduce((t, n) => K.isNativeInput(n) || K.containsOnlyInlineElements(n) ? [...t, n] : [...t, ...K.getDeepestBlockElements(n)], []);
+    return Ci(e.querySelectorAll(K.allInputsSelector)).reduce((t, n) => K.isNativeInput(n) || K.containsOnlyInlineElements(n) ? [...t, n] : [...t, ...K.getDeepestBlockElements(n)], []);
   }
   /**
    * Search for deepest node which is Leaf.
@@ -490,7 +511,7 @@ let f = class K {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static isElement(e) {
-    return Vr(e) ? !1 : e && e.nodeType && e.nodeType === Node.ELEMENT_NODE;
+    return Gr(e) ? !1 : e && e.nodeType && e.nodeType === Node.ELEMENT_NODE;
   }
   /**
    * Check if object is DocumentFragment node
@@ -500,7 +521,7 @@ let f = class K {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static isFragment(e) {
-    return Vr(e) ? !1 : e && e.nodeType && e.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
+    return Gr(e) ? !1 : e && e.nodeType && e.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
   }
   /**
    * Check if passed element is contenteditable
@@ -686,7 +707,7 @@ let f = class K {
    * @returns {HTMLElement}
    */
   static getHolder(e) {
-    return ge(e) ? Yr(e) : e;
+    return ge(e) ? Vr(e) : e;
   }
   /**
    * Returns true if element is anchor (is A tag)
@@ -699,7 +720,7 @@ let f = class K {
   }
   /**
    * Returns the closest ancestor anchor (A tag) of the given element (including itself)
-   * 
+   *
    * @param element - element to check
    * @returns {HTMLAnchorElement | null}
    */
@@ -760,17 +781,17 @@ let f = class K {
     };
   }
 };
-function qa(o) {
+function el(o) {
   return !/[^\t\n\r ]/.test(o);
 }
-function Ka(o) {
+function tl(o) {
   const e = window.getComputedStyle(o), t = parseFloat(e.fontSize), n = parseFloat(e.lineHeight) || t * 1.2, r = parseFloat(e.paddingTop), i = parseFloat(e.borderTopWidth), s = parseFloat(e.marginTop), a = t * 0.8, l = (n - t) / 2;
   return s + i + r + l + a;
 }
-function Ei(o) {
+function Ti(o) {
   o.dataset.empty = f.isEmpty(o) ? "true" : "false";
 }
-const Ya = {
+const ol = {
   blockTunes: {
     toggler: {
       "Click to tune": "",
@@ -792,19 +813,19 @@ const Ya = {
     "Nothing found": "",
     "Convert to": ""
   }
-}, Va = {
+}, nl = {
   Text: "",
   Link: "",
   Bold: "",
   Italic: ""
-}, Xa = {
+}, rl = {
   link: {
     "Add a link": ""
   },
   stub: {
     "The block can not be displayed correctly.": ""
   }
-}, Ga = {
+}, il = {
   delete: {
     Delete: "",
     "Click to delete": ""
@@ -815,12 +836,12 @@ const Ya = {
   moveDown: {
     "Move down": ""
   }
-}, Ci = {
-  ui: Ya,
-  toolNames: Va,
-  tools: Xa,
-  blockTunes: Ga
-}, Ti = class Ne {
+}, Bi = {
+  ui: ol,
+  toolNames: nl,
+  tools: rl,
+  blockTunes: il
+}, _i = class Ne {
   /**
    * Type-safe translation for internal UI texts:
    * Perform translation of the string by namespace and a key
@@ -870,9 +891,9 @@ const Ya = {
     return e.split(".").reduce((t, n) => !t || !Object.keys(t).length ? {} : t[n], Ne.currentDictionary);
   }
 };
-Ti.currentDictionary = Ci;
-let V = Ti;
-class Si extends Error {
+_i.currentDictionary = Bi;
+let V = _i;
+class Oi extends Error {
 }
 let et = class {
   constructor() {
@@ -1066,7 +1087,7 @@ let tt = class {
    * @param {boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
    */
   on(e, t, n, r = !1) {
-    const i = za("l"), s = {
+    const i = Qa("l"), s = {
       id: i,
       element: e,
       eventType: t,
@@ -1184,7 +1205,7 @@ let tt = class {
   findById(e) {
     return this.allListeners.find((t) => t.id === e);
   }
-}, _ = class Bi {
+}, O = class Ii {
   /**
    * @class
    * @param options - Module options
@@ -1214,7 +1235,7 @@ let tt = class {
           this.listeners.offById(n);
         this.mutableListenerIds = [];
       }
-    }, this.mutableListenerIds = [], new.target === Bi)
+    }, this.mutableListenerIds = [], new.target === Ii)
       throw new TypeError("Constructors for abstract class Module are not allowed.");
     this.config = e, this.eventsDispatcher = t;
   }
@@ -1521,11 +1542,11 @@ let tt = class {
     n.selectNodeContents(e), t.addRange(n);
   }
 };
-function Za(o, e) {
+function sl(o, e) {
   const { type: t, target: n, addedNodes: r, removedNodes: i } = o;
   return o.type === "attributes" && o.attributeName === "data-empty" ? !1 : !!(e.contains(n) || t === "childList" && (Array.from(r).some((s) => s === e) || Array.from(i).some((s) => s === e)));
 }
-const go = "redactor dom changed", Oi = "block changed", _i = "fake cursor is about to be toggled", Ii = "fake cursor have been set", Ze = "editor mobile layout toggled";
+const go = "redactor dom changed", Mi = "block changed", Li = "fake cursor is about to be toggled", Pi = "fake cursor have been set", Ze = "editor mobile layout toggled";
 function mo(o, e) {
   if (!o.conversionConfig)
     return !1;
@@ -1535,10 +1556,10 @@ function mo(o, e) {
 function wt(o, e) {
   return mo(o.tool, e);
 }
-function Mi(o, e) {
-  return Object.entries(o).some(([t, n]) => e[t] && Wa(e[t], n));
+function Ai(o, e) {
+  return Object.entries(o).some(([t, n]) => e[t] && Ja(e[t], n));
 }
-async function Li(o, e) {
+async function Ni(o, e) {
   const t = (await o.save()).data, n = e.find((r) => r.name === o.name);
   return n !== void 0 && !mo(n, "export") ? [] : e.reduce((r, i) => {
     if (!mo(i, "import") || i.toolbox === void 0)
@@ -1547,7 +1568,7 @@ async function Li(o, e) {
       if (J(a) || a.icon === void 0)
         return !1;
       if (a.data !== void 0) {
-        if (Mi(a.data, t))
+        if (Ai(a.data, t))
           return !1;
       } else if (i.name === o.name)
         return !1;
@@ -1559,14 +1580,14 @@ async function Li(o, e) {
     }), r;
   }, []);
 }
-function Zr(o, e) {
+function Jr(o, e) {
   return o.mergeable ? o.name === e.name ? !0 : wt(e, "export") && wt(o, "import") : !1;
 }
-function Qa(o, e) {
+function al(o, e) {
   const t = e?.export;
   return D(t) ? t(o) : ge(t) ? o[t] : (t !== void 0 && L("Conversion «export» property must be a string or function. String means key of saved data object to export. Function should export processed string to export."), "");
 }
-function Qr(o, e, t) {
+function ei(o, e, t) {
   const n = e?.import;
   return D(n) ? n(o, t) : ge(n) ? {
     [n]: o
@@ -1584,7 +1605,7 @@ let fe = class be extends et {
    * @param [eventBus] - Editor common event bus. Allows to subscribe on some Editor events. Could be omitted when "virtual" Block is created. See BlocksAPI@composeBlockData.
    */
   constructor({
-    id: e = Fa(),
+    id: e = Ga(),
     data: t,
     tool: n,
     readOnly: r,
@@ -1747,7 +1768,7 @@ let fe = class be extends et {
     var t, n;
     this.holder.classList.toggle(be.CSS.selected, e);
     const r = e === !0 && C.isRangeInsideContainer(this.holder), i = e === !1 && C.isFakeCursorInsideContainer(this.holder);
-    (r || i) && ((t = this.editorEventBus) == null || t.emit(_i, { state: e }), r ? C.addFakeCursor() : C.removeFakeCursor(this.holder), (n = this.editorEventBus) == null || n.emit(Ii, { state: e }));
+    (r || i) && ((t = this.editorEventBus) == null || t.emit(Li, { state: e }), r ? C.addFakeCursor() : C.removeFakeCursor(this.holder), (n = this.editorEventBus) == null || n.emit(Pi, { state: e }));
   }
   /**
    * Returns True if it is Selected
@@ -1911,14 +1932,14 @@ let fe = class be extends et {
     if (e.length === 1)
       return Promise.resolve(this.tool.toolbox[0]);
     const t = await this.data, n = e;
-    return n?.find((r) => Mi(r.data, t));
+    return n?.find((r) => Ai(r.data, t));
   }
   /**
    * Exports Block data as string using conversion config
    */
   async exportDataAsString() {
     const e = await this.data;
-    return Qa(e, this.tool.conversionConfig);
+    return al(e, this.tool.conversionConfig);
   }
   /**
    * Make default Block wrappers and put Tool`s content there
@@ -1974,7 +1995,7 @@ let fe = class be extends et {
     var e;
     this.redactorDomChangedCallback = (t) => {
       const { mutations: n } = t;
-      n.some((r) => Za(r, this.toolRenderedElement)) && this.didMutated(n);
+      n.some((r) => sl(r, this.toolRenderedElement)) && this.didMutated(n);
     }, (e = this.editorEventBus) == null || e.on(go, this.redactorDomChangedCallback);
   }
   /**
@@ -2008,10 +2029,10 @@ let fe = class be extends et {
    * Mark inputs with 'data-empty' attribute with the empty state
    */
   toggleInputsEmptyMark() {
-    this.inputs.forEach(Ei);
+    this.inputs.forEach(Ti);
   }
 };
-class Ja extends _ {
+class ll extends O {
   constructor() {
     super(...arguments), this.insert = (e = this.config.defaultBlock, t = {}, n = {}, r, i, s, a) => {
       const l = this.Editor.BlockManager.insert({
@@ -2261,13 +2282,13 @@ class Ja extends _ {
       throw new Error("Index should be greater than or equal to 0");
   }
 }
-function el(o, e) {
+function cl(o, e) {
   return typeof o == "number" ? e.BlockManager.getBlockByIndex(o) : typeof o == "string" ? e.BlockManager.getBlockById(o) : e.BlockManager.getBlockById(o.id);
 }
-class tl extends _ {
+class dl extends O {
   constructor() {
     super(...arguments), this.setToFirstBlock = (e = this.Editor.Caret.positions.DEFAULT, t = 0) => this.Editor.BlockManager.firstBlock ? (this.Editor.Caret.setToBlock(this.Editor.BlockManager.firstBlock, e, t), !0) : !1, this.setToLastBlock = (e = this.Editor.Caret.positions.DEFAULT, t = 0) => this.Editor.BlockManager.lastBlock ? (this.Editor.Caret.setToBlock(this.Editor.BlockManager.lastBlock, e, t), !0) : !1, this.setToPreviousBlock = (e = this.Editor.Caret.positions.DEFAULT, t = 0) => this.Editor.BlockManager.previousBlock ? (this.Editor.Caret.setToBlock(this.Editor.BlockManager.previousBlock, e, t), !0) : !1, this.setToNextBlock = (e = this.Editor.Caret.positions.DEFAULT, t = 0) => this.Editor.BlockManager.nextBlock ? (this.Editor.Caret.setToBlock(this.Editor.BlockManager.nextBlock, e, t), !0) : !1, this.setToBlock = (e, t = this.Editor.Caret.positions.DEFAULT, n = 0) => {
-      const r = el(e, this.Editor);
+      const r = cl(e, this.Editor);
       return r === void 0 ? !1 : (this.Editor.Caret.setToBlock(r, t, n), !0);
     }, this.focus = (e = !1) => e ? this.setToLastBlock(this.Editor.Caret.positions.END) : this.setToFirstBlock(this.Editor.Caret.positions.START);
   }
@@ -2287,7 +2308,7 @@ class tl extends _ {
     };
   }
 }
-class ol extends _ {
+class ul extends O {
   /**
    * Available methods
    *
@@ -2328,7 +2349,7 @@ class ol extends _ {
     this.eventsDispatcher.off(e, t);
   }
 }
-let nl = class Pi extends _ {
+let hl = class ji extends O {
   /**
    * Return namespace section for tool or block tune
    *
@@ -2358,12 +2379,12 @@ let nl = class Pi extends _ {
     return Object.assign(
       this.methods,
       {
-        t: (n) => V.t(Pi.getNamespace(e, t), n)
+        t: (n) => V.t(ji.getNamespace(e, t), n)
       }
     );
   }
 };
-class rl extends _ {
+class pl extends O {
   /**
    * Editor.js Core API modules
    */
@@ -2402,7 +2423,7 @@ class rl extends _ {
     );
   }
 }
-class il extends _ {
+class fl extends O {
   /**
    * Available methods
    *
@@ -2427,7 +2448,7 @@ class il extends _ {
     this.Editor.InlineToolbar.close();
   }
 }
-class sl extends _ {
+class gl extends O {
   /**
    * Available methods
    *
@@ -2471,7 +2492,7 @@ class sl extends _ {
     this.listeners.offById(e);
   }
 }
-var Ai = { exports: {} };
+var Di = { exports: {} };
 (function(o, e) {
   (function(t, n) {
     o.exports = n();
@@ -2624,8 +2645,8 @@ var Ai = { exports: {} };
       }
       function v(y, m) {
         for (var w = [], b = {}, x = 0; x < y.length; x++) {
-          var E = y[x], I = m.base ? E[0] + m.base : E[0], T = { css: E[1], media: E[2], sourceMap: E[3] };
-          b[I] ? b[I].parts.push(T) : w.push(b[I] = { id: I, parts: [T] });
+          var E = y[x], I = m.base ? E[0] + m.base : E[0], S = { css: E[1], media: E[2], sourceMap: E[3] };
+          b[I] ? b[I].parts.push(S) : w.push(b[I] = { id: I, parts: [S] });
         }
         return w;
       }
@@ -2650,7 +2671,7 @@ var Ai = { exports: {} };
           w.insertBefore(m, x);
         }
       }
-      function O(y) {
+      function _(y) {
         if (y.parentNode === null)
           return !1;
         y.parentNode.removeChild(y);
@@ -2678,34 +2699,34 @@ var Ai = { exports: {} };
           var I = u++;
           w = d || (d = k(m)), b = G.bind(null, w, I, !1), x = G.bind(null, w, I, !0);
         } else
-          y.sourceMap && typeof URL == "function" && typeof URL.createObjectURL == "function" && typeof URL.revokeObjectURL == "function" && typeof Blob == "function" && typeof btoa == "function" ? (w = (function(T) {
+          y.sourceMap && typeof URL == "function" && typeof URL.createObjectURL == "function" && typeof URL.revokeObjectURL == "function" && typeof Blob == "function" && typeof btoa == "function" ? (w = (function(S) {
             var H = document.createElement("link");
-            return T.attrs.type === void 0 && (T.attrs.type = "text/css"), T.attrs.rel = "stylesheet", P(H, T.attrs), B(T, H), H;
-          })(m), b = (function(T, H, Ce) {
-            var ce = Ce.css, Ue = Ce.sourceMap, ya = H.convertToAbsoluteUrls === void 0 && Ue;
-            (H.convertToAbsoluteUrls || ya) && (ce = g(ce)), Ue && (ce += `
+            return S.attrs.type === void 0 && (S.attrs.type = "text/css"), S.attrs.rel = "stylesheet", P(H, S.attrs), B(S, H), H;
+          })(m), b = (function(S, H, Ce) {
+            var ce = Ce.css, Ue = Ce.sourceMap, xa = H.convertToAbsoluteUrls === void 0 && Ue;
+            (H.convertToAbsoluteUrls || xa) && (ce = g(ce)), Ue && (ce += `
 /*# sourceMappingURL=data:application/json;base64,` + btoa(unescape(encodeURIComponent(JSON.stringify(Ue)))) + " */");
-            var ka = new Blob([ce], { type: "text/css" }), Kr = T.href;
-            T.href = URL.createObjectURL(ka), Kr && URL.revokeObjectURL(Kr);
+            var Ea = new Blob([ce], { type: "text/css" }), Kr = S.href;
+            S.href = URL.createObjectURL(Ea), Kr && URL.revokeObjectURL(Kr);
           }).bind(null, w, m), x = function() {
-            O(w), w.href && URL.revokeObjectURL(w.href);
-          }) : (w = k(m), b = (function(T, H) {
+            _(w), w.href && URL.revokeObjectURL(w.href);
+          }) : (w = k(m), b = (function(S, H) {
             var Ce = H.css, ce = H.media;
-            if (ce && T.setAttribute("media", ce), T.styleSheet)
-              T.styleSheet.cssText = Ce;
+            if (ce && S.setAttribute("media", ce), S.styleSheet)
+              S.styleSheet.cssText = Ce;
             else {
-              for (; T.firstChild; )
-                T.removeChild(T.firstChild);
-              T.appendChild(document.createTextNode(Ce));
+              for (; S.firstChild; )
+                S.removeChild(S.firstChild);
+              S.appendChild(document.createTextNode(Ce));
             }
           }).bind(null, w), x = function() {
-            O(w);
+            _(w);
           });
-        return b(y), function(T) {
-          if (T) {
-            if (T.css === y.css && T.media === y.media && T.sourceMap === y.sourceMap)
+        return b(y), function(S) {
+          if (S) {
+            if (S.css === y.css && S.media === y.media && S.sourceMap === y.sourceMap)
               return;
-            b(y = T);
+            b(y = S);
           } else
             x();
         };
@@ -2718,14 +2739,14 @@ var Ai = { exports: {} };
         return p(w, m), function(b) {
           for (var x = [], E = 0; E < w.length; E++) {
             var I = w[E];
-            (T = a[I.id]).refs--, x.push(T);
+            (S = a[I.id]).refs--, x.push(S);
           }
           for (b && p(v(b, m), m), E = 0; E < x.length; E++) {
-            var T;
-            if ((T = x[E]).refs === 0) {
-              for (var H = 0; H < T.parts.length; H++)
-                T.parts[H]();
-              delete a[T.id];
+            var S;
+            if ((S = x[E]).refs === 0) {
+              for (var H = 0; H < S.parts.length; H++)
+                S.parts[H]();
+              delete a[S.id];
             }
           }
         };
@@ -2763,36 +2784,36 @@ var Ai = { exports: {} };
     }, function(t, n, r) {
       var i, s, a, l, c, d, u, h, g;
       t.exports = (i = "cdx-notifies", s = "cdx-notify", a = "cdx-notify__cross", l = "cdx-notify__button--confirm", c = "cdx-notify__button--cancel", d = "cdx-notify__input", u = "cdx-notify__button", h = "cdx-notify__btns-wrapper", { alert: g = function(p) {
-        var v = document.createElement("DIV"), B = document.createElement("DIV"), O = p.message, k = p.style;
-        return v.classList.add(s), k && v.classList.add(s + "--" + k), v.innerHTML = O, B.classList.add(a), B.addEventListener("click", v.remove.bind(v)), v.appendChild(B), v;
+        var v = document.createElement("DIV"), B = document.createElement("DIV"), _ = p.message, k = p.style;
+        return v.classList.add(s), k && v.classList.add(s + "--" + k), v.innerHTML = _, B.classList.add(a), B.addEventListener("click", v.remove.bind(v)), v.appendChild(B), v;
       }, confirm: function(p) {
-        var v = g(p), B = document.createElement("div"), O = document.createElement("button"), k = document.createElement("button"), P = v.querySelector("." + a), M = p.cancelHandler, N = p.okHandler;
-        return B.classList.add(h), O.innerHTML = p.okText || "Confirm", k.innerHTML = p.cancelText || "Cancel", O.classList.add(u), k.classList.add(u), O.classList.add(l), k.classList.add(c), M && typeof M == "function" && (k.addEventListener("click", M), P.addEventListener("click", M)), N && typeof N == "function" && O.addEventListener("click", N), O.addEventListener("click", v.remove.bind(v)), k.addEventListener("click", v.remove.bind(v)), B.appendChild(O), B.appendChild(k), v.appendChild(B), v;
+        var v = g(p), B = document.createElement("div"), _ = document.createElement("button"), k = document.createElement("button"), P = v.querySelector("." + a), M = p.cancelHandler, N = p.okHandler;
+        return B.classList.add(h), _.innerHTML = p.okText || "Confirm", k.innerHTML = p.cancelText || "Cancel", _.classList.add(u), k.classList.add(u), _.classList.add(l), k.classList.add(c), M && typeof M == "function" && (k.addEventListener("click", M), P.addEventListener("click", M)), N && typeof N == "function" && _.addEventListener("click", N), _.addEventListener("click", v.remove.bind(v)), k.addEventListener("click", v.remove.bind(v)), B.appendChild(_), B.appendChild(k), v.appendChild(B), v;
       }, prompt: function(p) {
-        var v = g(p), B = document.createElement("div"), O = document.createElement("button"), k = document.createElement("input"), P = v.querySelector("." + a), M = p.cancelHandler, N = p.okHandler;
-        return B.classList.add(h), O.innerHTML = p.okText || "Ok", O.classList.add(u), O.classList.add(l), k.classList.add(d), p.placeholder && k.setAttribute("placeholder", p.placeholder), p.default && (k.value = p.default), p.inputType && (k.type = p.inputType), M && typeof M == "function" && P.addEventListener("click", M), N && typeof N == "function" && O.addEventListener("click", function() {
+        var v = g(p), B = document.createElement("div"), _ = document.createElement("button"), k = document.createElement("input"), P = v.querySelector("." + a), M = p.cancelHandler, N = p.okHandler;
+        return B.classList.add(h), _.innerHTML = p.okText || "Ok", _.classList.add(u), _.classList.add(l), k.classList.add(d), p.placeholder && k.setAttribute("placeholder", p.placeholder), p.default && (k.value = p.default), p.inputType && (k.type = p.inputType), M && typeof M == "function" && P.addEventListener("click", M), N && typeof N == "function" && _.addEventListener("click", function() {
           N(k.value);
-        }), O.addEventListener("click", v.remove.bind(v)), B.appendChild(k), B.appendChild(O), v.appendChild(B), v;
+        }), _.addEventListener("click", v.remove.bind(v)), B.appendChild(k), B.appendChild(_), v.appendChild(B), v;
       }, getWrapper: function() {
         var p = document.createElement("DIV");
         return p.classList.add(i), p;
       } });
     }]);
   });
-})(Ai);
-var al = Ai.exports;
-const ll = /* @__PURE__ */ It(al);
-class cl {
+})(Di);
+var ml = Di.exports;
+const bl = /* @__PURE__ */ It(ml);
+class vl {
   /**
    * Show web notification
    *
    * @param {NotifierOptions | ConfirmNotifierOptions | PromptNotifierOptions} options - notification options
    */
   show(e) {
-    ll.show(e);
+    bl.show(e);
   }
 }
-class dl extends _ {
+class yl extends O {
   /**
    * @param moduleConfiguration - Module Configuration
    * @param moduleConfiguration.config - Editor's config
@@ -2802,7 +2823,7 @@ class dl extends _ {
     super({
       config: e,
       eventsDispatcher: t
-    }), this.notifier = new cl();
+    }), this.notifier = new vl();
   }
   /**
    * Available methods
@@ -2821,7 +2842,7 @@ class dl extends _ {
     return this.notifier.show(e);
   }
 }
-class ul extends _ {
+class kl extends O {
   /**
    * Available methods
    */
@@ -2850,7 +2871,7 @@ class ul extends _ {
     return this.Editor.ReadOnly.isEnabled;
   }
 }
-var Ni = { exports: {} };
+var Ri = { exports: {} };
 (function(o, e) {
   (function(t, n) {
     o.exports = n();
@@ -2892,7 +2913,7 @@ var Ni = { exports: {} };
           }
           var v = s(p), B;
           v && (B = Array.prototype.some.call(p.childNodes, r));
-          var O = !!h.parentNode, k = r(h) && r(p) && O, P = p.nodeName.toLowerCase(), M = l(this.config, P, p), N = v && B;
+          var _ = !!h.parentNode, k = r(h) && r(p) && _, P = p.nodeName.toLowerCase(), M = l(this.config, P, p), N = v && B;
           if (N || c(p, M) || !this.config.keepNestedBlockElements && k) {
             if (!(p.nodeName === "SCRIPT" || p.nodeName === "STYLE"))
               for (; p.childNodes.length > 0; )
@@ -2927,44 +2948,44 @@ var Ni = { exports: {} };
     }
     return t;
   });
-})(Ni);
-var hl = Ni.exports;
-const pl = /* @__PURE__ */ It(hl);
-function To(o, e) {
+})(Ri);
+var wl = Ri.exports;
+const xl = /* @__PURE__ */ It(wl);
+function So(o, e) {
   return o.map((t) => {
     const n = D(e) ? e(t.tool) : e;
-    return J(n) || (t.data = So(t.data, n)), t;
+    return J(n) || (t.data = To(t.data, n)), t;
   });
 }
 function se(o, e = {}) {
   const t = {
     tags: e
   };
-  return new pl(t).clean(o);
+  return new xl(t).clean(o);
 }
-function So(o, e) {
-  return Array.isArray(o) ? fl(o, e) : z(o) ? gl(o, e) : ge(o) ? ml(o, e) : o;
+function To(o, e) {
+  return Array.isArray(o) ? El(o, e) : z(o) ? Cl(o, e) : ge(o) ? Sl(o, e) : o;
 }
-function fl(o, e) {
-  return o.map((t) => So(t, e));
+function El(o, e) {
+  return o.map((t) => To(t, e));
 }
-function gl(o, e) {
+function Cl(o, e) {
   const t = {};
   for (const n in o) {
     if (!Object.prototype.hasOwnProperty.call(o, n))
       continue;
-    const r = o[n], i = bl(e[n]) ? e[n] : e;
-    t[n] = So(r, i);
+    const r = o[n], i = Tl(e[n]) ? e[n] : e;
+    t[n] = To(r, i);
   }
   return t;
 }
-function ml(o, e) {
+function Sl(o, e) {
   return z(e) ? se(o, e) : e === !1 ? se(o, {}) : o;
 }
-function bl(o) {
-  return z(o) || Na(o) || D(o);
+function Tl(o) {
+  return z(o) || Wa(o) || D(o);
 }
-class vl extends _ {
+class Bl extends O {
   /**
    * Available methods
    *
@@ -2986,7 +3007,7 @@ class vl extends _ {
     return se(e, t);
   }
 }
-class yl extends _ {
+class _l extends O {
   /**
    * Available methods
    *
@@ -3007,7 +3028,7 @@ class yl extends _ {
     return this.Editor.ReadOnly.isEnabled ? (ee(e, "warn"), Promise.reject(new Error(e))) : this.Editor.Saver.save();
   }
 }
-class kl extends _ {
+class Ol extends O {
   constructor() {
     super(...arguments), this.selectionUtils = new C();
   }
@@ -3045,7 +3066,7 @@ class kl extends _ {
     this.selectionUtils.expandToTag(e);
   }
 }
-class wl extends _ {
+class Il extends O {
   /**
    * Available methods
    */
@@ -3055,7 +3076,7 @@ class wl extends _ {
     };
   }
 }
-class xl extends _ {
+class Ml extends O {
   /**
    * Exported classes
    */
@@ -3084,7 +3105,7 @@ class xl extends _ {
     };
   }
 }
-class El extends _ {
+class Ll extends O {
   /**
    * Available methods
    *
@@ -3135,7 +3156,7 @@ class El extends _ {
     e ?? !this.Editor.Toolbar.toolbox.opened ? (this.Editor.Toolbar.moveAndOpen(), this.Editor.Toolbar.toolbox.open()) : this.Editor.Toolbar.toolbox.close();
   }
 }
-var ji = { exports: {} };
+var $i = { exports: {} };
 (function(o, e) {
   (function(t, n) {
     o.exports = n();
@@ -3279,14 +3300,14 @@ var ji = { exports: {} };
       t.exports = `.ct{z-index:999;opacity:0;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;pointer-events:none;-webkit-transition:opacity 50ms ease-in,-webkit-transform 70ms cubic-bezier(.215,.61,.355,1);transition:opacity 50ms ease-in,-webkit-transform 70ms cubic-bezier(.215,.61,.355,1);transition:opacity 50ms ease-in,transform 70ms cubic-bezier(.215,.61,.355,1);transition:opacity 50ms ease-in,transform 70ms cubic-bezier(.215,.61,.355,1),-webkit-transform 70ms cubic-bezier(.215,.61,.355,1);will-change:opacity,top,left;-webkit-box-shadow:0 8px 12px 0 rgba(29,32,43,.17),0 4px 5px -3px rgba(5,6,12,.49);box-shadow:0 8px 12px 0 rgba(29,32,43,.17),0 4px 5px -3px rgba(5,6,12,.49);border-radius:9px}.ct,.ct:before{position:absolute;top:0;left:0}.ct:before{content:"";bottom:0;right:0;background-color:#1d202b;z-index:-1;border-radius:4px}@supports(-webkit-mask-box-image:url("")){.ct:before{border-radius:0;-webkit-mask-box-image:url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M10.71 0h2.58c3.02 0 4.64.42 6.1 1.2a8.18 8.18 0 013.4 3.4C23.6 6.07 24 7.7 24 10.71v2.58c0 3.02-.42 4.64-1.2 6.1a8.18 8.18 0 01-3.4 3.4c-1.47.8-3.1 1.21-6.11 1.21H10.7c-3.02 0-4.64-.42-6.1-1.2a8.18 8.18 0 01-3.4-3.4C.4 17.93 0 16.3 0 13.29V10.7c0-3.02.42-4.64 1.2-6.1a8.18 8.18 0 013.4-3.4C6.07.4 7.7 0 10.71 0z"/></svg>') 48% 41% 37.9% 53.3%}}@media (--mobile){.ct{display:none}}.ct__content{padding:6px 10px;color:#cdd1e0;font-size:12px;text-align:center;letter-spacing:.02em;line-height:1em}.ct:after{content:"";width:8px;height:8px;position:absolute;background-color:#1d202b;z-index:-1}.ct--bottom{-webkit-transform:translateY(5px);transform:translateY(5px)}.ct--bottom:after{top:-3px;left:50%;-webkit-transform:translateX(-50%) rotate(-45deg);transform:translateX(-50%) rotate(-45deg)}.ct--top{-webkit-transform:translateY(-5px);transform:translateY(-5px)}.ct--top:after{top:auto;bottom:-3px;left:50%;-webkit-transform:translateX(-50%) rotate(-45deg);transform:translateX(-50%) rotate(-45deg)}.ct--left{-webkit-transform:translateX(-5px);transform:translateX(-5px)}.ct--left:after{top:50%;left:auto;right:0;-webkit-transform:translate(41.6%,-50%) rotate(-45deg);transform:translate(41.6%,-50%) rotate(-45deg)}.ct--right{-webkit-transform:translateX(5px);transform:translateX(5px)}.ct--right:after{top:50%;left:0;-webkit-transform:translate(-41.6%,-50%) rotate(-45deg);transform:translate(-41.6%,-50%) rotate(-45deg)}.ct--shown{opacity:1;-webkit-transform:none;transform:none}`;
     }]).default;
   });
-})(ji);
-var Cl = ji.exports;
-const Tl = /* @__PURE__ */ It(Cl);
+})($i);
+var Pl = $i.exports;
+const Al = /* @__PURE__ */ It(Pl);
 let te = null;
 function Bo() {
-  te || (te = new Tl());
+  te || (te = new Al());
 }
-function Sl(o, e, t) {
+function Nl(o, e, t) {
   Bo(), te?.show(o, e, t);
 }
 function xt(o = !1) {
@@ -3295,10 +3316,10 @@ function xt(o = !1) {
 function Et(o, e, t) {
   Bo(), te?.onHover(o, e, t);
 }
-function Bl() {
+function jl() {
   te?.destroy(), te = null;
 }
-class Ol extends _ {
+class Dl extends O {
   /**
    * @class
    * @param moduleConfiguration - Module Configuration
@@ -3329,7 +3350,7 @@ class Ol extends _ {
    * @param {TooltipOptions} options - tooltip options
    */
   show(e, t, n) {
-    Sl(e, t, n);
+    Nl(e, t, n);
   }
   /**
    * Method hides tooltip on HTML page
@@ -3348,7 +3369,7 @@ class Ol extends _ {
     Et(e, t, n);
   }
 }
-class _l extends _ {
+class Rl extends O {
   /**
    * Available methods / getters
    */
@@ -3376,26 +3397,26 @@ class _l extends _ {
     };
   }
 }
-function Di(o, e) {
+function Hi(o, e) {
   const t = {};
   return Object.entries(o).forEach(([n, r]) => {
     if (z(r)) {
       const i = e ? `${e}.${n}` : n;
-      Object.values(r).every((s) => ge(s)) ? t[n] = i : t[n] = Di(r, i);
+      Object.values(r).every((s) => ge(s)) ? t[n] = i : t[n] = Hi(r, i);
       return;
     }
     t[n] = r;
   }), t;
 }
-const Q = Di(Ci);
-function Il(o, e) {
+const Q = Hi(Bi);
+function $l(o, e) {
   const t = {};
   return Object.keys(o).forEach((n) => {
     const r = e[n];
     r !== void 0 ? t[r] = o[n] : t[n] = o[n];
   }), t;
 }
-const Ri = class Ye {
+const Fi = class Ye {
   /**
    * @param {HTMLElement[]} nodeList — the list of iterable HTML-items
    * @param {string} focusedCssClass - user-provided CSS-class that will be set in flipping process
@@ -3458,11 +3479,11 @@ const Ri = class Ye {
     return t === -1 ? t = e === Ye.directions.RIGHT ? -1 : 0 : this.items[t].classList.remove(this.focusedCssClass), e === Ye.directions.RIGHT ? t = (t + 1) % this.items.length : t = (this.items.length + t - 1) % this.items.length, f.canSetCaret(this.items[t]) && yt(() => C.setCursor(this.items[t]), 50)(), this.items[t].classList.add(this.focusedCssClass), t;
   }
 };
-Ri.directions = {
+Fi.directions = {
   RIGHT: "right",
   LEFT: "left"
 };
-let ze = Ri, Ct = class bo {
+let ze = Fi, Ct = class bo {
   /**
    * @param options - different constructing settings
    */
@@ -3470,18 +3491,18 @@ let ze = Ri, Ct = class bo {
     this.iterator = null, this.activated = !1, this.flipCallbacks = [], this.onKeyDown = (t) => {
       if (!(!this.isEventReadyForHandling(t) || t.shiftKey === !0))
         switch (bo.usedKeys.includes(t.keyCode) && t.preventDefault(), t.keyCode) {
-          case S.TAB:
+          case T.TAB:
             this.handleTabPress(t);
             break;
-          case S.LEFT:
-          case S.UP:
+          case T.LEFT:
+          case T.UP:
             this.flipLeft();
             break;
-          case S.RIGHT:
-          case S.DOWN:
+          case T.RIGHT:
+          case T.DOWN:
             this.flipRight();
             break;
-          case S.ENTER:
+          case T.ENTER:
             this.handleEnterPress(t);
             break;
         }
@@ -3501,12 +3522,12 @@ let ze = Ri, Ct = class bo {
    */
   static get usedKeys() {
     return [
-      S.TAB,
-      S.LEFT,
-      S.RIGHT,
-      S.ENTER,
-      S.UP,
-      S.DOWN
+      T.TAB,
+      T.LEFT,
+      T.RIGHT,
+      T.ENTER,
+      T.UP,
+      T.DOWN
     ];
   }
   /**
@@ -3612,9 +3633,9 @@ let ze = Ri, Ct = class bo {
     this.iterator.currentItem && this.iterator.currentItem.scrollIntoViewIfNeeded(), this.flipCallbacks.forEach((e) => e());
   }
 };
-const Ml = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9 12L9 7.1C9 7.04477 9.04477 7 9.1 7H10.4C11.5 7 14 7.1 14 9.5C14 9.5 14 12 11 12M9 12V16.8C9 16.9105 9.08954 17 9.2 17H12.5C14 17 15 16 15 14.5C15 11.7046 11 12 11 12M9 12H11"/></svg>', Ll = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7 10L11.8586 14.8586C11.9367 14.9367 12.0633 14.9367 12.1414 14.8586L17 10"/></svg>', Pl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M14.5 17.5L9.64142 12.6414C9.56331 12.5633 9.56331 12.4367 9.64142 12.3586L14.5 7.5"/></svg>', Al = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9.58284 17.5L14.4414 12.6414C14.5195 12.5633 14.5195 12.4367 14.4414 12.3586L9.58284 7.5"/></svg>', Nl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7 15L11.8586 10.1414C11.9367 10.0633 12.0633 10.0633 12.1414 10.1414L17 15"/></svg>', jl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 8L12 12M12 12L16 16M12 12L16 8M12 12L8 16"/></svg>', Dl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/></svg>', Rl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M13.34 10C12.4223 12.7337 11 17 11 17"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M14.21 7H14.2"/></svg>', Jr = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7.69998 12.6L7.67896 12.62C6.53993 13.7048 6.52012 15.5155 7.63516 16.625V16.625C8.72293 17.7073 10.4799 17.7102 11.5712 16.6314L13.0263 15.193C14.0703 14.1609 14.2141 12.525 13.3662 11.3266L13.22 11.12"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16.22 11.12L16.3564 10.9805C17.2895 10.0265 17.3478 8.5207 16.4914 7.49733V7.49733C15.5691 6.39509 13.9269 6.25143 12.8271 7.17675L11.3901 8.38588C10.0935 9.47674 9.95706 11.4241 11.0888 12.6852L11.12 12.72"/></svg>', $l = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2.6" d="M9.40999 7.29999H9.4"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2.6" d="M14.6 7.29999H14.59"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2.6" d="M9.30999 12H9.3"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2.6" d="M14.6 12H14.59"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2.6" d="M9.40999 16.7H9.4"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2.6" d="M14.6 16.7H14.59"/></svg>', Hl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M12 7V12M12 17V12M17 12H12M12 12H7"/></svg>', $i = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M11.5 17.5L5 11M5 11V15.5M5 11H9.5"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M12.5 6.5L19 13M19 13V8.5M19 13H14.5"/></svg>', Fl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="5.5" stroke="currentColor" stroke-width="2"/><line x1="15.4142" x2="19" y1="15" y2="18.5858" stroke="currentColor" stroke-linecap="round" stroke-width="2"/></svg>', Ul = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M15.7795 11.5C15.7795 11.5 16.053 11.1962 16.5497 10.6722C17.4442 9.72856 17.4701 8.2475 16.5781 7.30145V7.30145C15.6482 6.31522 14.0873 6.29227 13.1288 7.25073L11.8796 8.49999"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8.24517 12.3883C8.24517 12.3883 7.97171 12.6922 7.47504 13.2161C6.58051 14.1598 6.55467 15.6408 7.44666 16.5869V16.5869C8.37653 17.5731 9.93744 17.5961 10.8959 16.6376L12.1452 15.3883"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M17.7802 15.1032L16.597 14.9422C16.0109 14.8624 15.4841 15.3059 15.4627 15.8969L15.4199 17.0818"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6.39064 9.03238L7.58432 9.06668C8.17551 9.08366 8.6522 8.58665 8.61056 7.99669L8.5271 6.81397"/><line x1="12.1142" x2="11.7" y1="12.2" y2="11.7858" stroke="currentColor" stroke-linecap="round" stroke-width="2"/></svg>', zl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><rect width="14" height="14" x="5" y="5" stroke="currentColor" stroke-width="2" rx="4"/><line x1="12" x2="12" y1="9" y2="12" stroke="currentColor" stroke-linecap="round" stroke-width="2"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M12 15.02V15.01"/></svg>', Wl = "__", ql = "--";
+const Hl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9 12L9 7.1C9 7.04477 9.04477 7 9.1 7H10.4C11.5 7 14 7.1 14 9.5C14 9.5 14 12 11 12M9 12V16.8C9 16.9105 9.08954 17 9.2 17H12.5C14 17 15 16 15 14.5C15 11.7046 11 12 11 12M9 12H11"/></svg>', Fl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7 10L11.8586 14.8586C11.9367 14.9367 12.0633 14.9367 12.1414 14.8586L17 10"/></svg>', Ul = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M14.5 17.5L9.64142 12.6414C9.56331 12.5633 9.56331 12.4367 9.64142 12.3586L14.5 7.5"/></svg>', zl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9.58284 17.5L14.4414 12.6414C14.5195 12.5633 14.5195 12.4367 14.4414 12.3586L9.58284 7.5"/></svg>', Wl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7 15L11.8586 10.1414C11.9367 10.0633 12.0633 10.0633 12.1414 10.1414L17 15"/></svg>', ql = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 8L12 12M12 12L16 16M12 12L16 8M12 12L8 16"/></svg>', Kl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"/></svg>', Yl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M13.34 10C12.4223 12.7337 11 17 11 17"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M14.21 7H14.2"/></svg>', ti = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7.69998 12.6L7.67896 12.62C6.53993 13.7048 6.52012 15.5155 7.63516 16.625V16.625C8.72293 17.7073 10.4799 17.7102 11.5712 16.6314L13.0263 15.193C14.0703 14.1609 14.2141 12.525 13.3662 11.3266L13.22 11.12"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16.22 11.12L16.3564 10.9805C17.2895 10.0265 17.3478 8.5207 16.4914 7.49733V7.49733C15.5691 6.39509 13.9269 6.25143 12.8271 7.17675L11.3901 8.38588C10.0935 9.47674 9.95706 11.4241 11.0888 12.6852L11.12 12.72"/></svg>', Vl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2.6" d="M9.40999 7.29999H9.4"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2.6" d="M14.6 7.29999H14.59"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2.6" d="M9.30999 12H9.3"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2.6" d="M14.6 12H14.59"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2.6" d="M9.40999 16.7H9.4"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2.6" d="M14.6 16.7H14.59"/></svg>', Xl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M12 7V12M12 17V12M17 12H12M12 12H7"/></svg>', Ui = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M11.5 17.5L5 11M5 11V15.5M5 11H9.5"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M12.5 6.5L19 13M19 13V8.5M19 13H14.5"/></svg>', Gl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="5.5" stroke="currentColor" stroke-width="2"/><line x1="15.4142" x2="19" y1="15" y2="18.5858" stroke="currentColor" stroke-linecap="round" stroke-width="2"/></svg>', Zl = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M15.7795 11.5C15.7795 11.5 16.053 11.1962 16.5497 10.6722C17.4442 9.72856 17.4701 8.2475 16.5781 7.30145V7.30145C15.6482 6.31522 14.0873 6.29227 13.1288 7.25073L11.8796 8.49999"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8.24517 12.3883C8.24517 12.3883 7.97171 12.6922 7.47504 13.2161C6.58051 14.1598 6.55467 15.6408 7.44666 16.5869V16.5869C8.37653 17.5731 9.93744 17.5961 10.8959 16.6376L12.1452 15.3883"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M17.7802 15.1032L16.597 14.9422C16.0109 14.8624 15.4841 15.3059 15.4627 15.8969L15.4199 17.0818"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6.39064 9.03238L7.58432 9.06668C8.17551 9.08366 8.6522 8.58665 8.61056 7.99669L8.5271 6.81397"/><line x1="12.1142" x2="11.7" y1="12.2" y2="11.7858" stroke="currentColor" stroke-linecap="round" stroke-width="2"/></svg>', Ql = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><rect width="14" height="14" x="5" y="5" stroke="currentColor" stroke-width="2" rx="4"/><line x1="12" x2="12" y1="9" y2="12" stroke="currentColor" stroke-linecap="round" stroke-width="2"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M12 15.02V15.01"/></svg>', Jl = "__", ec = "--";
 function Ee(o) {
-  return (e, t) => [[o, e].filter((n) => !!n).join(Wl), t].filter((n) => !!n).join(ql);
+  return (e, t) => [[o, e].filter((n) => !!n).join(Jl), t].filter((n) => !!n).join(ec);
 }
 const We = Ee("ce-hint"), qe = {
   root: We(),
@@ -3623,7 +3644,7 @@ const We = Ee("ce-hint"), qe = {
   title: We("title"),
   description: We("description")
 };
-class Kl {
+class tc {
   /**
    * Constructs the hint content instance
    *
@@ -3642,7 +3663,7 @@ class Kl {
     return this.nodes.root;
   }
 }
-let Oo = class {
+let _o = class {
   /**
    * Constructs the instance
    *
@@ -3692,7 +3713,7 @@ let Oo = class {
    * @param hintData - hint data
    */
   addHint(e, t) {
-    const n = new Kl(t);
+    const n = new tc(t);
     Et(e, n.getElement(), {
       placement: t.position,
       hidingDelay: 100
@@ -3761,7 +3782,7 @@ const Z = Ee("ce-popover-item"), R = {
   iconChevronRight: Z("icon", "chevron-right"),
   wobbleAnimation: Ee("wobble")()
 };
-let Se = class extends Oo {
+let Te = class extends _o {
   /**
    * Constructs popover item instance
    *
@@ -3872,13 +3893,13 @@ let Se = class extends Oo {
       type: i === "button" ? "button" : void 0
     });
     return e.name && (s.dataset.itemName = e.name), this.nodes.icon = f.make("div", [R.icon, R.iconTool], {
-      innerHTML: e.icon || Dl
+      innerHTML: e.icon || Kl
     }), s.appendChild(this.nodes.icon), e.title !== void 0 && s.appendChild(f.make("div", R.title, {
       innerHTML: e.title || ""
     })), e.secondaryLabel && s.appendChild(f.make("div", R.secondaryTitle, {
       textContent: e.secondaryLabel
     })), this.hasChildren && s.appendChild(f.make("div", [R.icon, R.iconChevronRight], {
-      innerHTML: Al
+      innerHTML: zl
     })), this.isActive && s.classList.add(R.active), e.isDisabled && s.classList.add(R.disabled), e.hint !== void 0 && ((n = t?.hint) == null ? void 0 : n.enabled) !== !1 && this.addHint(s, {
       ...e.hint,
       position: ((r = t?.hint) == null ? void 0 : r.position) || "right"
@@ -3952,7 +3973,7 @@ const Qt = Ee("ce-popover-item-separator"), Jt = {
   line: Qt("line"),
   hidden: Qt(null, "hidden")
 };
-let Hi = class extends Oo {
+let zi = class extends _o {
   /**
    * Constructs the instance
    */
@@ -3997,11 +4018,11 @@ const q = Ee("ce-popover"), $ = {
   popoverHeader: q("header")
 };
 var Re = /* @__PURE__ */ ((o) => (o.NestingLevel = "--nesting-level", o.PopoverHeight = "--popover-height", o.InlinePopoverWidth = "--inline-popover-width", o.TriggerItemLeft = "--trigger-item-left", o.TriggerItemTop = "--trigger-item-top", o))(Re || {});
-const ei = Ee("ce-popover-item-html"), ti = {
-  root: ei(),
-  hidden: ei(null, "hidden")
+const oi = Ee("ce-popover-item-html"), ni = {
+  root: oi(),
+  hidden: oi(null, "hidden")
 };
-let Qe = class extends Oo {
+let Qe = class extends _o {
   /**
    * Constructs the instance
    *
@@ -4012,7 +4033,7 @@ let Qe = class extends Oo {
   constructor(e, t) {
     var n, r;
     super(e), this.nodes = {
-      root: f.make("div", ti.root)
+      root: f.make("div", ni.root)
     }, this.nodes.root.appendChild(e.element), e.name && (this.nodes.root.dataset.itemName = e.name), e.hint !== void 0 && ((n = t?.hint) == null ? void 0 : n.enabled) !== !1 && this.addHint(this.nodes.root, {
       ...e.hint,
       position: ((r = t?.hint) == null ? void 0 : r.position) || "right"
@@ -4031,7 +4052,7 @@ let Qe = class extends Oo {
    */
   toggleHidden(e) {
     var t;
-    (t = this.nodes.root) == null || t.classList.toggle(ti.hidden, e);
+    (t = this.nodes.root) == null || t.classList.toggle(ni.hidden, e);
   }
   /**
    * Returns list of buttons and inputs inside custom content
@@ -4042,7 +4063,7 @@ let Qe = class extends Oo {
     );
     return Array.from(e);
   }
-}, Fi = class extends et {
+}, Wi = class extends et {
   /**
    * Constructs the instance
    *
@@ -4071,7 +4092,7 @@ let Qe = class extends Oo {
    * List of default popover items that are searchable and may have confirmation state
    */
   get itemsDefault() {
-    return this.items.filter((e) => e instanceof Se);
+    return this.items.filter((e) => e instanceof Te);
   }
   /**
    * Returns HTML element corresponding to the popover
@@ -4116,11 +4137,11 @@ let Qe = class extends Oo {
     return e.map((t) => {
       switch (t.type) {
         case j.Separator:
-          return new Hi();
+          return new zi();
         case j.Html:
           return new Qe(t, this.itemsRenderParams[j.Html]);
         default:
-          return new Se(t, this.itemsRenderParams[j.Default]);
+          return new Te(t, this.itemsRenderParams[j.Default]);
       }
     });
   }
@@ -4130,7 +4151,7 @@ let Qe = class extends Oo {
    * @param event - event to retrieve popover item from
    */
   getTargetItem(e) {
-    return this.items.filter((t) => t instanceof Se || t instanceof Qe).find((t) => {
+    return this.items.filter((t) => t instanceof Te || t instanceof Qe).find((t) => {
       const n = t.getElement();
       return n === null ? !1 : e.composedPath().includes(n);
     });
@@ -4167,7 +4188,7 @@ let Qe = class extends Oo {
    * @param clickedItem - popover item that was clicked
    */
   toggleItemActivenessIfNeeded(e) {
-    if (e instanceof Se && (e.toggle === !0 && e.toggleActive(), typeof e.toggle == "string")) {
+    if (e instanceof Te && (e.toggle === !0 && e.toggleActive(), typeof e.toggle == "string")) {
       const t = this.itemsDefault.filter((n) => n.toggle === e.toggle);
       if (t.length === 1) {
         e.toggleActive();
@@ -4179,13 +4200,13 @@ let Qe = class extends Oo {
     }
   }
 };
-var Tt = /* @__PURE__ */ ((o) => (o.Search = "search", o))(Tt || {});
+var St = /* @__PURE__ */ ((o) => (o.Search = "search", o))(St || {});
 const eo = Ee("cdx-search-field"), to = {
   wrapper: eo(),
   icon: eo("icon"),
   input: eo("input")
 };
-class Yl extends et {
+class oc extends et {
   /**
    * @param options - available config
    * @param options.items - searchable items list
@@ -4194,7 +4215,7 @@ class Yl extends et {
   constructor({ items: e, placeholder: t }) {
     super(), this.listeners = new tt(), this.items = e, this.wrapper = f.make("div", to.wrapper);
     const n = f.make("div", to.icon, {
-      innerHTML: Fl
+      innerHTML: Gl
     });
     this.input = f.make("input", to.input, {
       placeholder: t,
@@ -4205,7 +4226,7 @@ class Yl extends et {
        */
       tabIndex: -1
     }), this.wrapper.appendChild(n), this.wrapper.appendChild(this.input), this.listeners.on(this.input, "input", () => {
-      this.searchQuery = this.input.value, this.emit(Tt.Search, {
+      this.searchQuery = this.input.value, this.emit(St.Search, {
         query: this.searchQuery,
         items: this.foundItems
       });
@@ -4227,7 +4248,7 @@ class Yl extends et {
    * Clears search query and results
    */
   clear() {
-    this.input.value = "", this.searchQuery = "", this.emit(Tt.Search, {
+    this.input.value = "", this.searchQuery = "", this.emit(St.Search, {
       query: "",
       items: this.foundItems
     });
@@ -4255,17 +4276,17 @@ class Yl extends et {
     return i !== void 0 ? r.includes(i) : !1;
   }
 }
-var Vl = Object.defineProperty, Xl = Object.getOwnPropertyDescriptor, Gl = (o, e, t, n) => {
-  for (var r = Xl(e, t), i = o.length - 1, s; i >= 0; i--)
+var nc = Object.defineProperty, rc = Object.getOwnPropertyDescriptor, ic = (o, e, t, n) => {
+  for (var r = rc(e, t), i = o.length - 1, s; i >= 0; i--)
     (s = o[i]) && (r = s(e, t, r) || r);
-  return r && Vl(e, t, r), r;
+  return r && nc(e, t, r), r;
 };
-const Ui = class zi extends Fi {
+const qi = class Ki extends Wi {
   /**
    * Construct the instance
    *
    * @param params - popover params
-   * @param itemsRenderParams – popover item render params.
+   * @param itemsRenderParams – popover item render params.
    * The parameters that are not set by user via popover api but rather depend on technical implementation
    */
   constructor(e, t) {
@@ -4280,7 +4301,7 @@ const Ui = class zi extends Fi {
       const i = n.query === "", s = n.items.length === 0;
       this.items.forEach((l) => {
         let c = !1;
-        l instanceof Se ? c = !n.items.includes(l) : (l instanceof Hi || l instanceof Qe) && (c = s || !i), l.toggleHidden(c);
+        l instanceof Te ? c = !n.items.includes(l) : (l instanceof zi || l instanceof Qe) && (c = s || !i), l.toggleHidden(c);
       }), this.toggleNothingFoundMessage(s);
       const a = n.query === "" ? this.flippableElements : n.items.map((l) => l.getElement());
       (r = this.flipper) != null && r.isActivated && (this.flipper.deactivate(), this.flipper.activate(a));
@@ -4288,10 +4309,10 @@ const Ui = class zi extends Fi {
       items: this.flippableElements,
       focusedItemClass: R.focused,
       allowedKeys: [
-        S.TAB,
-        S.UP,
-        S.DOWN,
-        S.ENTER
+        T.TAB,
+        T.UP,
+        T.DOWN,
+        T.ENTER
       ]
     }), this.flipper.onFlip(this.onFlip));
   }
@@ -4369,7 +4390,7 @@ const Ui = class zi extends Fi {
    */
   showNestedPopoverForItem(e) {
     var t;
-    this.nestedPopover = new zi({
+    this.nestedPopover = new Ki({
       searchable: e.isChildrenSearchable,
       items: e.children,
       nestingLevel: this.nestingLevel + 1,
@@ -4408,7 +4429,7 @@ const Ui = class zi extends Fi {
     if (this.nodes.popover === null)
       return t;
     const n = this.nodes.popover.cloneNode(!0);
-    n.style.visibility = "hidden", n.style.position = "absolute", n.style.top = "-1000px", n.classList.add($.popoverOpened), (e = n.querySelector("." + $.popoverNested)) == null || e.remove(), (Ia() || document.body).appendChild(n);
+    n.style.visibility = "hidden", n.style.position = "absolute", n.style.top = "-1000px", n.classList.add($.popoverOpened), (e = n.querySelector("." + $.popoverNested)) == null || e.remove(), ($a() || document.body).appendChild(n);
     const r = n.querySelector("." + $.popoverContainer);
     return t.height = r.offsetHeight, t.width = r.offsetWidth, n.remove(), t;
   }
@@ -4417,7 +4438,7 @@ const Ui = class zi extends Fi {
    */
   get flippableElements() {
     return this.items.map((e) => {
-      if (e instanceof Se)
+      if (e instanceof Te)
         return e.getElement();
       if (e instanceof Qe)
         return e.getControls();
@@ -4427,10 +4448,10 @@ const Ui = class zi extends Fi {
    * Adds search to the popover
    */
   addSearch() {
-    this.search = new Yl({
+    this.search = new oc({
       items: this.itemsDefault,
       placeholder: this.messages.search
-    }), this.search.on(Tt.Search, this.onSearch);
+    }), this.search.on(St.Search, this.onSearch);
     const e = this.search.getElement();
     e.classList.add($.search), this.nodes.popoverContainer.insertBefore(e, this.nodes.popoverContainer.firstChild);
   }
@@ -4443,11 +4464,11 @@ const Ui = class zi extends Fi {
     this.nodes.nothingFoundMessage.classList.toggle($.nothingFoundMessageDisplayed, e);
   }
 };
-Gl([
+ic([
   He
-], Ui.prototype, "size");
-let _o = Ui;
-class Zl extends _o {
+], qi.prototype, "size");
+let Oo = qi;
+class sc extends Oo {
   /**
    * Constructs the instance
    *
@@ -4483,7 +4504,7 @@ class Zl extends _o {
         }
       }
     ), this.items.forEach((n) => {
-      !(n instanceof Se) && !(n instanceof Qe) || n.hasChildren && n.isChildrenOpen && this.showNestedItems(n);
+      !(n instanceof Te) && !(n instanceof Qe) || n.hasChildren && n.isChildrenOpen && this.showNestedItems(n);
     });
   }
   /**
@@ -4555,7 +4576,7 @@ class Zl extends _o {
     e !== this.nestedPopoverTriggerItem && ((t = this.nestedPopoverTriggerItem) == null || t.handleClick(), super.destroyNestedPopoverIfExists()), super.handleItemClick(e);
   }
 }
-const Wi = class Ve {
+const Yi = class Ve {
   constructor() {
     this.scrollPosition = null;
   }
@@ -4587,17 +4608,17 @@ const Wi = class Ve {
     document.body.classList.remove(Ve.CSS.scrollLockedHard), this.scrollPosition !== null && window.scrollTo(0, this.scrollPosition), this.scrollPosition = null;
   }
 };
-Wi.CSS = {
+Yi.CSS = {
   scrollLocked: "ce-scroll-locked",
   scrollLockedHard: "ce-scroll-locked--hard"
 };
-let Ql = Wi;
+let ac = Yi;
 const oo = Ee("ce-popover-header"), no = {
   root: oo(),
   text: oo("text"),
   backButton: oo("back-button")
 };
-class Jl {
+class lc {
   /**
    * Constructs the instance
    *
@@ -4608,7 +4629,7 @@ class Jl {
       root: f.make("div", [no.root]),
       backButton: f.make("button", [no.backButton]),
       text: f.make("div", [no.text])
-    }, this.nodes.backButton.innerHTML = Pl, this.nodes.root.appendChild(this.nodes.backButton), this.listeners.on(this.nodes.backButton, "click", this.onBackButtonClick), this.nodes.text.innerText = this.text, this.nodes.root.appendChild(this.nodes.text);
+    }, this.nodes.backButton.innerHTML = Ul, this.nodes.root.appendChild(this.nodes.backButton), this.listeners.on(this.nodes.backButton, "click", this.onBackButtonClick), this.nodes.text.innerText = this.text, this.nodes.root.appendChild(this.nodes.text);
   }
   /**
    * Returns popover header root html element
@@ -4623,7 +4644,7 @@ class Jl {
     this.nodes.root.remove(), this.listeners.destroy();
   }
 }
-class ec {
+class cc {
   constructor() {
     this.history = [];
   }
@@ -4661,7 +4682,7 @@ class ec {
       this.pop();
   }
 }
-let qi = class extends Fi {
+let Vi = class extends Wi {
   /**
    * Construct the instance
    *
@@ -4679,7 +4700,7 @@ let qi = class extends Fi {
           enabled: !1
         }
       }
-    }), this.scrollLocker = new Ql(), this.history = new ec(), this.isHidden = !0, this.nodes.overlay = f.make("div", [$.overlay, $.overlayHidden]), this.nodes.popover.insertBefore(this.nodes.overlay, this.nodes.popover.firstChild), this.listeners.on(this.nodes.overlay, "click", () => {
+    }), this.scrollLocker = new ac(), this.history = new cc(), this.isHidden = !0, this.nodes.overlay = f.make("div", [$.overlay, $.overlayHidden]), this.nodes.popover.insertBefore(this.nodes.overlay, this.nodes.popover.firstChild), this.listeners.on(this.nodes.overlay, "click", () => {
       this.hide();
     }), this.history.push({ items: e.items });
   }
@@ -4704,7 +4725,7 @@ let qi = class extends Fi {
   /**
    * Handles displaying nested items for the item
    *
-   * @param item – item to show nested popover for
+   * @param item – item to show nested popover for
    */
   showNestedItems(e) {
     this.updateItemsAndHeader(e.children, e.title), this.history.push({
@@ -4720,7 +4741,7 @@ let qi = class extends Fi {
    */
   updateItemsAndHeader(e, t) {
     if (this.header !== null && this.header !== void 0 && (this.header.destroy(), this.header = null), t !== void 0) {
-      this.header = new Jl({
+      this.header = new lc({
         text: t,
         onBackButtonClick: () => {
           this.history.pop(), this.updateItemsAndHeader(this.history.currentItems, this.history.currentTitle);
@@ -4739,7 +4760,7 @@ let qi = class extends Fi {
     });
   }
 };
-class tc extends _ {
+class dc extends O {
   constructor() {
     super(...arguments), this.opened = !1, this.hasMobileLayoutToggleListener = !1, this.selection = new C(), this.popover = null, this.close = () => {
       this.opened && (this.opened = !1, C.isAtEditor || this.selection.restore(), this.selection.clearSaved(), !this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted && this.Editor.BlockManager.currentBlock && this.Editor.BlockSelection.unselectBlock(this.Editor.BlockManager.currentBlock), this.eventsDispatcher.emit(this.events.closed), this.popover && (this.popover.off(ae.Closed, this.onPopoverClose), this.popover.destroy(), this.popover.getElement().remove(), this.popover = null));
@@ -4798,7 +4819,7 @@ class tc extends _ {
     this.opened = !0, this.selection.save(), this.Editor.BlockSelection.selectBlock(e), this.Editor.BlockSelection.clearCache();
     const { toolTunes: n, commonTunes: r } = e.getTunes();
     this.eventsDispatcher.emit(this.events.opened);
-    const i = Fe() ? qi : _o;
+    const i = Fe() ? Vi : Oo;
     this.popover = new i({
       searchable: !0,
       items: await this.getTunesItems(e, r, n),
@@ -4828,7 +4849,7 @@ class tc extends _ {
     n !== void 0 && n.length > 0 && (r.push(...n), r.push({
       type: j.Separator
     }));
-    const i = Array.from(this.Editor.Tools.blockTools.values()), s = (await Li(e, i)).reduce((a, l) => (l.toolbox.forEach((c) => {
+    const i = Array.from(this.Editor.Tools.blockTools.values()), s = (await Ni(e, i)).reduce((a, l) => (l.toolbox.forEach((c) => {
       a.push({
         icon: c.icon,
         title: V.t(Q.toolNames, c.title),
@@ -4841,7 +4862,7 @@ class tc extends _ {
       });
     }), a), []);
     return s.length > 0 && (r.push({
-      icon: $i,
+      icon: Ui,
       name: "convert-to",
       title: V.ui(Q.ui.popover, "Convert to"),
       children: {
@@ -4860,11 +4881,11 @@ class tc extends _ {
   resolveTuneAliases(e) {
     if (e.type === j.Separator || e.type === j.Html)
       return e;
-    const t = Il(e, { label: "title" });
+    const t = $l(e, { label: "title" });
     return e.confirmation && (t.confirmation = this.resolveTuneAliases(e.confirmation)), t;
   }
 }
-var Ki = { exports: {} };
+var Xi = { exports: {} };
 (function(o, e) {
   (function(t, n) {
     o.exports = n();
@@ -4955,10 +4976,10 @@ var Ki = { exports: {} };
       n.default = a;
     }]).default;
   });
-})(Ki);
-var oc = Ki.exports;
-const nc = /* @__PURE__ */ It(oc);
-class rc {
+})(Xi);
+var uc = Xi.exports;
+const hc = /* @__PURE__ */ It(uc);
+class pc {
   constructor() {
     this.registeredShortcuts = /* @__PURE__ */ new Map();
   }
@@ -4972,7 +4993,7 @@ class rc {
       throw Error(
         `Shortcut ${e.name} is already registered for ${e.on}. Please remove it before add a new handler.`
       );
-    const t = new nc({
+    const t = new hc({
       name: e.name,
       on: e.on,
       callback: e.handler
@@ -5008,13 +5029,13 @@ class rc {
     return (this.registeredShortcuts.get(e) || []).find(({ name: n }) => n === t);
   }
 }
-const $e = new rc();
-var ic = Object.defineProperty, sc = Object.getOwnPropertyDescriptor, Yi = (o, e, t, n) => {
-  for (var r = sc(e, t), i = o.length - 1, s; i >= 0; i--)
+const $e = new pc();
+var fc = Object.defineProperty, gc = Object.getOwnPropertyDescriptor, Gi = (o, e, t, n) => {
+  for (var r = gc(e, t), i = o.length - 1, s; i >= 0; i--)
     (s = o[i]) && (r = s(e, t, r) || r);
-  return r && ic(e, t, r), r;
+  return r && fc(e, t, r), r;
 }, lt = /* @__PURE__ */ ((o) => (o.Opened = "toolbox-opened", o.Closed = "toolbox-closed", o.BlockAdded = "toolbox-block-added", o))(lt || {});
-const Io = class Vi extends et {
+const Io = class Zi extends et {
   /**
    * Toolbox constructor
    *
@@ -5031,7 +5052,7 @@ const Io = class Vi extends et {
         /* Closed */
       );
     }, this.api = e, this.tools = t, this.i18nLabels = n, this.enableShortcuts(), this.nodes = {
-      toolbox: f.make("div", Vi.CSS.toolbox)
+      toolbox: f.make("div", Zi.CSS.toolbox)
     }, this.initPopover(), this.api.events.on(Ze, this.handleMobileLayoutToggle);
   }
   /**
@@ -5110,7 +5131,7 @@ const Io = class Vi extends et {
    */
   initPopover() {
     var e;
-    const t = Fe() ? qi : _o;
+    const t = Fe() ? Vi : Oo;
     this.popover = new t({
       scopeElement: this.api.ui.nodes.redactor,
       searchable: !0,
@@ -5220,15 +5241,15 @@ const Io = class Vi extends et {
     }), this.api.toolbar.close();
   }
 };
-Yi([
+Gi([
   He
 ], Io.prototype, "toolsToBeDisplayed");
-Yi([
+Gi([
   He
 ], Io.prototype, "toolboxItemsToBeDisplayed");
-let ac = Io;
-const Xi = "block hovered";
-async function lc(o, e) {
+let mc = Io;
+const Qi = "block hovered";
+async function bc(o, e) {
   const t = navigator.keyboard;
   if (!t)
     return e;
@@ -5238,7 +5259,7 @@ async function lc(o, e) {
     return console.error(n), e;
   }
 }
-class cc extends _ {
+class vc extends O {
   /**
    * @class
    * @param moduleConfiguration - Module Configuration
@@ -5363,7 +5384,7 @@ class cc extends _ {
       const u = parseInt(window.getComputedStyle(e.pluginsContent).paddingTop);
       r = t.offsetTop + u;
     } else {
-      const u = Ka(s), h = parseInt(window.getComputedStyle(this.nodes.plusButton).height, 10);
+      const u = tl(s), h = parseInt(window.getComputedStyle(this.nodes.plusButton).height, 10);
       r = t.offsetTop + u - h + 8 + c;
     }
     this.nodes.wrapper.style.top = `${Math.floor(r)}px`, this.Editor.BlockManager.blocks.length === 1 && e.isEmpty ? this.blockTunesToggler.hide() : this.blockTunesToggler.show(), this.open();
@@ -5397,7 +5418,7 @@ class cc extends _ {
     this.nodes.wrapper = f.make("div", this.CSS.toolbar), ["content", "actions"].forEach((i) => {
       this.nodes[i] = f.make("div", this.CSS[i]);
     }), f.append(this.nodes.wrapper, this.nodes.content), f.append(this.nodes.content, this.nodes.actions), this.nodes.plusButton = f.make("div", this.CSS.plusButton, {
-      innerHTML: Hl
+      innerHTML: Xl
     }), f.append(this.nodes.actions, this.nodes.plusButton), this.readOnlyMutableListeners.on(this.nodes.plusButton, "click", () => {
       xt(!0), this.plusButtonClicked();
     }, !1);
@@ -5407,9 +5428,9 @@ class cc extends _ {
     })), Et(this.nodes.plusButton, e, {
       hidingDelay: 400
     }), this.nodes.settingsToggler = f.make("span", this.CSS.settingsToggler, {
-      innerHTML: $l
+      innerHTML: Vl
     }), f.append(this.nodes.actions, this.nodes.settingsToggler);
-    const t = f.make("div"), n = f.text(V.ui(Q.ui.blockTunes.toggler, "Click to tune")), r = await lc("Slash", "/");
+    const t = f.make("div"), n = f.text(V.ui(Q.ui.blockTunes.toggler, "Click to tune")), r = await bc("Slash", "/");
     t.appendChild(n), t.appendChild(f.make("div", this.CSS.plusButtonShortcut, {
       textContent: Co(`CMD + ${r}`)
     })), Et(this.nodes.settingsToggler, t, {
@@ -5420,7 +5441,7 @@ class cc extends _ {
    * Creates the Toolbox instance and return it's rendered element
    */
   makeToolbox() {
-    return this.toolboxInstance = new ac({
+    return this.toolboxInstance = new mc({
       api: this.Editor.API.methods,
       tools: this.Editor.Tools.blockTools,
       i18nLabels: {
@@ -5450,7 +5471,7 @@ class cc extends _ {
     this.readOnlyMutableListeners.on(this.nodes.settingsToggler, "mousedown", (e) => {
       var t;
       e.stopPropagation(), this.settingsTogglerClicked(), (t = this.toolboxInstance) != null && t.opened && this.toolboxInstance.close(), xt(!0);
-    }, !0), Fe() || this.eventsDispatcher.on(Xi, (e) => {
+    }, !0), Fe() || this.eventsDispatcher.on(Qi, (e) => {
       var t;
       this.Editor.BlockSettings.opened || (t = this.toolboxInstance) != null && t.opened || this.moveAndOpen(e.block);
     });
@@ -5489,7 +5510,7 @@ class cc extends _ {
     this.removeAllNodes(), this.toolboxInstance && this.toolboxInstance.destroy();
   }
 }
-var Be = /* @__PURE__ */ ((o) => (o[o.Block = 0] = "Block", o[o.Inline = 1] = "Inline", o[o.Tune = 2] = "Tune", o))(Be || {}), ct = /* @__PURE__ */ ((o) => (o.Shortcut = "shortcut", o.Toolbox = "toolbox", o.EnabledInlineTools = "inlineToolbar", o.EnabledBlockTunes = "tunes", o.Config = "config", o))(ct || {}), Gi = /* @__PURE__ */ ((o) => (o.Shortcut = "shortcut", o.SanitizeConfig = "sanitize", o))(Gi || {}), je = /* @__PURE__ */ ((o) => (o.IsEnabledLineBreaks = "enableLineBreaks", o.Toolbox = "toolbox", o.ConversionConfig = "conversionConfig", o.IsReadOnlySupported = "isReadOnlySupported", o.PasteConfig = "pasteConfig", o))(je || {}), St = /* @__PURE__ */ ((o) => (o.IsInline = "isInline", o.Title = "title", o.IsReadOnlySupported = "isReadOnlySupported", o))(St || {}), vo = /* @__PURE__ */ ((o) => (o.IsTune = "isTune", o))(vo || {});
+var Be = /* @__PURE__ */ ((o) => (o[o.Block = 0] = "Block", o[o.Inline = 1] = "Inline", o[o.Tune = 2] = "Tune", o))(Be || {}), ct = /* @__PURE__ */ ((o) => (o.Shortcut = "shortcut", o.Toolbox = "toolbox", o.EnabledInlineTools = "inlineToolbar", o.EnabledBlockTunes = "tunes", o.Config = "config", o))(ct || {}), Ji = /* @__PURE__ */ ((o) => (o.Shortcut = "shortcut", o.SanitizeConfig = "sanitize", o))(Ji || {}), je = /* @__PURE__ */ ((o) => (o.IsEnabledLineBreaks = "enableLineBreaks", o.Toolbox = "toolbox", o.ConversionConfig = "conversionConfig", o.IsReadOnlySupported = "isReadOnlySupported", o.PasteConfig = "pasteConfig", o))(je || {}), Tt = /* @__PURE__ */ ((o) => (o.IsInline = "isInline", o.Title = "title", o.IsReadOnlySupported = "isReadOnlySupported", o))(Tt || {}), vo = /* @__PURE__ */ ((o) => (o.IsTune = "isTune", o))(vo || {});
 let Mo = class {
   /**
    * @class
@@ -5562,7 +5583,7 @@ let Mo = class {
     return this.type === Be.Tune;
   }
 };
-class dc extends _ {
+class yc extends O {
   /**
    * @param moduleConfiguration - Module Configuration
    * @param moduleConfiguration.config - Editor's config
@@ -5637,7 +5658,7 @@ class dc extends _ {
       return;
     this.opened = !0, this.popover !== null && this.popover.destroy(), this.createToolsInstances();
     const t = await this.getPopoverItems();
-    this.popover = new Zl({
+    this.popover = new sc({
       items: t,
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
       messages: {
@@ -5785,7 +5806,7 @@ class dc extends _ {
    */
   getToolShortcut(e) {
     const { Tools: t } = this.Editor, n = t.inlineTools.get(e), r = t.internal.inlineTools;
-    return Array.from(r.keys()).includes(e) ? this.inlineTools[e][Gi.Shortcut] : n?.shortcut;
+    return Array.from(r.keys()).includes(e) ? this.inlineTools[e][Ji.Shortcut] : n?.shortcut;
   }
   /**
    * Enable Tool shortcut with Editor Shortcuts Module
@@ -5838,20 +5859,20 @@ class dc extends _ {
     }), e;
   }
 }
-function Zi() {
+function es() {
   const o = Y();
   if (o === null)
     return [null, 0];
   let e = o.focusNode, t = o.focusOffset;
   return e === null ? [null, 0] : (e.nodeType !== Node.TEXT_NODE && e.childNodes.length > 0 && (e.childNodes[t] ? (e = e.childNodes[t], t = 0) : (e = e.childNodes[t - 1], t = e.textContent.length)), [e, t]);
 }
-function Qi(o, e, t, n) {
+function ts(o, e, t, n) {
   const r = document.createRange();
   n === "left" ? (r.setStart(o, 0), r.setEnd(e, t)) : (r.setStart(e, t), r.setEnd(o, o.childNodes.length));
   const i = r.cloneContents(), s = document.createElement("div");
   s.appendChild(i);
   const a = s.textContent || "";
-  return qa(a);
+  return el(a);
 }
 function dt(o) {
   const e = f.getDeepestNode(o);
@@ -5861,8 +5882,8 @@ function dt(o) {
     return e.selectionEnd === 0;
   if (f.isEmpty(o))
     return !0;
-  const [t, n] = Zi();
-  return t === null ? !1 : Qi(o, t, n, "left");
+  const [t, n] = es();
+  return t === null ? !1 : ts(o, t, n, "left");
 }
 function ut(o) {
   const e = f.getDeepestNode(o, !0);
@@ -5870,13 +5891,13 @@ function ut(o) {
     return !0;
   if (f.isNativeInput(e))
     return e.selectionEnd === e.value.length;
-  const [t, n] = Zi();
-  return t === null ? !1 : Qi(o, t, n, "right");
+  const [t, n] = es();
+  return t === null ? !1 : ts(o, t, n, "right");
 }
-var Ji = {}, Lo = {}, Mt = {}, _e = {}, Po = {}, Ao = {};
+var os = {}, Lo = {}, Mt = {}, Oe = {}, Po = {}, Ao = {};
 Object.defineProperty(Ao, "__esModule", { value: !0 });
-Ao.allInputsSelector = uc;
-function uc() {
+Ao.allInputsSelector = kc;
+function kc() {
   var o = ["text", "password", "email", "number", "search", "tel", "url"];
   return "[contenteditable=true], textarea, input:not([type]), " + o.map(function(e) {
     return 'input[type="'.concat(e, '"]');
@@ -5891,8 +5912,8 @@ function uc() {
 })(Po);
 var Ie = {}, No = {};
 Object.defineProperty(No, "__esModule", { value: !0 });
-No.isNativeInput = hc;
-function hc(o) {
+No.isNativeInput = wc;
+function wc(o) {
   var e = [
     "INPUT",
     "TEXTAREA"
@@ -5906,10 +5927,10 @@ function hc(o) {
     return e.isNativeInput;
   } });
 })(Ie);
-var es = {}, jo = {};
+var ns = {}, jo = {};
 Object.defineProperty(jo, "__esModule", { value: !0 });
-jo.append = pc;
-function pc(o, e) {
+jo.append = xc;
+function xc(o, e) {
   Array.isArray(e) ? e.forEach(function(t) {
     o.appendChild(t);
   }) : o.appendChild(e);
@@ -5920,11 +5941,11 @@ function pc(o, e) {
   Object.defineProperty(o, "append", { enumerable: !0, get: function() {
     return e.append;
   } });
-})(es);
+})(ns);
 var Do = {}, Ro = {};
 Object.defineProperty(Ro, "__esModule", { value: !0 });
-Ro.blockElements = fc;
-function fc() {
+Ro.blockElements = Ec;
+function Ec() {
   return [
     "address",
     "article",
@@ -5974,10 +5995,10 @@ function fc() {
     return e.blockElements;
   } });
 })(Do);
-var ts = {}, $o = {};
+var rs = {}, $o = {};
 Object.defineProperty($o, "__esModule", { value: !0 });
-$o.calculateBaseline = gc;
-function gc(o) {
+$o.calculateBaseline = Cc;
+function Cc(o) {
   var e = window.getComputedStyle(o), t = parseFloat(e.fontSize), n = parseFloat(e.lineHeight) || t * 1.2, r = parseFloat(e.paddingTop), i = parseFloat(e.borderTopWidth), s = parseFloat(e.marginTop), a = t * 0.8, l = (n - t) / 2, c = s + i + r + l + a;
   return c;
 }
@@ -5987,11 +6008,11 @@ function gc(o) {
   Object.defineProperty(o, "calculateBaseline", { enumerable: !0, get: function() {
     return e.calculateBaseline;
   } });
-})(ts);
-var os = {}, Ho = {}, Fo = {}, Uo = {};
+})(rs);
+var is = {}, Ho = {}, Fo = {}, Uo = {};
 Object.defineProperty(Uo, "__esModule", { value: !0 });
-Uo.isContentEditable = mc;
-function mc(o) {
+Uo.isContentEditable = Sc;
+function Sc(o) {
   return o.contentEditable === "true";
 }
 (function(o) {
@@ -6002,11 +6023,11 @@ function mc(o) {
   } });
 })(Fo);
 Object.defineProperty(Ho, "__esModule", { value: !0 });
-Ho.canSetCaret = yc;
-var bc = Ie, vc = Fo;
-function yc(o) {
+Ho.canSetCaret = _c;
+var Tc = Ie, Bc = Fo;
+function _c(o) {
   var e = !0;
-  if ((0, bc.isNativeInput)(o))
+  if ((0, Tc.isNativeInput)(o))
     switch (o.type) {
       case "file":
       case "checkbox":
@@ -6020,7 +6041,7 @@ function yc(o) {
         break;
     }
   else
-    e = (0, vc.isContentEditable)(o);
+    e = (0, Bc.isContentEditable)(o);
   return e;
 }
 (function(o) {
@@ -6029,9 +6050,9 @@ function yc(o) {
   Object.defineProperty(o, "canSetCaret", { enumerable: !0, get: function() {
     return e.canSetCaret;
   } });
-})(os);
+})(is);
 var Lt = {}, zo = {};
-function kc(o, e, t) {
+function Oc(o, e, t) {
   const n = t.value !== void 0 ? "value" : "get", r = t[n], i = `#${e}Cache`;
   if (t[n] = function(...s) {
     return this[i] === void 0 && (this[i] = r.apply(this, s)), this[i];
@@ -6043,7 +6064,7 @@ function kc(o, e, t) {
   }
   return t;
 }
-function ns() {
+function ss() {
   const o = {
     win: !1,
     mac: !1,
@@ -6055,18 +6076,18 @@ function ns() {
 function Wo(o) {
   return o != null && o !== "" && (typeof o != "object" || Object.keys(o).length > 0);
 }
-function wc(o) {
+function Ic(o) {
   return !Wo(o);
 }
-const xc = () => typeof window < "u" && window.navigator !== null && Wo(window.navigator.platform) && (/iP(ad|hone|od)/.test(window.navigator.platform) || window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1);
-function Ec(o) {
-  const e = ns();
+const Mc = () => typeof window < "u" && window.navigator !== null && Wo(window.navigator.platform) && (/iP(ad|hone|od)/.test(window.navigator.platform) || window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1);
+function Lc(o) {
+  const e = ss();
   return o = o.replace(/shift/gi, "⇧").replace(/backspace/gi, "⌫").replace(/enter/gi, "⏎").replace(/up/gi, "↑").replace(/left/gi, "→").replace(/down/gi, "↓").replace(/right/gi, "←").replace(/escape/gi, "⎋").replace(/insert/gi, "Ins").replace(/delete/gi, "␡").replace(/\+/gi, "+"), e.mac ? o = o.replace(/ctrl|cmd/gi, "⌘").replace(/alt/gi, "⌥") : o = o.replace(/cmd/gi, "Ctrl").replace(/windows/gi, "WIN"), o;
 }
-function Cc(o) {
+function Pc(o) {
   return o[0].toUpperCase() + o.slice(1);
 }
-function Tc(o) {
+function Ac(o) {
   const e = document.createElement("div");
   e.style.position = "absolute", e.style.left = "-999px", e.style.bottom = "-999px", e.innerHTML = o, document.body.appendChild(e);
   const t = window.getSelection(), n = document.createRange();
@@ -6074,7 +6095,7 @@ function Tc(o) {
     throw new Error("Cannot copy text to clipboard");
   t.removeAllRanges(), t.addRange(n), document.execCommand("copy"), document.body.removeChild(e);
 }
-function Sc(o, e, t) {
+function Nc(o, e, t) {
   let n;
   return (...r) => {
     const i = this, s = () => {
@@ -6086,28 +6107,28 @@ function Sc(o, e, t) {
 function ye(o) {
   return Object.prototype.toString.call(o).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 }
-function Bc(o) {
+function jc(o) {
   return ye(o) === "boolean";
 }
-function rs(o) {
+function as(o) {
   return ye(o) === "function" || ye(o) === "asyncfunction";
 }
-function Oc(o) {
-  return rs(o) && /^\s*class\s+/.test(o.toString());
+function Dc(o) {
+  return as(o) && /^\s*class\s+/.test(o.toString());
 }
-function _c(o) {
+function Rc(o) {
   return ye(o) === "number";
 }
 function ht(o) {
   return ye(o) === "object";
 }
-function Ic(o) {
+function $c(o) {
   return Promise.resolve(o) === o;
 }
-function Mc(o) {
+function Hc(o) {
   return ye(o) === "string";
 }
-function Lc(o) {
+function Fc(o) {
   return ye(o) === "undefined";
 }
 function yo(o, ...e) {
@@ -6119,21 +6140,21 @@ function yo(o, ...e) {
       ht(t[n]) ? (o[n] === void 0 && Object.assign(o, { [n]: {} }), yo(o[n], t[n])) : Object.assign(o, { [n]: t[n] });
   return yo(o, ...e);
 }
-function Pc(o, e, t) {
+function Uc(o, e, t) {
   const n = `«${e}» is deprecated and will be removed in the next major release. Please use the «${t}» instead.`;
   o && console.warn(n);
 }
-function Ac(o) {
+function zc(o) {
   try {
     return new URL(o).href;
   } catch {
   }
   return o.substring(0, 2) === "//" ? window.location.protocol + o : window.location.origin + o;
 }
-function Nc(o) {
+function Wc(o) {
   return o > 47 && o < 58 || o === 32 || o === 13 || o === 229 || o > 64 && o < 91 || o > 95 && o < 112 || o > 185 && o < 193 || o > 218 && o < 223;
 }
-const jc = {
+const qc = {
   BACKSPACE: 8,
   TAB: 9,
   ENTER: 13,
@@ -6149,14 +6170,14 @@ const jc = {
   DELETE: 46,
   META: 91,
   SLASH: 191
-}, Dc = {
+}, Kc = {
   LEFT: 0,
   WHEEL: 1,
   RIGHT: 2,
   BACKWARD: 3,
   FORWARD: 4
 };
-let Rc = class {
+let Yc = class {
   constructor() {
     this.completed = Promise.resolve();
   }
@@ -6170,7 +6191,7 @@ let Rc = class {
     });
   }
 };
-function $c(o, e, t = void 0) {
+function Vc(o, e, t = void 0) {
   let n, r, i, s = null, a = 0;
   t || (t = {});
   const l = function() {
@@ -6183,43 +6204,43 @@ function $c(o, e, t = void 0) {
     return n = this, r = arguments, d <= 0 || d > e ? (s && (clearTimeout(s), s = null), a = c, i = o.apply(n, r), s === null && (n = r = null)) : !s && t.trailing !== !1 && (s = setTimeout(l, d)), i;
   };
 }
-const Hc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const Xc = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  PromiseQueue: Rc,
-  beautifyShortcut: Ec,
-  cacheable: kc,
-  capitalize: Cc,
-  copyTextToClipboard: Tc,
-  debounce: Sc,
+  PromiseQueue: Yc,
+  beautifyShortcut: Lc,
+  cacheable: Oc,
+  capitalize: Pc,
+  copyTextToClipboard: Ac,
+  debounce: Nc,
   deepMerge: yo,
-  deprecationAssert: Pc,
-  getUserOS: ns,
-  getValidUrl: Ac,
-  isBoolean: Bc,
-  isClass: Oc,
-  isEmpty: wc,
-  isFunction: rs,
-  isIosDevice: xc,
-  isNumber: _c,
+  deprecationAssert: Uc,
+  getUserOS: ss,
+  getValidUrl: zc,
+  isBoolean: jc,
+  isClass: Dc,
+  isEmpty: Ic,
+  isFunction: as,
+  isIosDevice: Mc,
+  isNumber: Rc,
   isObject: ht,
-  isPrintableKey: Nc,
-  isPromise: Ic,
-  isString: Mc,
-  isUndefined: Lc,
-  keyCodes: jc,
-  mouseButtons: Dc,
+  isPrintableKey: Wc,
+  isPromise: $c,
+  isString: Hc,
+  isUndefined: Fc,
+  keyCodes: qc,
+  mouseButtons: Kc,
   notEmpty: Wo,
-  throttle: $c,
+  throttle: Vc,
   typeOf: ye
-}, Symbol.toStringTag, { value: "Module" })), qo = /* @__PURE__ */ Ba(Hc);
+}, Symbol.toStringTag, { value: "Module" })), qo = /* @__PURE__ */ ja(Xc);
 Object.defineProperty(zo, "__esModule", { value: !0 });
-zo.containsOnlyInlineElements = zc;
-var Fc = qo, Uc = Do;
-function zc(o) {
+zo.containsOnlyInlineElements = Qc;
+var Gc = qo, Zc = Do;
+function Qc(o) {
   var e;
-  (0, Fc.isString)(o) ? (e = document.createElement("div"), e.innerHTML = o) : e = o;
+  (0, Gc.isString)(o) ? (e = document.createElement("div"), e.innerHTML = o) : e = o;
   var t = function(n) {
-    return !(0, Uc.blockElements)().includes(n.tagName.toLowerCase()) && Array.from(n.children).every(t);
+    return !(0, Zc.blockElements)().includes(n.tagName.toLowerCase()) && Array.from(n.children).every(t);
   };
   return Array.from(e.children).every(t);
 }
@@ -6230,10 +6251,10 @@ function zc(o) {
     return e.containsOnlyInlineElements;
   } });
 })(Lt);
-var is = {}, Ko = {}, Pt = {}, Yo = {};
+var ls = {}, Ko = {}, Pt = {}, Yo = {};
 Object.defineProperty(Yo, "__esModule", { value: !0 });
-Yo.make = Wc;
-function Wc(o, e, t) {
+Yo.make = Jc;
+function Jc(o, e, t) {
   var n;
   e === void 0 && (e = null), t === void 0 && (t = {});
   var r = document.createElement(o);
@@ -6256,10 +6277,10 @@ function Wc(o, e, t) {
   } });
 })(Pt);
 Object.defineProperty(Ko, "__esModule", { value: !0 });
-Ko.fragmentToString = Kc;
-var qc = Pt;
-function Kc(o) {
-  var e = (0, qc.make)("div");
+Ko.fragmentToString = td;
+var ed = Pt;
+function td(o) {
+  var e = (0, ed.make)("div");
   return e.appendChild(o), e.innerHTML;
 }
 (function(o) {
@@ -6268,14 +6289,14 @@ function Kc(o) {
   Object.defineProperty(o, "fragmentToString", { enumerable: !0, get: function() {
     return e.fragmentToString;
   } });
-})(is);
-var ss = {}, Vo = {};
+})(ls);
+var cs = {}, Vo = {};
 Object.defineProperty(Vo, "__esModule", { value: !0 });
-Vo.getContentLength = Vc;
-var Yc = Ie;
-function Vc(o) {
+Vo.getContentLength = nd;
+var od = Ie;
+function nd(o) {
   var e, t;
-  return (0, Yc.isNativeInput)(o) ? o.value.length : o.nodeType === Node.TEXT_NODE ? o.length : (t = (e = o.textContent) === null || e === void 0 ? void 0 : e.length) !== null && t !== void 0 ? t : 0;
+  return (0, od.isNativeInput)(o) ? o.value.length : o.nodeType === Node.TEXT_NODE ? o.length : (t = (e = o.textContent) === null || e === void 0 ? void 0 : e.length) !== null && t !== void 0 ? t : 0;
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.getContentLength = void 0;
@@ -6283,19 +6304,19 @@ function Vc(o) {
   Object.defineProperty(o, "getContentLength", { enumerable: !0, get: function() {
     return e.getContentLength;
   } });
-})(ss);
-var Xo = {}, Go = {}, oi = Ge && Ge.__spreadArray || function(o, e, t) {
+})(cs);
+var Xo = {}, Go = {}, ri = Ge && Ge.__spreadArray || function(o, e, t) {
   if (t || arguments.length === 2)
     for (var n = 0, r = e.length, i; n < r; n++)
       (i || !(n in e)) && (i || (i = Array.prototype.slice.call(e, 0, n)), i[n] = e[n]);
   return o.concat(i || Array.prototype.slice.call(e));
 };
 Object.defineProperty(Go, "__esModule", { value: !0 });
-Go.getDeepestBlockElements = as;
-var Xc = Lt;
-function as(o) {
-  return (0, Xc.containsOnlyInlineElements)(o) ? [o] : Array.from(o.children).reduce(function(e, t) {
-    return oi(oi([], e, !0), as(t), !0);
+Go.getDeepestBlockElements = ds;
+var rd = Lt;
+function ds(o) {
+  return (0, rd.containsOnlyInlineElements)(o) ? [o] : Array.from(o.children).reduce(function(e, t) {
+    return ri(ri([], e, !0), ds(t), !0);
   }, []);
 }
 (function(o) {
@@ -6305,10 +6326,10 @@ function as(o) {
     return e.getDeepestBlockElements;
   } });
 })(Xo);
-var ls = {}, Zo = {}, At = {}, Qo = {};
+var us = {}, Zo = {}, At = {}, Qo = {};
 Object.defineProperty(Qo, "__esModule", { value: !0 });
-Qo.isLineBreakTag = Gc;
-function Gc(o) {
+Qo.isLineBreakTag = id;
+function id(o) {
   return [
     "BR",
     "WBR"
@@ -6323,8 +6344,8 @@ function Gc(o) {
 })(At);
 var Nt = {}, Jo = {};
 Object.defineProperty(Jo, "__esModule", { value: !0 });
-Jo.isSingleTag = Zc;
-function Zc(o) {
+Jo.isSingleTag = sd;
+function sd(o) {
   return [
     "AREA",
     "BASE",
@@ -6352,21 +6373,21 @@ function Zc(o) {
   } });
 })(Nt);
 Object.defineProperty(Zo, "__esModule", { value: !0 });
-Zo.getDeepestNode = cs;
-var Qc = Ie, Jc = At, ed = Nt;
-function cs(o, e) {
+Zo.getDeepestNode = hs;
+var ad = Ie, ld = At, cd = Nt;
+function hs(o, e) {
   e === void 0 && (e = !1);
   var t = e ? "lastChild" : "firstChild", n = e ? "previousSibling" : "nextSibling";
   if (o.nodeType === Node.ELEMENT_NODE && o[t]) {
     var r = o[t];
-    if ((0, ed.isSingleTag)(r) && !(0, Qc.isNativeInput)(r) && !(0, Jc.isLineBreakTag)(r))
+    if ((0, cd.isSingleTag)(r) && !(0, ad.isNativeInput)(r) && !(0, ld.isLineBreakTag)(r))
       if (r[n])
         r = r[n];
       else if (r.parentNode !== null && r.parentNode[n])
         r = r.parentNode[n];
       else
         return r.parentNode;
-    return cs(r, e);
+    return hs(r, e);
   }
   return o;
 }
@@ -6376,19 +6397,19 @@ function cs(o, e) {
   Object.defineProperty(o, "getDeepestNode", { enumerable: !0, get: function() {
     return e.getDeepestNode;
   } });
-})(ls);
-var ds = {}, en = {}, nt = Ge && Ge.__spreadArray || function(o, e, t) {
+})(us);
+var ps = {}, en = {}, nt = Ge && Ge.__spreadArray || function(o, e, t) {
   if (t || arguments.length === 2)
     for (var n = 0, r = e.length, i; n < r; n++)
       (i || !(n in e)) && (i || (i = Array.prototype.slice.call(e, 0, n)), i[n] = e[n]);
   return o.concat(i || Array.prototype.slice.call(e));
 };
 Object.defineProperty(en, "__esModule", { value: !0 });
-en.findAllInputs = id;
-var td = Lt, od = Xo, nd = Po, rd = Ie;
-function id(o) {
-  return Array.from(o.querySelectorAll((0, nd.allInputsSelector)())).reduce(function(e, t) {
-    return (0, rd.isNativeInput)(t) || (0, td.containsOnlyInlineElements)(t) ? nt(nt([], e, !0), [t], !1) : nt(nt([], e, !0), (0, od.getDeepestBlockElements)(t), !0);
+en.findAllInputs = fd;
+var dd = Lt, ud = Xo, hd = Po, pd = Ie;
+function fd(o) {
+  return Array.from(o.querySelectorAll((0, hd.allInputsSelector)())).reduce(function(e, t) {
+    return (0, pd.isNativeInput)(t) || (0, dd.containsOnlyInlineElements)(t) ? nt(nt([], e, !0), [t], !1) : nt(nt([], e, !0), (0, ud.getDeepestBlockElements)(t), !0);
   }, []);
 }
 (function(o) {
@@ -6397,11 +6418,11 @@ function id(o) {
   Object.defineProperty(o, "findAllInputs", { enumerable: !0, get: function() {
     return e.findAllInputs;
   } });
-})(ds);
-var us = {}, tn = {};
+})(ps);
+var fs = {}, tn = {};
 Object.defineProperty(tn, "__esModule", { value: !0 });
-tn.isCollapsedWhitespaces = sd;
-function sd(o) {
+tn.isCollapsedWhitespaces = gd;
+function gd(o) {
   return !/[^\t\n\r ]/.test(o);
 }
 (function(o) {
@@ -6410,13 +6431,13 @@ function sd(o) {
   Object.defineProperty(o, "isCollapsedWhitespaces", { enumerable: !0, get: function() {
     return e.isCollapsedWhitespaces;
   } });
-})(us);
+})(fs);
 var on = {}, nn = {};
 Object.defineProperty(nn, "__esModule", { value: !0 });
-nn.isElement = ld;
-var ad = qo;
-function ld(o) {
-  return (0, ad.isNumber)(o) ? !1 : !!o && !!o.nodeType && o.nodeType === Node.ELEMENT_NODE;
+nn.isElement = bd;
+var md = qo;
+function bd(o) {
+  return (0, md.isNumber)(o) ? !1 : !!o && !!o.nodeType && o.nodeType === Node.ELEMENT_NODE;
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isElement = void 0;
@@ -6425,10 +6446,10 @@ function ld(o) {
     return e.isElement;
   } });
 })(on);
-var hs = {}, rn = {}, sn = {}, an = {};
+var gs = {}, rn = {}, sn = {}, an = {};
 Object.defineProperty(an, "__esModule", { value: !0 });
-an.isLeaf = cd;
-function cd(o) {
+an.isLeaf = vd;
+function vd(o) {
   return o === null ? !1 : o.childNodes.length === 0;
 }
 (function(o) {
@@ -6440,11 +6461,11 @@ function cd(o) {
 })(sn);
 var ln = {}, cn = {};
 Object.defineProperty(cn, "__esModule", { value: !0 });
-cn.isNodeEmpty = fd;
-var dd = At, ud = on, hd = Ie, pd = Nt;
-function fd(o, e) {
+cn.isNodeEmpty = Ed;
+var yd = At, kd = on, wd = Ie, xd = Nt;
+function Ed(o, e) {
   var t = "";
-  return (0, pd.isSingleTag)(o) && !(0, dd.isLineBreakTag)(o) ? !1 : ((0, ud.isElement)(o) && (0, hd.isNativeInput)(o) ? t = o.value : o.textContent !== null && (t = o.textContent.replace("​", "")), e !== void 0 && (t = t.replace(new RegExp(e, "g"), "")), t.trim().length === 0);
+  return (0, xd.isSingleTag)(o) && !(0, yd.isLineBreakTag)(o) ? !1 : ((0, kd.isElement)(o) && (0, wd.isNativeInput)(o) ? t = o.value : o.textContent !== null && (t = o.textContent.replace("​", "")), e !== void 0 && (t = t.replace(new RegExp(e, "g"), "")), t.trim().length === 0);
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isNodeEmpty = void 0;
@@ -6454,14 +6475,14 @@ function fd(o, e) {
   } });
 })(ln);
 Object.defineProperty(rn, "__esModule", { value: !0 });
-rn.isEmpty = bd;
-var gd = sn, md = ln;
-function bd(o, e) {
+rn.isEmpty = Td;
+var Cd = sn, Sd = ln;
+function Td(o, e) {
   o.normalize();
   for (var t = [o]; t.length > 0; ) {
     var n = t.shift();
     if (n) {
-      if (o = n, (0, gd.isLeaf)(o) && !(0, md.isNodeEmpty)(o, e))
+      if (o = n, (0, Cd.isLeaf)(o) && !(0, Sd.isNodeEmpty)(o, e))
         return !1;
       t.push.apply(t, Array.from(o.childNodes));
     }
@@ -6474,13 +6495,13 @@ function bd(o, e) {
   Object.defineProperty(o, "isEmpty", { enumerable: !0, get: function() {
     return e.isEmpty;
   } });
-})(hs);
-var ps = {}, dn = {};
+})(gs);
+var ms = {}, dn = {};
 Object.defineProperty(dn, "__esModule", { value: !0 });
-dn.isFragment = yd;
-var vd = qo;
-function yd(o) {
-  return (0, vd.isNumber)(o) ? !1 : !!o && !!o.nodeType && o.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
+dn.isFragment = _d;
+var Bd = qo;
+function _d(o) {
+  return (0, Bd.isNumber)(o) ? !1 : !!o && !!o.nodeType && o.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isFragment = void 0;
@@ -6488,13 +6509,13 @@ function yd(o) {
   Object.defineProperty(o, "isFragment", { enumerable: !0, get: function() {
     return e.isFragment;
   } });
-})(ps);
-var fs = {}, un = {};
+})(ms);
+var bs = {}, un = {};
 Object.defineProperty(un, "__esModule", { value: !0 });
-un.isHTMLString = wd;
-var kd = Pt;
-function wd(o) {
-  var e = (0, kd.make)("div");
+un.isHTMLString = Id;
+var Od = Pt;
+function Id(o) {
+  var e = (0, Od.make)("div");
   return e.innerHTML = o, e.childElementCount > 0;
 }
 (function(o) {
@@ -6503,11 +6524,11 @@ function wd(o) {
   Object.defineProperty(o, "isHTMLString", { enumerable: !0, get: function() {
     return e.isHTMLString;
   } });
-})(fs);
-var gs = {}, hn = {};
+})(bs);
+var vs = {}, hn = {};
 Object.defineProperty(hn, "__esModule", { value: !0 });
-hn.offset = xd;
-function xd(o) {
+hn.offset = Md;
+function Md(o) {
   var e = o.getBoundingClientRect(), t = window.pageXOffset || document.documentElement.scrollLeft, n = window.pageYOffset || document.documentElement.scrollTop, r = e.top + n, i = e.left + t;
   return {
     top: r,
@@ -6522,11 +6543,11 @@ function xd(o) {
   Object.defineProperty(o, "offset", { enumerable: !0, get: function() {
     return e.offset;
   } });
-})(gs);
-var ms = {}, pn = {};
+})(vs);
+var ys = {}, pn = {};
 Object.defineProperty(pn, "__esModule", { value: !0 });
-pn.prepend = Ed;
-function Ed(o, e) {
+pn.prepend = Ld;
+function Ld(o, e) {
   Array.isArray(e) ? (e = e.reverse(), e.forEach(function(t) {
     return o.prepend(t);
   })) : o.prepend(e);
@@ -6537,7 +6558,7 @@ function Ed(o, e) {
   Object.defineProperty(o, "prepend", { enumerable: !0, get: function() {
     return e.prepend;
   } });
-})(ms);
+})(ys);
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.prepend = o.offset = o.make = o.isLineBreakTag = o.isSingleTag = o.isNodeEmpty = o.isLeaf = o.isHTMLString = o.isFragment = o.isEmpty = o.isElement = o.isContentEditable = o.isCollapsedWhitespaces = o.findAllInputs = o.isNativeInput = o.allInputsSelector = o.getDeepestNode = o.getDeepestBlockElements = o.getContentLength = o.fragmentToString = o.containsOnlyInlineElements = o.canSetCaret = o.calculateBaseline = o.blockElements = o.append = void 0;
   var e = Po;
@@ -6548,7 +6569,7 @@ function Ed(o, e) {
   Object.defineProperty(o, "isNativeInput", { enumerable: !0, get: function() {
     return t.isNativeInput;
   } });
-  var n = es;
+  var n = ns;
   Object.defineProperty(o, "append", { enumerable: !0, get: function() {
     return n.append;
   } });
@@ -6556,11 +6577,11 @@ function Ed(o, e) {
   Object.defineProperty(o, "blockElements", { enumerable: !0, get: function() {
     return r.blockElements;
   } });
-  var i = ts;
+  var i = rs;
   Object.defineProperty(o, "calculateBaseline", { enumerable: !0, get: function() {
     return i.calculateBaseline;
   } });
-  var s = os;
+  var s = is;
   Object.defineProperty(o, "canSetCaret", { enumerable: !0, get: function() {
     return s.canSetCaret;
   } });
@@ -6568,11 +6589,11 @@ function Ed(o, e) {
   Object.defineProperty(o, "containsOnlyInlineElements", { enumerable: !0, get: function() {
     return a.containsOnlyInlineElements;
   } });
-  var l = is;
+  var l = ls;
   Object.defineProperty(o, "fragmentToString", { enumerable: !0, get: function() {
     return l.fragmentToString;
   } });
-  var c = ss;
+  var c = cs;
   Object.defineProperty(o, "getContentLength", { enumerable: !0, get: function() {
     return c.getContentLength;
   } });
@@ -6580,15 +6601,15 @@ function Ed(o, e) {
   Object.defineProperty(o, "getDeepestBlockElements", { enumerable: !0, get: function() {
     return d.getDeepestBlockElements;
   } });
-  var u = ls;
+  var u = us;
   Object.defineProperty(o, "getDeepestNode", { enumerable: !0, get: function() {
     return u.getDeepestNode;
   } });
-  var h = ds;
+  var h = ps;
   Object.defineProperty(o, "findAllInputs", { enumerable: !0, get: function() {
     return h.findAllInputs;
   } });
-  var g = us;
+  var g = fs;
   Object.defineProperty(o, "isCollapsedWhitespaces", { enumerable: !0, get: function() {
     return g.isCollapsedWhitespaces;
   } });
@@ -6600,15 +6621,15 @@ function Ed(o, e) {
   Object.defineProperty(o, "isElement", { enumerable: !0, get: function() {
     return v.isElement;
   } });
-  var B = hs;
+  var B = gs;
   Object.defineProperty(o, "isEmpty", { enumerable: !0, get: function() {
     return B.isEmpty;
   } });
-  var O = ps;
+  var _ = ms;
   Object.defineProperty(o, "isFragment", { enumerable: !0, get: function() {
-    return O.isFragment;
+    return _.isFragment;
   } });
-  var k = fs;
+  var k = bs;
   Object.defineProperty(o, "isHTMLString", { enumerable: !0, get: function() {
     return k.isHTMLString;
   } });
@@ -6632,26 +6653,26 @@ function Ed(o, e) {
   Object.defineProperty(o, "make", { enumerable: !0, get: function() {
     return G.make;
   } });
-  var y = gs;
+  var y = vs;
   Object.defineProperty(o, "offset", { enumerable: !0, get: function() {
     return y.offset;
   } });
-  var m = ms;
+  var m = ys;
   Object.defineProperty(o, "prepend", { enumerable: !0, get: function() {
     return m.prepend;
   } });
-})(_e);
+})(Oe);
 var jt = {};
 Object.defineProperty(jt, "__esModule", { value: !0 });
-jt.getContenteditableSlice = Td;
-var Cd = _e;
-function Td(o, e, t, n, r) {
+jt.getContenteditableSlice = Ad;
+var Pd = Oe;
+function Ad(o, e, t, n, r) {
   var i;
   r === void 0 && (r = !1);
   var s = document.createRange();
   if (n === "left" ? (s.setStart(o, 0), s.setEnd(e, t)) : (s.setStart(e, t), s.setEnd(o, o.childNodes.length)), r === !0) {
     var a = s.extractContents();
-    return (0, Cd.fragmentToString)(a);
+    return (0, Pd.fragmentToString)(a);
   }
   var l = s.cloneContents(), c = document.createElement("div");
   c.appendChild(l);
@@ -6659,11 +6680,11 @@ function Td(o, e, t, n, r) {
   return d;
 }
 Object.defineProperty(Mt, "__esModule", { value: !0 });
-Mt.checkContenteditableSliceForEmptiness = Od;
-var Sd = _e, Bd = jt;
-function Od(o, e, t, n) {
-  var r = (0, Bd.getContenteditableSlice)(o, e, t, n);
-  return (0, Sd.isCollapsedWhitespaces)(r);
+Mt.checkContenteditableSliceForEmptiness = Dd;
+var Nd = Oe, jd = jt;
+function Dd(o, e, t, n) {
+  var r = (0, jd.getContenteditableSlice)(o, e, t, n);
+  return (0, Nd.isCollapsedWhitespaces)(r);
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.checkContenteditableSliceForEmptiness = void 0;
@@ -6672,21 +6693,21 @@ function Od(o, e, t, n) {
     return e.checkContenteditableSliceForEmptiness;
   } });
 })(Lo);
-var bs = {};
+var ks = {};
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.getContenteditableSlice = void 0;
   var e = jt;
   Object.defineProperty(o, "getContenteditableSlice", { enumerable: !0, get: function() {
     return e.getContenteditableSlice;
   } });
-})(bs);
-var vs = {}, fn = {};
+})(ks);
+var ws = {}, fn = {};
 Object.defineProperty(fn, "__esModule", { value: !0 });
-fn.focus = Id;
-var _d = _e;
-function Id(o, e) {
+fn.focus = $d;
+var Rd = Oe;
+function $d(o, e) {
   var t, n;
-  if (e === void 0 && (e = !0), (0, _d.isNativeInput)(o)) {
+  if (e === void 0 && (e = !0), (0, Rd.isNativeInput)(o)) {
     o.focus();
     var r = e ? 0 : o.value.length;
     o.setSelectionRange(r, r);
@@ -6719,11 +6740,11 @@ function Id(o, e) {
   Object.defineProperty(o, "focus", { enumerable: !0, get: function() {
     return e.focus;
   } });
-})(vs);
+})(ws);
 var gn = {}, Dt = {};
 Object.defineProperty(Dt, "__esModule", { value: !0 });
-Dt.getCaretNodeAndOffset = Md;
-function Md() {
+Dt.getCaretNodeAndOffset = Hd;
+function Hd() {
   var o = window.getSelection();
   if (o === null)
     return [null, 0];
@@ -6737,10 +6758,10 @@ function Md() {
     return e.getCaretNodeAndOffset;
   } });
 })(gn);
-var ys = {}, Rt = {};
+var xs = {}, Rt = {};
 Object.defineProperty(Rt, "__esModule", { value: !0 });
-Rt.getRange = Ld;
-function Ld() {
+Rt.getRange = Fd;
+function Fd() {
   var o = window.getSelection();
   return o && o.rangeCount ? o.getRangeAt(0) : null;
 }
@@ -6750,19 +6771,19 @@ function Ld() {
   Object.defineProperty(o, "getRange", { enumerable: !0, get: function() {
     return e.getRange;
   } });
-})(ys);
-var ks = {}, mn = {};
+})(xs);
+var Es = {}, mn = {};
 Object.defineProperty(mn, "__esModule", { value: !0 });
-mn.isCaretAtEndOfInput = Nd;
-var ni = _e, Pd = gn, Ad = Lo;
-function Nd(o) {
-  var e = (0, ni.getDeepestNode)(o, !0);
+mn.isCaretAtEndOfInput = Wd;
+var ii = Oe, Ud = gn, zd = Lo;
+function Wd(o) {
+  var e = (0, ii.getDeepestNode)(o, !0);
   if (e === null)
     return !0;
-  if ((0, ni.isNativeInput)(e))
+  if ((0, ii.isNativeInput)(e))
     return e.selectionEnd === e.value.length;
-  var t = (0, Pd.getCaretNodeAndOffset)(), n = t[0], r = t[1];
-  return n === null ? !1 : (0, Ad.checkContenteditableSliceForEmptiness)(o, n, r, "right");
+  var t = (0, Ud.getCaretNodeAndOffset)(), n = t[0], r = t[1];
+  return n === null ? !1 : (0, zd.checkContenteditableSliceForEmptiness)(o, n, r, "right");
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isCaretAtEndOfInput = void 0;
@@ -6770,12 +6791,12 @@ function Nd(o) {
   Object.defineProperty(o, "isCaretAtEndOfInput", { enumerable: !0, get: function() {
     return e.isCaretAtEndOfInput;
   } });
-})(ks);
-var ws = {}, bn = {};
+})(Es);
+var Cs = {}, bn = {};
 Object.defineProperty(bn, "__esModule", { value: !0 });
-bn.isCaretAtStartOfInput = Rd;
-var rt = _e, jd = Dt, Dd = Mt;
-function Rd(o) {
+bn.isCaretAtStartOfInput = Yd;
+var rt = Oe, qd = Dt, Kd = Mt;
+function Yd(o) {
   var e = (0, rt.getDeepestNode)(o);
   if (e === null || (0, rt.isEmpty)(o))
     return !0;
@@ -6783,8 +6804,8 @@ function Rd(o) {
     return e.selectionEnd === 0;
   if ((0, rt.isEmpty)(o))
     return !0;
-  var t = (0, jd.getCaretNodeAndOffset)(), n = t[0], r = t[1];
-  return n === null ? !1 : (0, Dd.checkContenteditableSliceForEmptiness)(o, n, r, "left");
+  var t = (0, qd.getCaretNodeAndOffset)(), n = t[0], r = t[1];
+  return n === null ? !1 : (0, Kd.checkContenteditableSliceForEmptiness)(o, n, r, "left");
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isCaretAtStartOfInput = void 0;
@@ -6792,13 +6813,13 @@ function Rd(o) {
   Object.defineProperty(o, "isCaretAtStartOfInput", { enumerable: !0, get: function() {
     return e.isCaretAtStartOfInput;
   } });
-})(ws);
-var xs = {}, vn = {};
+})(Cs);
+var Ss = {}, vn = {};
 Object.defineProperty(vn, "__esModule", { value: !0 });
-vn.save = Fd;
-var $d = _e, Hd = Rt;
-function Fd() {
-  var o = (0, Hd.getRange)(), e = (0, $d.make)("span");
+vn.save = Gd;
+var Vd = Oe, Xd = Rt;
+function Gd() {
+  var o = (0, Xd.getRange)(), e = (0, Vd.make)("span");
   if (e.id = "cursor", e.hidden = !0, !!o)
     return o.insertNode(e), function() {
       var t = window.getSelection();
@@ -6813,18 +6834,18 @@ function Fd() {
   Object.defineProperty(o, "save", { enumerable: !0, get: function() {
     return e.save;
   } });
-})(xs);
+})(Ss);
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.save = o.isCaretAtStartOfInput = o.isCaretAtEndOfInput = o.getRange = o.getCaretNodeAndOffset = o.focus = o.getContenteditableSlice = o.checkContenteditableSliceForEmptiness = void 0;
   var e = Lo;
   Object.defineProperty(o, "checkContenteditableSliceForEmptiness", { enumerable: !0, get: function() {
     return e.checkContenteditableSliceForEmptiness;
   } });
-  var t = bs;
+  var t = ks;
   Object.defineProperty(o, "getContenteditableSlice", { enumerable: !0, get: function() {
     return t.getContenteditableSlice;
   } });
-  var n = vs;
+  var n = ws;
   Object.defineProperty(o, "focus", { enumerable: !0, get: function() {
     return n.focus;
   } });
@@ -6832,24 +6853,24 @@ function Fd() {
   Object.defineProperty(o, "getCaretNodeAndOffset", { enumerable: !0, get: function() {
     return r.getCaretNodeAndOffset;
   } });
-  var i = ys;
+  var i = xs;
   Object.defineProperty(o, "getRange", { enumerable: !0, get: function() {
     return i.getRange;
   } });
-  var s = ks;
+  var s = Es;
   Object.defineProperty(o, "isCaretAtEndOfInput", { enumerable: !0, get: function() {
     return s.isCaretAtEndOfInput;
   } });
-  var a = ws;
+  var a = Cs;
   Object.defineProperty(o, "isCaretAtStartOfInput", { enumerable: !0, get: function() {
     return a.isCaretAtStartOfInput;
   } });
-  var l = xs;
+  var l = Ss;
   Object.defineProperty(o, "save", { enumerable: !0, get: function() {
     return l.save;
   } });
-})(Ji);
-class Ud extends _ {
+})(os);
+class Zd extends O {
   /**
    * All keydowns on Block
    *
@@ -6857,24 +6878,24 @@ class Ud extends _ {
    */
   keydown(e) {
     switch (this.beforeKeydownProcessing(e), e.keyCode) {
-      case S.BACKSPACE:
+      case T.BACKSPACE:
         this.backspace(e);
         break;
-      case S.DELETE:
+      case T.DELETE:
         this.delete(e);
         break;
-      case S.ENTER:
+      case T.ENTER:
         this.enter(e);
         break;
-      case S.DOWN:
-      case S.RIGHT:
+      case T.DOWN:
+      case T.RIGHT:
         this.arrowRightAndDown(e);
         break;
-      case S.UP:
-      case S.LEFT:
+      case T.UP:
+      case T.LEFT:
         this.arrowLeftAndUp(e);
         break;
-      case S.TAB:
+      case T.TAB:
         this.tabPressed(e);
         break;
     }
@@ -6886,7 +6907,7 @@ class Ud extends _ {
    * @param {KeyboardEvent} event - keydown
    */
   beforeKeydownProcessing(e) {
-    this.needToolbarClosing(e) && ki(e.keyCode) && (this.Editor.Toolbar.close(), e.ctrlKey || e.metaKey || e.altKey || e.shiftKey || this.Editor.BlockSelection.clearSelection(e));
+    this.needToolbarClosing(e) && Ei(e.keyCode) && (this.Editor.Toolbar.close(), e.ctrlKey || e.metaKey || e.altKey || e.shiftKey || this.Editor.BlockSelection.clearSelection(e));
   }
   /**
    * Key up on Block:
@@ -6996,7 +7017,7 @@ class Ud extends _ {
           n.setToBlock(s, n.positions.END);
           return;
         }
-        Zr(i, r) ? this.mergeBlocks(i, r) : n.setToBlock(i, n.positions.END);
+        Jr(i, r) ? this.mergeBlocks(i, r) : n.setToBlock(i, n.positions.END);
       }
     }
   }
@@ -7023,7 +7044,7 @@ class Ud extends _ {
           t.removeBlock(r), n.setToBlock(i, n.positions.START);
           return;
         }
-        Zr(r, i) ? this.mergeBlocks(r, i) : n.setToBlock(i, n.positions.START);
+        Jr(r, i) ? this.mergeBlocks(r, i) : n.setToBlock(i, n.positions.START);
       }
     }
   }
@@ -7035,7 +7056,7 @@ class Ud extends _ {
    */
   mergeBlocks(e, t) {
     const { BlockManager: n, Toolbar: r } = this.Editor;
-    e.lastInput !== void 0 && (Ji.focus(e.lastInput, !1), n.mergeBlocks(e, t).then(() => {
+    e.lastInput !== void 0 && (os.focus(e.lastInput, !1), n.mergeBlocks(e, t).then(() => {
       r.close();
     }));
   }
@@ -7045,16 +7066,16 @@ class Ud extends _ {
    * @param {KeyboardEvent} event - keyboard event
    */
   arrowRightAndDown(e) {
-    const t = Ct.usedKeys.includes(e.keyCode) && (!e.shiftKey || e.keyCode === S.TAB);
+    const t = Ct.usedKeys.includes(e.keyCode) && (!e.shiftKey || e.keyCode === T.TAB);
     if (this.Editor.UI.someToolbarOpened && t)
       return;
     this.Editor.Toolbar.close();
     const { currentBlock: n } = this.Editor.BlockManager, r = (n?.currentInput !== void 0 ? ut(n.currentInput) : void 0) || this.Editor.BlockSelection.anyBlockSelected;
-    if (e.shiftKey && e.keyCode === S.DOWN && r) {
+    if (e.shiftKey && e.keyCode === T.DOWN && r) {
       this.Editor.CrossBlockSelection.toggleBlockSelectedState();
       return;
     }
-    if (e.keyCode === S.DOWN || e.keyCode === S.RIGHT && !this.isRtl ? this.Editor.Caret.navigateNext() : this.Editor.Caret.navigatePrevious()) {
+    if (e.keyCode === T.DOWN || e.keyCode === T.RIGHT && !this.isRtl ? this.Editor.Caret.navigateNext() : this.Editor.Caret.navigatePrevious()) {
       e.preventDefault();
       return;
     }
@@ -7069,17 +7090,17 @@ class Ud extends _ {
    */
   arrowLeftAndUp(e) {
     if (this.Editor.UI.someToolbarOpened) {
-      if (Ct.usedKeys.includes(e.keyCode) && (!e.shiftKey || e.keyCode === S.TAB))
+      if (Ct.usedKeys.includes(e.keyCode) && (!e.shiftKey || e.keyCode === T.TAB))
         return;
       this.Editor.UI.closeAllToolbars();
     }
     this.Editor.Toolbar.close();
     const { currentBlock: t } = this.Editor.BlockManager, n = (t?.currentInput !== void 0 ? dt(t.currentInput) : void 0) || this.Editor.BlockSelection.anyBlockSelected;
-    if (e.shiftKey && e.keyCode === S.UP && n) {
+    if (e.shiftKey && e.keyCode === T.UP && n) {
       this.Editor.CrossBlockSelection.toggleBlockSelectedState(!1);
       return;
     }
-    if (e.keyCode === S.UP || e.keyCode === S.LEFT && !this.isRtl ? this.Editor.Caret.navigatePrevious() : this.Editor.Caret.navigateNext()) {
+    if (e.keyCode === T.UP || e.keyCode === T.LEFT && !this.isRtl ? this.Editor.Caret.navigatePrevious() : this.Editor.Caret.navigateNext()) {
       e.preventDefault();
       return;
     }
@@ -7093,7 +7114,7 @@ class Ud extends _ {
    * @param {KeyboardEvent} event - keyboard event
    */
   needToolbarClosing(e) {
-    const t = e.keyCode === S.ENTER && this.Editor.Toolbar.toolbox.opened, n = e.keyCode === S.ENTER && this.Editor.BlockSettings.opened, r = e.keyCode === S.ENTER && this.Editor.InlineToolbar.opened, i = e.keyCode === S.TAB;
+    const t = e.keyCode === T.ENTER && this.Editor.Toolbar.toolbox.opened, n = e.keyCode === T.ENTER && this.Editor.BlockSettings.opened, r = e.keyCode === T.ENTER && this.Editor.InlineToolbar.opened, i = e.keyCode === T.TAB;
     return !(e.shiftKey || i || t || n || r);
   }
   /**
@@ -7139,7 +7160,7 @@ let ro = class {
    * @returns {HTMLElement[]}
    */
   get nodes() {
-    return wi(this.workingArea.children);
+    return Ci(this.workingArea.children);
   }
   /**
    * Proxy trap to implement array-like setter
@@ -7317,8 +7338,8 @@ let ro = class {
     });
   }
 };
-const ri = "block-removed", ii = "block-added", zd = "block-moved", si = "block-changed";
-class Wd {
+const si = "block-removed", ai = "block-added", Qd = "block-moved", li = "block-changed";
+class Jd {
   constructor() {
     this.completed = Promise.resolve();
   }
@@ -7333,7 +7354,7 @@ class Wd {
     });
   }
 }
-class qd extends _ {
+class eu extends O {
   constructor() {
     super(...arguments), this._currentBlockIndex = -1, this._blocks = null;
   }
@@ -7518,9 +7539,9 @@ class qd extends _ {
       data: n,
       tunes: a
     });
-    return s && this.blockDidMutated(ri, this.getBlockByIndex(l), {
+    return s && this.blockDidMutated(si, this.getBlockByIndex(l), {
       index: l
-    }), this._blocks.insert(l, c, s), this.blockDidMutated(ii, c, {
+    }), this._blocks.insert(l, c, s), this.blockDidMutated(ai, c, {
       index: l
     }), i ? this.currentBlockIndex = l : l <= this.currentBlockIndex && this.currentBlockIndex++, c;
   }
@@ -7554,7 +7575,7 @@ class qd extends _ {
       data: Object.assign({}, r, t ?? {}),
       tunes: n ?? e.tunes
     }), s = this.getBlockIndex(e);
-    return this._blocks.replace(s, i), this.blockDidMutated(si, i, {
+    return this._blocks.replace(s, i), this.blockDidMutated(li, i, {
       index: s
     }), i;
   }
@@ -7606,7 +7627,7 @@ class qd extends _ {
    */
   insertDefaultBlockAtIndex(e, t = !1) {
     const n = this.composeBlock({ tool: this.config.defaultBlock });
-    return this._blocks[e] = n, this.blockDidMutated(ii, n, {
+    return this._blocks[e] = n, this.blockDidMutated(ai, n, {
       index: e
     }), t ? this.currentBlockIndex = e : e <= this.currentBlockIndex && this.currentBlockIndex++, n;
   }
@@ -7633,11 +7654,11 @@ class qd extends _ {
         console.error("Could not merge Block. Failed to extract original Block data.");
         return;
       }
-      const [i] = To([r], e.tool.sanitizeConfig);
+      const [i] = So([r], e.tool.sanitizeConfig);
       n = i;
     } else if (e.mergeable && wt(t, "export") && wt(e, "import")) {
       const r = await t.exportDataAsString(), i = se(r, e.tool.sanitizeConfig);
-      n = Qr(i, e.tool.conversionConfig);
+      n = ei(i, e.tool.conversionConfig);
     }
     n !== void 0 && (await e.mergeWith(n), this.removeBlock(t), this.currentBlockIndex = this._blocks.indexOf(e));
   }
@@ -7652,7 +7673,7 @@ class qd extends _ {
       const r = this._blocks.indexOf(e);
       if (!this.validateIndex(r))
         throw new Error("Can't find a Block to remove");
-      this._blocks.remove(r), e.destroy(), this.blockDidMutated(ri, e, {
+      this._blocks.remove(r), e.destroy(), this.blockDidMutated(si, e, {
         index: r
       }), this.currentBlockIndex >= r && this.currentBlockIndex--, this.blocks.length ? r === 0 && (this.currentBlockIndex = 0) : (this.unsetCurrentBlock(), t && this.insert()), n();
     });
@@ -7785,7 +7806,7 @@ class qd extends _ {
       L("Warning during 'move' call: indices cannot be lower than 0 or greater than the amount of blocks.", "warn");
       return;
     }
-    this._blocks.move(e, t), this.currentBlockIndex = e, this.blockDidMutated(zd, this.currentBlock, {
+    this._blocks.move(e, t), this.currentBlockIndex = e, this.blockDidMutated(Qd, this.currentBlock, {
       fromIndex: t,
       toIndex: e
     });
@@ -7808,7 +7829,7 @@ class qd extends _ {
       i,
       r.sanitizeConfig
     );
-    let a = Qr(s, r.conversionConfig, r.settings);
+    let a = ei(s, r.conversionConfig, r.settings);
     return n && (a = Object.assign(a, n)), this.replace(e, r.name, a);
   }
   /**
@@ -7826,7 +7847,7 @@ class qd extends _ {
    *                                        2) in api.blocks.clear we should add empty block
    */
   async clear(e = !1) {
-    const t = new Wd();
+    const t = new Jd();
     [...this.blocks].forEach((n) => {
       t.add(async () => {
         await this.removeBlock(n, !1);
@@ -7855,7 +7876,7 @@ class qd extends _ {
       t.dragOver(n);
     }), this.readOnlyMutableListeners.on(e.holder, "dragleave", (n) => {
       t.dragLeave(n);
-    }), e.on("didMutated", (n) => this.blockDidMutated(si, n, {
+    }), e.on("didMutated", (n) => this.blockDidMutated(li, n, {
       index: this.getBlockIndex(n)
     }));
   }
@@ -7900,12 +7921,12 @@ class qd extends _ {
         ...n
       }
     });
-    return this.eventsDispatcher.emit(Oi, {
+    return this.eventsDispatcher.emit(Mi, {
       event: r
     }), t;
   }
 }
-class Kd extends _ {
+class tu extends O {
   constructor() {
     super(...arguments), this.anyBlockSelectedCache = null, this.needToSelectAll = !1, this.nativeInputSelected = !1, this.readyToBlockSelection = !1;
   }
@@ -8024,7 +8045,7 @@ class Kd extends _ {
   clearSelection(e, t = !1) {
     const { BlockManager: n, Caret: r, RectangleSelection: i } = this.Editor;
     this.needToSelectAll = !1, this.nativeInputSelected = !1, this.readyToBlockSelection = !1;
-    const s = e && e instanceof KeyboardEvent, a = s && ki(e.keyCode);
+    const s = e && e instanceof KeyboardEvent, a = s && Ei(e.keyCode);
     if (this.anyBlockSelected && s && a && !C.isSelectionExists) {
       const l = n.removeSelectedBlocks();
       n.insertDefaultBlockAtIndex(l, !0), r.setToBlock(n.currentBlock), yt(() => {
@@ -8129,7 +8150,7 @@ class Kd extends _ {
     this.selection.save(), C.get().removeAllRanges(), this.allBlocksSelected = !0, this.Editor.InlineToolbar.close();
   }
 }
-let Yd = class ko extends _ {
+let ou = class ko extends O {
   /**
    * Allowed caret positions in input
    *
@@ -8329,7 +8350,7 @@ let Yd = class ko extends _ {
     l !== null && l.textContent !== null && a.setStart(l, l.textContent.length), r.removeAllRanges(), r.addRange(a);
   }
 };
-class Vd extends _ {
+class nu extends O {
   constructor() {
     super(...arguments), this.onMouseUp = () => {
       this.listeners.off(pe(), "mouseover", this.onMouseOver), this.listeners.off(pe(), "mouseup", this.onMouseUp);
@@ -8367,7 +8388,7 @@ class Vd extends _ {
    * @param {MouseEvent} event - mouse down event
    */
   watchSelection(e) {
-    if (e.button !== Pa.LEFT)
+    if (e.button !== Ua.LEFT)
       return;
     const { BlockManager: t } = this.Editor;
     this.firstSelectedBlock = t.getBlock(e.target), this.lastSelectedBlock = this.firstSelectedBlock, this.listeners.on(pe(), "mouseover", this.onMouseOver), this.listeners.on(pe(), "mouseup", this.onMouseUp);
@@ -8402,12 +8423,12 @@ class Vd extends _ {
     const { BlockManager: t, BlockSelection: n, Caret: r } = this.Editor, i = t.blocks.indexOf(this.firstSelectedBlock), s = t.blocks.indexOf(this.lastSelectedBlock);
     if (n.anyBlockSelected && i > -1 && s > -1 && e && e instanceof KeyboardEvent)
       switch (e.keyCode) {
-        case S.DOWN:
-        case S.RIGHT:
+        case T.DOWN:
+        case T.RIGHT:
           r.setToBlock(t.blocks[Math.max(i, s)], r.positions.END);
           break;
-        case S.UP:
-        case S.LEFT:
+        case T.UP:
+        case T.LEFT:
           r.setToBlock(t.blocks[Math.min(i, s)], r.positions.START);
           break;
         default:
@@ -8438,7 +8459,7 @@ class Vd extends _ {
     }
   }
 }
-class Xd extends _ {
+class ru extends O {
   constructor() {
     super(...arguments), this.isStartedAtEditor = !1;
   }
@@ -8511,8 +8532,8 @@ class Xd extends _ {
     e.preventDefault();
   }
 }
-const Gd = 180, Zd = 400;
-class Qd extends _ {
+const iu = 180, su = 400;
+class au extends O {
   /**
    * Prepare the module
    *
@@ -8524,13 +8545,13 @@ class Qd extends _ {
     super({
       config: e,
       eventsDispatcher: t
-    }), this.disabled = !1, this.batchingTimeout = null, this.batchingOnChangeQueue = /* @__PURE__ */ new Map(), this.batchTime = Zd, this.mutationObserver = new MutationObserver((n) => {
+    }), this.disabled = !1, this.batchingTimeout = null, this.batchingOnChangeQueue = /* @__PURE__ */ new Map(), this.batchTime = su, this.mutationObserver = new MutationObserver((n) => {
       this.redactorChanged(n);
-    }), this.eventsDispatcher.on(Oi, (n) => {
+    }), this.eventsDispatcher.on(Mi, (n) => {
       this.particularBlockChanged(n.event);
-    }), this.eventsDispatcher.on(_i, () => {
+    }), this.eventsDispatcher.on(Li, () => {
       this.disable();
-    }), this.eventsDispatcher.on(Ii, () => {
+    }), this.eventsDispatcher.on(Pi, () => {
       this.enable();
     });
   }
@@ -8576,7 +8597,7 @@ class Qd extends _ {
     });
   }
 }
-const Es = class Cs extends _ {
+const Ts = class Bs extends O {
   constructor() {
     super(...arguments), this.MIME_TYPE = "application/x-editor-js", this.toolsTags = {}, this.tagsByTool = {}, this.toolsPatterns = [], this.toolsFiles = {}, this.exceptionList = [], this.processTool = (e) => {
       try {
@@ -8722,7 +8743,7 @@ const Es = class Cs extends _ {
       return;
     const { files: t = {} } = e.pasteConfig;
     let { extensions: n, mimeTypes: r } = t;
-    !n && !r || (n && !Array.isArray(n) && (L(`«extensions» property of the onDrop config for «${e.name}» Tool should be an array`), n = []), r && !Array.isArray(r) && (L(`«mimeTypes» property of the onDrop config for «${e.name}» Tool should be an array`), r = []), r && (r = r.filter((i) => Ra(i) ? !0 : (L(`MIME type value «${i}» for the «${e.name}» Tool is not a valid MIME type`, "warn"), !1))), this.toolsFiles[e.name] = {
+    !n && !r || (n && !Array.isArray(n) && (L(`«extensions» property of the onDrop config for «${e.name}» Tool should be an array`), n = []), r && !Array.isArray(r) && (L(`«mimeTypes» property of the onDrop config for «${e.name}» Tool should be an array`), r = []), r && (r = r.filter((i) => Ya(i) ? !0 : (L(`MIME type value «${i}» for the «${e.name}» Tool is not a valid MIME type`, "warn"), !1))), this.toolsFiles[e.name] = {
       extensions: n || [],
       mimeTypes: r || []
     });
@@ -8777,7 +8798,7 @@ const Es = class Cs extends _ {
    * @param {File} file - file to process
    */
   async processFile(e) {
-    const t = Da(e), n = Object.entries(this.toolsFiles).find(([i, { mimeTypes: s, extensions: a }]) => {
+    const t = Ka(e), n = Object.entries(this.toolsFiles).find(([i, { mimeTypes: s, extensions: a }]) => {
       const [l, c] = e.type.split("/"), d = a.find((h) => h.toLowerCase() === t.toLowerCase()), u = s.find((h) => {
         const [g, p] = h.split("/");
         return g === l && (p === c || p === "*");
@@ -8885,7 +8906,7 @@ const Es = class Cs extends _ {
    */
   async processInlinePaste(e) {
     const { BlockManager: t, Caret: n } = this.Editor, { content: r } = e;
-    if (t.currentBlock && t.currentBlock.tool.isDefault && r.textContent.length < Cs.PATTERN_PROCESSING_MAX_LENGTH) {
+    if (t.currentBlock && t.currentBlock.tool.isDefault && r.textContent.length < Bs.PATTERN_PROCESSING_MAX_LENGTH) {
       const i = await this.processPattern(r.textContent);
       if (i) {
         const s = t.currentBlock && t.currentBlock.tool.isDefault && t.currentBlock.isEmpty, a = t.paste(i.tool, i.event, s);
@@ -8946,7 +8967,7 @@ const Es = class Cs extends _ {
    */
   insertEditorJSData(e) {
     const { BlockManager: t, Caret: n, Tools: r } = this.Editor;
-    To(
+    So(
       e,
       (i) => r.blockTools.get(i).sanitizeConfig
     ).forEach(({ tool: i, data: s }, a) => {
@@ -9020,9 +9041,9 @@ const Es = class Cs extends _ {
     });
   }
 };
-Es.PATTERN_PROCESSING_MAX_LENGTH = 450;
-let Jd = Es;
-class eu extends _ {
+Ts.PATTERN_PROCESSING_MAX_LENGTH = 450;
+let lu = Ts;
+class cu extends O {
   constructor() {
     super(...arguments), this.toolsDontSupportReadOnly = [], this.readOnlyEnabled = !1;
   }
@@ -9066,12 +9087,12 @@ class eu extends _ {
    * Throws an error about tools which don't support read-only mode
    */
   throwCriticalError() {
-    throw new Si(
+    throw new Oi(
       `To enable read-only mode all connected tools should support it. Tools ${this.toolsDontSupportReadOnly.join(", ")} don't support read-only mode.`
     );
   }
 }
-let tu = class pt extends _ {
+let du = class pt extends O {
   constructor() {
     super(...arguments), this.isRectSelectionActivated = !1, this.SCROLL_SPEED = 3, this.HEIGHT_OF_SCROLL_ZONE = 40, this.BOTTOM_SCROLL_ZONE = 1, this.TOP_SCROLL_ZONE = 2, this.MAIN_MOUSE_BUTTON = 0, this.mousedown = !1, this.isScrolling = !1, this.inScrollZone = null, this.startX = 0, this.startY = 0, this.mouseX = 0, this.mouseY = 0, this.stackOfSelected = [], this.listenerIds = [];
   }
@@ -9138,7 +9159,7 @@ let tu = class pt extends _ {
     this.listeners.on(e, "mousedown", (n) => {
       this.processMouseDown(n);
     }, !1);
-    const t = La(this.Editor.UI.nodes.wrapper) || document.body;
+    const t = Fa(this.Editor.UI.nodes.wrapper) || document.body;
     this.listeners.on(t, "mousemove", uo((n) => {
       this.processMouseMove(n);
     }, 10), {
@@ -9315,7 +9336,7 @@ let tu = class pt extends _ {
       this.rectCrossesBlocks && this.Editor.BlockSelection.unSelectBlockByIndex(this.stackOfSelected[h]), this.stackOfSelected.pop(), h--;
   }
 };
-class ou extends _ {
+class uu extends O {
   /**
    * Renders passed blocks as one batch
    *
@@ -9381,7 +9402,7 @@ class ou extends _ {
     };
   }
 }
-class nu extends _ {
+class hu extends O {
   /**
    * Composes new chain of Promises to fire them alternatelly
    *
@@ -9393,7 +9414,7 @@ class nu extends _ {
       n.forEach((a) => {
         r.push(this.getSavedData(a));
       });
-      const i = await Promise.all(r), s = await To(i, (a) => t.blockTools.get(a).sanitizeConfig);
+      const i = await Promise.all(r), s = await So(i, (a) => t.blockTools.get(a).sanitizeConfig);
       return this.makeOutput(s);
     } catch (i) {
       ee("Saving failed due to the Error %o", "error", i);
@@ -9455,8 +9476,8 @@ class nu extends _ {
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const ru = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 9V7.2C8 7.08954 8.08954 7 8.2 7L12 7M16 9V7.2C16 7.08954 15.9105 7 15.8 7L12 7M12 7L12 17M12 17H10M12 17H14"/></svg>';
-function iu(o) {
+const pu = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M8 9V7.2C8 7.08954 8.08954 7 8.2 7L12 7M16 9V7.2C16 7.08954 15.9105 7 15.8 7L12 7M12 7L12 17M12 17H10M12 17H14"/></svg>';
+function fu(o) {
   const e = document.createElement("div");
   e.innerHTML = o.trim();
   const t = document.createDocumentFragment();
@@ -9528,7 +9549,7 @@ class yn {
     if (!this._element)
       return;
     this._data.text += e.text;
-    const t = iu(e.text);
+    const t = fu(e.text);
     this._element.appendChild(t), this._element.normalize();
   }
   /**
@@ -9616,7 +9637,7 @@ class yn {
    */
   static get toolbox() {
     return {
-      icon: ru,
+      icon: pu,
       title: "Text"
     };
   }
@@ -9641,7 +9662,7 @@ class kn {
    */
   render() {
     return {
-      icon: Ml,
+      icon: Hl,
       name: "bold",
       onActivate: () => {
         document.execCommand(this.commandName);
@@ -9685,7 +9706,7 @@ class wn {
    * Create button for Inline Toolbar
    */
   render() {
-    return this.nodes.button = document.createElement("button"), this.nodes.button.type = "button", this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier), this.nodes.button.innerHTML = Rl, this.nodes.button;
+    return this.nodes.button = document.createElement("button"), this.nodes.button.type = "button", this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier), this.nodes.button.innerHTML = Yl, this.nodes.button;
   }
   /**
    * Wrap range with <i> tag
@@ -9745,7 +9766,7 @@ class xn {
    * Create button for Inline Toolbar
    */
   render() {
-    return this.nodes.button = document.createElement("button"), this.nodes.button.type = "button", this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier), this.nodes.button.innerHTML = Jr, this.nodes.button;
+    return this.nodes.button = document.createElement("button"), this.nodes.button.type = "button", this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier), this.nodes.button.innerHTML = ti, this.nodes.button;
   }
   /**
    * Input for the link
@@ -9777,11 +9798,11 @@ class xn {
   checkState() {
     const e = this.selection.findParentTag("A");
     if (e) {
-      this.nodes.button.innerHTML = Ul, this.nodes.button.classList.add(this.CSS.buttonUnlink), this.nodes.button.classList.add(this.CSS.buttonActive), this.openActions();
+      this.nodes.button.innerHTML = Zl, this.nodes.button.classList.add(this.CSS.buttonUnlink), this.nodes.button.classList.add(this.CSS.buttonActive), this.openActions();
       const t = e.getAttribute("href");
       this.nodes.input.defaultValue = t !== "null" ? t : "", this.selection.save();
     } else
-      this.nodes.button.innerHTML = Jr, this.nodes.button.classList.remove(this.CSS.buttonUnlink), this.nodes.button.classList.remove(this.CSS.buttonActive);
+      this.nodes.button.innerHTML = ti, this.nodes.button.classList.remove(this.CSS.buttonUnlink), this.nodes.button.classList.remove(this.CSS.buttonActive);
     return !!e;
   }
   /**
@@ -9889,7 +9910,7 @@ class xn {
 }
 xn.isInline = !0;
 xn.title = "Link";
-let Ts = class {
+let _s = class {
   /**
    * @param api - Editor.js API
    */
@@ -9903,7 +9924,7 @@ let Ts = class {
     const e = C.get(), t = this.blocksAPI.getBlockByElement(e.anchorNode);
     if (t === void 0)
       return [];
-    const n = this.toolsAPI.getBlockTools(), r = await Li(t, n);
+    const n = this.toolsAPI.getBlockTools(), r = await Ni(t, n);
     if (r.length === 0)
       return [];
     const i = r.reduce((c, d) => {
@@ -9920,7 +9941,7 @@ let Ts = class {
           }
         });
       }), c;
-    }, []), s = await t.getActiveToolboxEntry(), a = s !== void 0 ? s.icon : $i, l = !Fe();
+    }, []), s = await t.getActiveToolboxEntry(), a = s !== void 0 ? s.icon : Ui, l = !Fe();
     return {
       icon: a,
       name: "convert-to",
@@ -9940,8 +9961,8 @@ let Ts = class {
     };
   }
 };
-Ts.isInline = !0;
-let Ss = class {
+_s.isInline = !0;
+let Os = class {
   /**
    * @param options - constructor options
    * @param options.data - stub tool data
@@ -9977,7 +9998,7 @@ let Ss = class {
    * @returns {HTMLElement}
    */
   make() {
-    const e = f.make("div", this.CSS.wrapper), t = zl, n = f.make("div", this.CSS.info), r = f.make("div", this.CSS.title, {
+    const e = f.make("div", this.CSS.wrapper), t = Ql, n = f.make("div", this.CSS.info), r = f.make("div", this.CSS.title, {
       textContent: this.title
     }), i = f.make("div", this.CSS.subtitle, {
       textContent: this.subtitle
@@ -9985,8 +10006,8 @@ let Ss = class {
     return e.innerHTML = t, n.appendChild(r), n.appendChild(i), e.appendChild(n), e;
   }
 };
-Ss.isReadOnlySupported = !0;
-class su extends Mo {
+Os.isReadOnlySupported = !0;
+class gu extends Mo {
   constructor() {
     super(...arguments), this.type = Be.Inline;
   }
@@ -9994,7 +10015,7 @@ class su extends Mo {
    * Returns title for Inline Tool if specified by user
    */
   get title() {
-    return this.constructable[St.Title];
+    return this.constructable[Tt.Title];
   }
   /**
    * Constructs new InlineTool instance from constructable
@@ -10010,10 +10031,10 @@ class su extends Mo {
    * Can be used, for example, by comments tool
    */
   get isReadOnlySupported() {
-    return this.constructable[St.IsReadOnlySupported] ?? !1;
+    return this.constructable[Tt.IsReadOnlySupported] ?? !1;
   }
 }
-class au extends Mo {
+class mu extends Mo {
   constructor() {
     super(...arguments), this.type = Be.Tune;
   }
@@ -10069,10 +10090,10 @@ let oe = class De extends Map {
     return new De(e);
   }
 };
-var lu = Object.defineProperty, cu = Object.getOwnPropertyDescriptor, Bs = (o, e, t, n) => {
-  for (var r = cu(e, t), i = o.length - 1, s; i >= 0; i--)
+var bu = Object.defineProperty, vu = Object.getOwnPropertyDescriptor, Is = (o, e, t, n) => {
+  for (var r = vu(e, t), i = o.length - 1, s; i >= 0; i--)
     (s = o[i]) && (r = s(e, t, r) || r);
-  return r && lu(e, t, r), r;
+  return r && bu(e, t, r), r;
 };
 class En extends Mo {
   constructor() {
@@ -10176,13 +10197,13 @@ class En extends Mo {
     return Array.from(this.inlineTools.values()).forEach((t) => Object.assign(e, t.sanitizeConfig)), Array.from(this.tunes.values()).forEach((t) => Object.assign(e, t.sanitizeConfig)), e;
   }
 }
-Bs([
+Is([
   He
 ], En.prototype, "sanitizeConfig");
-Bs([
+Is([
   He
 ], En.prototype, "baseSanitizeConfig");
-class du {
+class yu {
   /**
    * @class
    * @param config - tools config
@@ -10216,16 +10237,16 @@ class du {
    */
   getConstructor(e) {
     switch (!0) {
-      case e[St.IsInline]:
-        return su;
+      case e[Tt.IsInline]:
+        return gu;
       case e[vo.IsTune]:
-        return au;
+        return mu;
       default:
         return En;
     }
   }
 }
-let Os = class {
+let Ms = class {
   /**
    * MoveDownTune constructor
    *
@@ -10241,7 +10262,7 @@ let Os = class {
    */
   render() {
     return {
-      icon: Ll,
+      icon: Fl,
       title: this.api.i18n.t("Move down"),
       onActivate: () => this.handleClick(),
       name: "move-down"
@@ -10259,8 +10280,8 @@ let Os = class {
     r.top < window.innerHeight && (i = window.scrollY + n.offsetHeight), window.scrollTo(0, i), this.api.blocks.move(e + 1), this.api.toolbar.toggleBlockSettings(!0);
   }
 };
-Os.isTune = !0;
-let _s = class {
+Ms.isTune = !0;
+let Ls = class {
   /**
    * DeleteTune constructor
    *
@@ -10274,7 +10295,7 @@ let _s = class {
    */
   render() {
     return {
-      icon: jl,
+      icon: ql,
       title: this.api.i18n.t("Delete"),
       name: "delete",
       confirmation: {
@@ -10290,8 +10311,8 @@ let _s = class {
     this.api.blocks.delete();
   }
 };
-_s.isTune = !0;
-let Is = class {
+Ls.isTune = !0;
+let Ps = class {
   /**
    * MoveUpTune constructor
    *
@@ -10307,7 +10328,7 @@ let Is = class {
    */
   render() {
     return {
-      icon: Nl,
+      icon: Wl,
       title: this.api.i18n.t("Move up"),
       onActivate: () => this.handleClick(),
       name: "move-up"
@@ -10325,13 +10346,13 @@ let Is = class {
     a.top > 0 ? l = Math.abs(s.top) - Math.abs(a.top) : l = Math.abs(s.top) + a.height, window.scrollBy(0, -1 * l), this.api.blocks.move(e - 1), this.api.toolbar.toggleBlockSettings(!0);
   }
 };
-Is.isTune = !0;
-var uu = Object.defineProperty, hu = Object.getOwnPropertyDescriptor, pu = (o, e, t, n) => {
-  for (var r = hu(e, t), i = o.length - 1, s; i >= 0; i--)
+Ps.isTune = !0;
+var ku = Object.defineProperty, wu = Object.getOwnPropertyDescriptor, xu = (o, e, t, n) => {
+  for (var r = wu(e, t), i = o.length - 1, s; i >= 0; i--)
     (s = o[i]) && (r = s(e, t, r) || r);
-  return r && uu(e, t, r), r;
+  return r && ku(e, t, r), r;
 };
-let Ms = class extends _ {
+let As = class extends O {
   constructor() {
     super(...arguments), this.stubTool = "stub", this.toolsAvailable = new oe(), this.toolsUnavailable = new oe();
   }
@@ -10388,11 +10409,11 @@ let Ms = class extends _ {
     if (this.validateTools(), this.config.tools = ho({}, this.internalTools, this.config.tools), !Object.prototype.hasOwnProperty.call(this.config, "tools") || Object.keys(this.config.tools).length === 0)
       throw Error("Can't start without tools");
     const e = this.prepareConfig();
-    this.factory = new du(e, this.config, this.Editor.API);
+    this.factory = new yu(e, this.config, this.Editor.API);
     const t = this.getListOfPrepareFunctions(e);
     if (t.length === 0)
       return Promise.resolve();
-    await ja(t, (n) => {
+    await qa(t, (n) => {
       this.toolPrepareMethodSuccess(n);
     }, (n) => {
       this.toolPrepareMethodFallback(n);
@@ -10419,7 +10440,7 @@ let Ms = class extends _ {
   get internalTools() {
     return {
       convertTo: {
-        class: Ts,
+        class: _s,
         isInternal: !0
       },
       link: {
@@ -10440,19 +10461,19 @@ let Ms = class extends _ {
         isInternal: !0
       },
       stub: {
-        class: Ss,
+        class: Os,
         isInternal: !0
       },
       moveUp: {
-        class: Is,
+        class: Ps,
         isInternal: !0
       },
       delete: {
-        class: _s,
+        class: Ls,
         isInternal: !0
       },
       moveDown: {
-        class: Os,
+        class: Ms,
         isInternal: !0
       }
     };
@@ -10581,18 +10602,18 @@ let Ms = class extends _ {
     return e;
   }
 };
-pu([
+xu([
   He
-], Ms.prototype, "getAllInlineToolsSanitizeConfig");
-const ai = `:root{--selectionColor: #e1f2ff;--inlineSelectionColor: #d4ecff;--bg-light: #eff2f5;--grayText: #707684;--color-dark: #1D202B;--color-active-icon: #388AE5;--color-gray-border: rgba(201, 201, 204, .48);--content-width: 650px;--narrow-mode-right-padding: 50px;--toolbox-buttons-size: 26px;--toolbox-buttons-size--mobile: 36px;--icon-size: 20px;--icon-size--mobile: 28px;--block-padding-vertical: .4em;--color-line-gray: #EFF0F1 }.codex-editor{position:relative;-webkit-box-sizing:border-box;box-sizing:border-box;z-index:1}.codex-editor .hide{display:none}.codex-editor__redactor [contenteditable]:empty:after{content:"\\feff"}@media (min-width: 651px){.codex-editor--narrow .codex-editor__redactor{margin-right:50px}}@media (min-width: 651px){.codex-editor--narrow.codex-editor--rtl .codex-editor__redactor{margin-left:50px;margin-right:0}}@media (min-width: 651px){.codex-editor--narrow .ce-toolbar__actions{right:-5px}}.codex-editor-copyable{position:absolute;height:1px;width:1px;top:-400%;opacity:.001}.codex-editor-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:999;pointer-events:none;overflow:hidden}.codex-editor-overlay__container{position:relative;pointer-events:auto;z-index:0}.codex-editor-overlay__rectangle{position:absolute;pointer-events:none;background-color:#2eaadc33;border:1px solid transparent}.codex-editor svg{max-height:100%}.codex-editor path{stroke:currentColor}.codex-editor ::-moz-selection{background-color:#d4ecff}.codex-editor ::selection{background-color:#d4ecff}.codex-editor--toolbox-opened [contentEditable=true][data-placeholder]:focus:before{opacity:0!important}.ce-scroll-locked{overflow:hidden}.ce-scroll-locked--hard{overflow:hidden;top:calc(-1 * var(--window-scroll-offset));position:fixed;width:100%}.ce-toolbar{position:absolute;left:0;right:0;top:0;-webkit-transition:opacity .1s ease;transition:opacity .1s ease;will-change:opacity,top;display:none}.ce-toolbar--opened{display:block}.ce-toolbar__content{max-width:650px;margin:0 auto;position:relative}.ce-toolbar__plus{color:#1d202b;cursor:pointer;width:26px;height:26px;border-radius:7px;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-ms-flex-negative:0;flex-shrink:0}@media (max-width: 650px){.ce-toolbar__plus{width:36px;height:36px}}@media (hover: hover){.ce-toolbar__plus:hover{background-color:#eff2f5}}.ce-toolbar__plus--active{background-color:#eff2f5;-webkit-animation:bounceIn .75s 1;animation:bounceIn .75s 1;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.ce-toolbar__plus-shortcut{opacity:.6;word-spacing:-2px;margin-top:5px}@media (max-width: 650px){.ce-toolbar__plus{position:absolute;background-color:#fff;border:1px solid #E8E8EB;-webkit-box-shadow:0 3px 15px -3px rgba(13,20,33,.13);box-shadow:0 3px 15px -3px #0d142121;border-radius:6px;z-index:2;position:static}.ce-toolbar__plus--left-oriented:before{left:15px;margin-left:0}.ce-toolbar__plus--right-oriented:before{left:auto;right:15px;margin-left:0}}.ce-toolbar__actions{position:absolute;right:100%;opacity:0;display:-webkit-box;display:-ms-flexbox;display:flex;padding-right:5px}.ce-toolbar__actions--opened{opacity:1}@media (max-width: 650px){.ce-toolbar__actions{right:auto}}.ce-toolbar__settings-btn{color:#1d202b;width:26px;height:26px;border-radius:7px;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;margin-left:3px;cursor:pointer;user-select:none}@media (max-width: 650px){.ce-toolbar__settings-btn{width:36px;height:36px}}@media (hover: hover){.ce-toolbar__settings-btn:hover{background-color:#eff2f5}}.ce-toolbar__settings-btn--active{background-color:#eff2f5;-webkit-animation:bounceIn .75s 1;animation:bounceIn .75s 1;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}@media (min-width: 651px){.ce-toolbar__settings-btn{width:24px}}.ce-toolbar__settings-btn--hidden{display:none}@media (max-width: 650px){.ce-toolbar__settings-btn{position:absolute;background-color:#fff;border:1px solid #E8E8EB;-webkit-box-shadow:0 3px 15px -3px rgba(13,20,33,.13);box-shadow:0 3px 15px -3px #0d142121;border-radius:6px;z-index:2;position:static}.ce-toolbar__settings-btn--left-oriented:before{left:15px;margin-left:0}.ce-toolbar__settings-btn--right-oriented:before{left:auto;right:15px;margin-left:0}}.ce-toolbar__plus svg,.ce-toolbar__settings-btn svg{width:24px;height:24px}@media (min-width: 651px){.codex-editor--narrow .ce-toolbar__plus{left:5px}}@media (min-width: 651px){.codex-editor--narrow .ce-toolbox .ce-popover{right:0;left:auto;left:initial}}.ce-inline-toolbar{--y-offset: 8px;--color-background-icon-active: rgba(56, 138, 229, .1);--color-text-icon-active: #388AE5;--color-text-primary: black;position:absolute;visibility:hidden;-webkit-transition:opacity .25s ease;transition:opacity .25s ease;will-change:opacity,left,top;top:0;left:0;z-index:3;opacity:1;visibility:visible}.ce-inline-toolbar [hidden]{display:none!important}.ce-inline-toolbar__toggler-and-button-wrapper{display:-webkit-box;display:-ms-flexbox;display:flex;width:100%;padding:0 6px}.ce-inline-toolbar__buttons{display:-webkit-box;display:-ms-flexbox;display:flex}.ce-inline-toolbar__dropdown{display:-webkit-box;display:-ms-flexbox;display:flex;padding:6px;margin:0 6px 0 -6px;-webkit-box-align:center;-ms-flex-align:center;align-items:center;cursor:pointer;border-right:1px solid rgba(201,201,204,.48);-webkit-box-sizing:border-box;box-sizing:border-box}@media (hover: hover){.ce-inline-toolbar__dropdown:hover{background:#eff2f5}}.ce-inline-toolbar__dropdown--hidden{display:none}.ce-inline-toolbar__dropdown-content,.ce-inline-toolbar__dropdown-arrow{display:-webkit-box;display:-ms-flexbox;display:flex}.ce-inline-toolbar__dropdown-content svg,.ce-inline-toolbar__dropdown-arrow svg{width:20px;height:20px}.ce-inline-toolbar__shortcut{opacity:.6;word-spacing:-3px;margin-top:3px}.ce-inline-tool{color:var(--color-text-primary);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;border:0;border-radius:4px;line-height:normal;height:100%;padding:0;width:28px;background-color:transparent;cursor:pointer}@media (max-width: 650px){.ce-inline-tool{width:36px;height:36px}}@media (hover: hover){.ce-inline-tool:hover{background-color:#f8f8f8}}.ce-inline-tool svg{display:block;width:20px;height:20px}@media (max-width: 650px){.ce-inline-tool svg{width:28px;height:28px}}.ce-inline-tool--link .icon--unlink,.ce-inline-tool--unlink .icon--link{display:none}.ce-inline-tool--unlink .icon--unlink{display:inline-block;margin-bottom:-1px}.ce-inline-tool-input{background:#F8F8F8;border:1px solid rgba(226,226,229,.2);border-radius:6px;padding:4px 8px;font-size:14px;line-height:22px;outline:none;margin:0;width:100%;-webkit-box-sizing:border-box;box-sizing:border-box;display:none;font-weight:500;-webkit-appearance:none;font-family:inherit}@media (max-width: 650px){.ce-inline-tool-input{font-size:15px;font-weight:500}}.ce-inline-tool-input::-webkit-input-placeholder{color:#707684}.ce-inline-tool-input::-moz-placeholder{color:#707684}.ce-inline-tool-input:-ms-input-placeholder{color:#707684}.ce-inline-tool-input::-ms-input-placeholder{color:#707684}.ce-inline-tool-input::placeholder{color:#707684}.ce-inline-tool-input--showed{display:block}.ce-inline-tool--active{background:var(--color-background-icon-active);color:var(--color-text-icon-active)}@-webkit-keyframes fade-in{0%{opacity:0}to{opacity:1}}@keyframes fade-in{0%{opacity:0}to{opacity:1}}.ce-block{-webkit-animation:fade-in .3s ease;animation:fade-in .3s ease;-webkit-animation-fill-mode:none;animation-fill-mode:none;-webkit-animation-fill-mode:initial;animation-fill-mode:initial}.ce-block:first-of-type{margin-top:0}.ce-block--selected .ce-block__content{background:#e1f2ff}.ce-block--selected .ce-block__content [contenteditable]{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.ce-block--selected .ce-block__content img,.ce-block--selected .ce-block__content .ce-stub{opacity:.55}.ce-block--stretched .ce-block__content{max-width:none}.ce-block__content{position:relative;max-width:650px;margin:0 auto;-webkit-transition:background-color .15s ease;transition:background-color .15s ease}.ce-block--drop-target .ce-block__content:before{content:"";position:absolute;top:100%;left:-20px;margin-top:-1px;height:8px;width:8px;border:solid #388AE5;border-width:1px 1px 0 0;-webkit-transform-origin:right;transform-origin:right;-webkit-transform:rotate(45deg);transform:rotate(45deg)}.ce-block--drop-target .ce-block__content:after{content:"";position:absolute;top:100%;height:1px;width:100%;color:#388ae5;background:repeating-linear-gradient(90deg,#388AE5,#388AE5 1px,#fff 1px,#fff 6px)}.ce-block a{cursor:pointer;-webkit-text-decoration:underline;text-decoration:underline}.ce-block b{font-weight:700}.ce-block i{font-style:italic}@-webkit-keyframes bounceIn{0%,20%,40%,60%,80%,to{-webkit-animation-timing-function:cubic-bezier(.215,.61,.355,1);animation-timing-function:cubic-bezier(.215,.61,.355,1)}0%{-webkit-transform:scale3d(.9,.9,.9);transform:scale3d(.9,.9,.9)}20%{-webkit-transform:scale3d(1.03,1.03,1.03);transform:scale3d(1.03,1.03,1.03)}60%{-webkit-transform:scale3d(1,1,1);transform:scaleZ(1)}}@keyframes bounceIn{0%,20%,40%,60%,80%,to{-webkit-animation-timing-function:cubic-bezier(.215,.61,.355,1);animation-timing-function:cubic-bezier(.215,.61,.355,1)}0%{-webkit-transform:scale3d(.9,.9,.9);transform:scale3d(.9,.9,.9)}20%{-webkit-transform:scale3d(1.03,1.03,1.03);transform:scale3d(1.03,1.03,1.03)}60%{-webkit-transform:scale3d(1,1,1);transform:scaleZ(1)}}@-webkit-keyframes selectionBounce{0%,20%,40%,60%,80%,to{-webkit-animation-timing-function:cubic-bezier(.215,.61,.355,1);animation-timing-function:cubic-bezier(.215,.61,.355,1)}50%{-webkit-transform:scale3d(1.01,1.01,1.01);transform:scale3d(1.01,1.01,1.01)}70%{-webkit-transform:scale3d(1,1,1);transform:scaleZ(1)}}@keyframes selectionBounce{0%,20%,40%,60%,80%,to{-webkit-animation-timing-function:cubic-bezier(.215,.61,.355,1);animation-timing-function:cubic-bezier(.215,.61,.355,1)}50%{-webkit-transform:scale3d(1.01,1.01,1.01);transform:scale3d(1.01,1.01,1.01)}70%{-webkit-transform:scale3d(1,1,1);transform:scaleZ(1)}}@-webkit-keyframes buttonClicked{0%,20%,40%,60%,80%,to{-webkit-animation-timing-function:cubic-bezier(.215,.61,.355,1);animation-timing-function:cubic-bezier(.215,.61,.355,1)}0%{-webkit-transform:scale3d(.95,.95,.95);transform:scale3d(.95,.95,.95)}60%{-webkit-transform:scale3d(1.02,1.02,1.02);transform:scale3d(1.02,1.02,1.02)}80%{-webkit-transform:scale3d(1,1,1);transform:scaleZ(1)}}@keyframes buttonClicked{0%,20%,40%,60%,80%,to{-webkit-animation-timing-function:cubic-bezier(.215,.61,.355,1);animation-timing-function:cubic-bezier(.215,.61,.355,1)}0%{-webkit-transform:scale3d(.95,.95,.95);transform:scale3d(.95,.95,.95)}60%{-webkit-transform:scale3d(1.02,1.02,1.02);transform:scale3d(1.02,1.02,1.02)}80%{-webkit-transform:scale3d(1,1,1);transform:scaleZ(1)}}.cdx-block{padding:.4em 0}.cdx-block::-webkit-input-placeholder{line-height:normal!important}.cdx-input{border:1px solid rgba(201,201,204,.48);-webkit-box-shadow:inset 0 1px 2px 0 rgba(35,44,72,.06);box-shadow:inset 0 1px 2px #232c480f;border-radius:3px;padding:10px 12px;outline:none;width:100%;-webkit-box-sizing:border-box;box-sizing:border-box}.cdx-input[data-placeholder]:before{position:static!important}.cdx-input[data-placeholder]:before{display:inline-block;width:0;white-space:nowrap;pointer-events:none}.cdx-settings-button{display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;border-radius:3px;cursor:pointer;border:0;outline:none;background-color:transparent;vertical-align:bottom;color:inherit;margin:0;min-width:26px;min-height:26px}.cdx-settings-button--focused{background:rgba(34,186,255,.08)!important}.cdx-settings-button--focused{-webkit-box-shadow:inset 0 0 0px 1px rgba(7,161,227,.08);box-shadow:inset 0 0 0 1px #07a1e314}.cdx-settings-button--focused-animated{-webkit-animation-name:buttonClicked;animation-name:buttonClicked;-webkit-animation-duration:.25s;animation-duration:.25s}.cdx-settings-button--active{color:#388ae5}.cdx-settings-button svg{width:auto;height:auto}@media (max-width: 650px){.cdx-settings-button svg{width:28px;height:28px}}@media (max-width: 650px){.cdx-settings-button{width:36px;height:36px;border-radius:8px}}@media (hover: hover){.cdx-settings-button:hover{background-color:#eff2f5}}.cdx-loader{position:relative;border:1px solid rgba(201,201,204,.48)}.cdx-loader:before{content:"";position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-11px 0 0 -11px;border:2px solid rgba(201,201,204,.48);border-left-color:#388ae5;border-radius:50%;-webkit-animation:cdxRotation 1.2s infinite linear;animation:cdxRotation 1.2s infinite linear}@-webkit-keyframes cdxRotation{0%{-webkit-transform:rotate(0deg);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes cdxRotation{0%{-webkit-transform:rotate(0deg);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.cdx-button{padding:13px;border-radius:3px;border:1px solid rgba(201,201,204,.48);font-size:14.9px;background:#fff;-webkit-box-shadow:0 2px 2px 0 rgba(18,30,57,.04);box-shadow:0 2px 2px #121e390a;color:#707684;text-align:center;cursor:pointer}@media (hover: hover){.cdx-button:hover{background:#FBFCFE;-webkit-box-shadow:0 1px 3px 0 rgba(18,30,57,.08);box-shadow:0 1px 3px #121e3914}}.cdx-button svg{height:20px;margin-right:.2em;margin-top:-2px}.ce-stub{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;padding:12px 18px;margin:10px 0;border-radius:10px;background:#eff2f5;border:1px solid #EFF0F1;color:#707684;font-size:14px}.ce-stub svg{width:20px;height:20px}.ce-stub__info{margin-left:14px}.ce-stub__title{font-weight:500;text-transform:capitalize}.codex-editor.codex-editor--rtl{direction:rtl}.codex-editor.codex-editor--rtl .cdx-list{padding-left:0;padding-right:40px}.codex-editor.codex-editor--rtl .ce-toolbar__plus{right:-26px;left:auto}.codex-editor.codex-editor--rtl .ce-toolbar__actions{right:auto;left:-26px}@media (max-width: 650px){.codex-editor.codex-editor--rtl .ce-toolbar__actions{margin-left:0;margin-right:auto;padding-right:0;padding-left:10px}}.codex-editor.codex-editor--rtl .ce-settings{left:5px;right:auto}.codex-editor.codex-editor--rtl .ce-settings:before{right:auto;left:25px}.codex-editor.codex-editor--rtl .ce-settings__button:not(:nth-child(3n+3)){margin-left:3px;margin-right:0}.codex-editor.codex-editor--rtl .ce-conversion-tool__icon{margin-right:0;margin-left:10px}.codex-editor.codex-editor--rtl .ce-inline-toolbar__dropdown{border-right:0px solid transparent;border-left:1px solid rgba(201,201,204,.48);margin:0 -6px 0 6px}.codex-editor.codex-editor--rtl .ce-inline-toolbar__dropdown .icon--toggler-down{margin-left:0;margin-right:4px}@media (min-width: 651px){.codex-editor--narrow.codex-editor--rtl .ce-toolbar__plus{left:0;right:5px}}@media (min-width: 651px){.codex-editor--narrow.codex-editor--rtl .ce-toolbar__actions{left:-5px}}.cdx-search-field{--icon-margin-right: 10px;background:#F8F8F8;border:1px solid rgba(226,226,229,.2);border-radius:6px;padding:2px;display:grid;grid-template-columns:auto auto 1fr;grid-template-rows:auto}.cdx-search-field__icon{width:26px;height:26px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;margin-right:var(--icon-margin-right)}.cdx-search-field__icon svg{width:20px;height:20px;color:#707684}.cdx-search-field__input{font-size:14px;outline:none;font-weight:500;font-family:inherit;border:0;background:transparent;margin:0;padding:0;line-height:22px;min-width:calc(100% - 26px - var(--icon-margin-right))}.cdx-search-field__input::-webkit-input-placeholder{color:#707684;font-weight:500}.cdx-search-field__input::-moz-placeholder{color:#707684;font-weight:500}.cdx-search-field__input:-ms-input-placeholder{color:#707684;font-weight:500}.cdx-search-field__input::-ms-input-placeholder{color:#707684;font-weight:500}.cdx-search-field__input::placeholder{color:#707684;font-weight:500}.ce-popover{--border-radius: 6px;--width: 200px;--max-height: 270px;--padding: 6px;--offset-from-target: 8px;--color-border: #EFF0F1;--color-shadow: rgba(13, 20, 33, .1);--color-background: white;--color-text-primary: black;--color-text-secondary: #707684;--color-border-icon: rgba(201, 201, 204, .48);--color-border-icon-disabled: #EFF0F1;--color-text-icon-active: #388AE5;--color-background-icon-active: rgba(56, 138, 229, .1);--color-background-item-focus: rgba(34, 186, 255, .08);--color-shadow-item-focus: rgba(7, 161, 227, .08);--color-background-item-hover: #F8F8F8;--color-background-item-confirm: #E24A4A;--color-background-item-confirm-hover: #CE4343;--popover-top: calc(100% + var(--offset-from-target));--popover-left: 0;--nested-popover-overlap: 4px;--icon-size: 20px;--item-padding: 3px;--item-height: calc(var(--icon-size) + 2 * var(--item-padding))}.ce-popover__container{min-width:var(--width);width:var(--width);max-height:var(--max-height);border-radius:var(--border-radius);overflow:hidden;-webkit-box-sizing:border-box;box-sizing:border-box;-webkit-box-shadow:0px 3px 15px -3px var(--color-shadow);box-shadow:0 3px 15px -3px var(--color-shadow);position:absolute;left:var(--popover-left);top:var(--popover-top);background:var(--color-background);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;z-index:4;opacity:0;max-height:0;pointer-events:none;padding:0;border:none}.ce-popover--opened>.ce-popover__container{opacity:1;padding:var(--padding);max-height:var(--max-height);pointer-events:auto;-webkit-animation:panelShowing .1s ease;animation:panelShowing .1s ease;border:1px solid var(--color-border)}@media (max-width: 650px){.ce-popover--opened>.ce-popover__container{-webkit-animation:panelShowingMobile .25s ease;animation:panelShowingMobile .25s ease}}.ce-popover--open-top .ce-popover__container{--popover-top: calc(-1 * (var(--offset-from-target) + var(--popover-height)))}.ce-popover--open-left .ce-popover__container{--popover-left: calc(-1 * var(--width) + 100%)}.ce-popover__items{overflow-y:auto;-ms-scroll-chaining:none;overscroll-behavior:contain}@media (max-width: 650px){.ce-popover__overlay{position:fixed;top:0;bottom:0;left:0;right:0;background:#1D202B;z-index:3;opacity:.5;-webkit-transition:opacity .12s ease-in;transition:opacity .12s ease-in;will-change:opacity;visibility:visible}}.ce-popover__overlay--hidden{display:none}@media (max-width: 650px){.ce-popover .ce-popover__container{--offset: 5px;position:fixed;max-width:none;min-width:calc(100% - var(--offset) * 2);left:var(--offset);right:var(--offset);bottom:calc(var(--offset) + env(safe-area-inset-bottom));top:auto;border-radius:10px}}.ce-popover__search{margin-bottom:5px}.ce-popover__nothing-found-message{color:#707684;display:none;cursor:default;padding:3px;font-size:14px;line-height:20px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ce-popover__nothing-found-message--displayed{display:block}.ce-popover--nested .ce-popover__container{--popover-left: calc(var(--nesting-level) * (var(--width) - var(--nested-popover-overlap)));top:calc(var(--trigger-item-top) - var(--nested-popover-overlap));position:absolute}.ce-popover--open-top.ce-popover--nested .ce-popover__container{top:calc(var(--trigger-item-top) - var(--popover-height) + var(--item-height) + var(--offset-from-target) + var(--nested-popover-overlap))}.ce-popover--open-left .ce-popover--nested .ce-popover__container{--popover-left: calc(-1 * (var(--nesting-level) + 1) * var(--width) + 100%)}.ce-popover-item-separator{padding:4px 3px}.ce-popover-item-separator--hidden{display:none}.ce-popover-item-separator__line{height:1px;background:var(--color-border);width:100%}.ce-popover-item-html--hidden{display:none}.ce-popover-item{--border-radius: 6px;border-radius:var(--border-radius);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;padding:var(--item-padding);color:var(--color-text-primary);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;border:none;background:transparent}@media (max-width: 650px){.ce-popover-item{padding:4px}}.ce-popover-item:not(:last-of-type){margin-bottom:1px}.ce-popover-item__icon{width:26px;height:26px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center}.ce-popover-item__icon svg{width:20px;height:20px}@media (max-width: 650px){.ce-popover-item__icon{width:36px;height:36px;border-radius:8px}.ce-popover-item__icon svg{width:28px;height:28px}}.ce-popover-item__icon--tool{margin-right:4px}.ce-popover-item__title{font-size:14px;line-height:20px;font-weight:500;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-right:auto}@media (max-width: 650px){.ce-popover-item__title{font-size:16px}}.ce-popover-item__secondary-title{color:var(--color-text-secondary);font-size:12px;white-space:nowrap;letter-spacing:-.1em;padding-right:5px;opacity:.6}@media (max-width: 650px){.ce-popover-item__secondary-title{display:none}}.ce-popover-item--active{background:var(--color-background-icon-active);color:var(--color-text-icon-active)}.ce-popover-item--disabled{color:var(--color-text-secondary);cursor:default;pointer-events:none}.ce-popover-item--focused:not(.ce-popover-item--no-focus){background:var(--color-background-item-focus)!important}.ce-popover-item--hidden{display:none}@media (hover: hover){.ce-popover-item:hover{cursor:pointer}.ce-popover-item:hover:not(.ce-popover-item--no-hover){background-color:var(--color-background-item-hover)}}.ce-popover-item--confirmation{background:var(--color-background-item-confirm)}.ce-popover-item--confirmation .ce-popover-item__title,.ce-popover-item--confirmation .ce-popover-item__icon{color:#fff}@media (hover: hover){.ce-popover-item--confirmation:not(.ce-popover-item--no-hover):hover{background:var(--color-background-item-confirm-hover)}}.ce-popover-item--confirmation:not(.ce-popover-item--no-focus).ce-popover-item--focused{background:var(--color-background-item-confirm-hover)!important}@-webkit-keyframes panelShowing{0%{opacity:0;-webkit-transform:translateY(-8px) scale(.9);transform:translateY(-8px) scale(.9)}70%{opacity:1;-webkit-transform:translateY(2px);transform:translateY(2px)}to{-webkit-transform:translateY(0);transform:translateY(0)}}@keyframes panelShowing{0%{opacity:0;-webkit-transform:translateY(-8px) scale(.9);transform:translateY(-8px) scale(.9)}70%{opacity:1;-webkit-transform:translateY(2px);transform:translateY(2px)}to{-webkit-transform:translateY(0);transform:translateY(0)}}@-webkit-keyframes panelShowingMobile{0%{opacity:0;-webkit-transform:translateY(14px) scale(.98);transform:translateY(14px) scale(.98)}70%{opacity:1;-webkit-transform:translateY(-4px);transform:translateY(-4px)}to{-webkit-transform:translateY(0);transform:translateY(0)}}@keyframes panelShowingMobile{0%{opacity:0;-webkit-transform:translateY(14px) scale(.98);transform:translateY(14px) scale(.98)}70%{opacity:1;-webkit-transform:translateY(-4px);transform:translateY(-4px)}to{-webkit-transform:translateY(0);transform:translateY(0)}}.wobble{-webkit-animation-name:wobble;animation-name:wobble;-webkit-animation-duration:.4s;animation-duration:.4s}@-webkit-keyframes wobble{0%{-webkit-transform:translate3d(0,0,0);transform:translateZ(0)}15%{-webkit-transform:translate3d(-9%,0,0);transform:translate3d(-9%,0,0)}30%{-webkit-transform:translate3d(9%,0,0);transform:translate3d(9%,0,0)}45%{-webkit-transform:translate3d(-4%,0,0);transform:translate3d(-4%,0,0)}60%{-webkit-transform:translate3d(4%,0,0);transform:translate3d(4%,0,0)}75%{-webkit-transform:translate3d(-1%,0,0);transform:translate3d(-1%,0,0)}to{-webkit-transform:translate3d(0,0,0);transform:translateZ(0)}}@keyframes wobble{0%{-webkit-transform:translate3d(0,0,0);transform:translateZ(0)}15%{-webkit-transform:translate3d(-9%,0,0);transform:translate3d(-9%,0,0)}30%{-webkit-transform:translate3d(9%,0,0);transform:translate3d(9%,0,0)}45%{-webkit-transform:translate3d(-4%,0,0);transform:translate3d(-4%,0,0)}60%{-webkit-transform:translate3d(4%,0,0);transform:translate3d(4%,0,0)}75%{-webkit-transform:translate3d(-1%,0,0);transform:translate3d(-1%,0,0)}to{-webkit-transform:translate3d(0,0,0);transform:translateZ(0)}}.ce-popover-header{margin-bottom:8px;margin-top:4px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center}.ce-popover-header__text{font-size:18px;font-weight:600}.ce-popover-header__back-button{border:0;background:transparent;width:36px;height:36px;color:var(--color-text-primary)}.ce-popover-header__back-button svg{display:block;width:28px;height:28px}.ce-popover--inline{--height: 38px;--height-mobile: 46px;--container-padding: 4px;position:relative}.ce-popover--inline .ce-popover__custom-content{margin-bottom:0}.ce-popover--inline .ce-popover__items{display:-webkit-box;display:-ms-flexbox;display:flex}.ce-popover--inline .ce-popover__container{-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;padding:var(--container-padding);height:var(--height);top:0;min-width:-webkit-max-content;min-width:-moz-max-content;min-width:max-content;width:-webkit-max-content;width:-moz-max-content;width:max-content;-webkit-animation:none;animation:none}@media (max-width: 650px){.ce-popover--inline .ce-popover__container{height:var(--height-mobile);position:absolute}}.ce-popover--inline .ce-popover-item-separator{padding:0 4px}.ce-popover--inline .ce-popover-item-separator__line{height:100%;width:1px}.ce-popover--inline .ce-popover-item{border-radius:4px;padding:4px}.ce-popover--inline .ce-popover-item__icon--tool{-webkit-box-shadow:none;box-shadow:none;background:transparent;margin-right:0}.ce-popover--inline .ce-popover-item__icon{width:auto;width:initial;height:auto;height:initial}.ce-popover--inline .ce-popover-item__icon svg{width:20px;height:20px}@media (max-width: 650px){.ce-popover--inline .ce-popover-item__icon svg{width:28px;height:28px}}.ce-popover--inline .ce-popover-item:not(:last-of-type){margin-bottom:0;margin-bottom:initial}.ce-popover--inline .ce-popover-item-html{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center}.ce-popover--inline .ce-popover-item__icon--chevron-right{-webkit-transform:rotate(90deg);transform:rotate(90deg)}.ce-popover--inline .ce-popover--nested-level-1 .ce-popover__container{--offset: 3px;left:0;top:calc(var(--height) + var(--offset))}@media (max-width: 650px){.ce-popover--inline .ce-popover--nested-level-1 .ce-popover__container{top:calc(var(--height-mobile) + var(--offset))}}.ce-popover--inline .ce-popover--nested .ce-popover__container{min-width:var(--width);width:var(--width);height:-webkit-fit-content;height:-moz-fit-content;height:fit-content;padding:6px;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column}.ce-popover--inline .ce-popover--nested .ce-popover__items{display:block;width:100%}.ce-popover--inline .ce-popover--nested .ce-popover-item{border-radius:6px;padding:3px}@media (max-width: 650px){.ce-popover--inline .ce-popover--nested .ce-popover-item{padding:4px}}.ce-popover--inline .ce-popover--nested .ce-popover-item__icon--tool{margin-right:4px}.ce-popover--inline .ce-popover--nested .ce-popover-item__icon{width:26px;height:26px}.ce-popover--inline .ce-popover--nested .ce-popover-item-separator{padding:4px 3px}.ce-popover--inline .ce-popover--nested .ce-popover-item-separator__line{width:100%;height:1px}.codex-editor [data-placeholder]:empty:before,.codex-editor [data-placeholder][data-empty=true]:before{pointer-events:none;color:#707684;cursor:text;content:attr(data-placeholder)}.codex-editor [data-placeholder-active]:empty:before,.codex-editor [data-placeholder-active][data-empty=true]:before{pointer-events:none;color:#707684;cursor:text}.codex-editor [data-placeholder-active]:empty:focus:before,.codex-editor [data-placeholder-active][data-empty=true]:focus:before{content:attr(data-placeholder-active)}.ce-hint--align-start{text-align:left}.ce-hint--align-center{text-align:center}.ce-hint__description{opacity:.6;margin-top:3px}
+], As.prototype, "getAllInlineToolsSanitizeConfig");
+const ci = `:root{--selectionColor: #e1f2ff;--inlineSelectionColor: #d4ecff;--bg-light: #eff2f5;--grayText: #707684;--color-dark: #1D202B;--color-active-icon: #388AE5;--color-gray-border: rgba(201, 201, 204, .48);--content-width: 650px;--narrow-mode-right-padding: 50px;--toolbox-buttons-size: 26px;--toolbox-buttons-size--mobile: 36px;--icon-size: 20px;--icon-size--mobile: 28px;--block-padding-vertical: .4em;--color-line-gray: #EFF0F1 }.codex-editor{position:relative;-webkit-box-sizing:border-box;box-sizing:border-box;z-index:1}.codex-editor .hide{display:none}.codex-editor__redactor [contenteditable]:empty:after{content:"\\feff"}@media (min-width: 651px){.codex-editor--narrow .codex-editor__redactor{margin-right:50px}}@media (min-width: 651px){.codex-editor--narrow.codex-editor--rtl .codex-editor__redactor{margin-left:50px;margin-right:0}}@media (min-width: 651px){.codex-editor--narrow .ce-toolbar__actions{right:-5px}}.codex-editor-copyable{position:absolute;height:1px;width:1px;top:-400%;opacity:.001}.codex-editor-overlay{position:fixed;top:0;left:0;right:0;bottom:0;z-index:999;pointer-events:none;overflow:hidden}.codex-editor-overlay__container{position:relative;pointer-events:auto;z-index:0}.codex-editor-overlay__rectangle{position:absolute;pointer-events:none;background-color:#2eaadc33;border:1px solid transparent}.codex-editor svg{max-height:100%}.codex-editor path{stroke:currentColor}.codex-editor ::-moz-selection{background-color:#d4ecff}.codex-editor ::selection{background-color:#d4ecff}.codex-editor--toolbox-opened [contentEditable=true][data-placeholder]:focus:before{opacity:0!important}.ce-scroll-locked{overflow:hidden}.ce-scroll-locked--hard{overflow:hidden;top:calc(-1 * var(--window-scroll-offset));position:fixed;width:100%}.ce-toolbar{position:absolute;left:0;right:0;top:0;-webkit-transition:opacity .1s ease;transition:opacity .1s ease;will-change:opacity,top;display:none}.ce-toolbar--opened{display:block}.ce-toolbar__content{max-width:650px;margin:0 auto;position:relative}.ce-toolbar__plus{color:#1d202b;cursor:pointer;width:26px;height:26px;border-radius:7px;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-ms-flex-negative:0;flex-shrink:0}@media (max-width: 650px){.ce-toolbar__plus{width:36px;height:36px}}@media (hover: hover){.ce-toolbar__plus:hover{background-color:#eff2f5}}.ce-toolbar__plus--active{background-color:#eff2f5;-webkit-animation:bounceIn .75s 1;animation:bounceIn .75s 1;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}.ce-toolbar__plus-shortcut{opacity:.6;word-spacing:-2px;margin-top:5px}@media (max-width: 650px){.ce-toolbar__plus{position:absolute;background-color:#fff;border:1px solid #E8E8EB;-webkit-box-shadow:0 3px 15px -3px rgba(13,20,33,.13);box-shadow:0 3px 15px -3px #0d142121;border-radius:6px;z-index:2;position:static}.ce-toolbar__plus--left-oriented:before{left:15px;margin-left:0}.ce-toolbar__plus--right-oriented:before{left:auto;right:15px;margin-left:0}}.ce-toolbar__actions{position:absolute;right:100%;opacity:0;display:-webkit-box;display:-ms-flexbox;display:flex;padding-right:5px}.ce-toolbar__actions--opened{opacity:1}@media (max-width: 650px){.ce-toolbar__actions{right:auto}}.ce-toolbar__settings-btn{color:#1d202b;width:26px;height:26px;border-radius:7px;display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;margin-left:3px;cursor:pointer;user-select:none}@media (max-width: 650px){.ce-toolbar__settings-btn{width:36px;height:36px}}@media (hover: hover){.ce-toolbar__settings-btn:hover{background-color:#eff2f5}}.ce-toolbar__settings-btn--active{background-color:#eff2f5;-webkit-animation:bounceIn .75s 1;animation:bounceIn .75s 1;-webkit-animation-fill-mode:forwards;animation-fill-mode:forwards}@media (min-width: 651px){.ce-toolbar__settings-btn{width:24px}}.ce-toolbar__settings-btn--hidden{display:none}@media (max-width: 650px){.ce-toolbar__settings-btn{position:absolute;background-color:#fff;border:1px solid #E8E8EB;-webkit-box-shadow:0 3px 15px -3px rgba(13,20,33,.13);box-shadow:0 3px 15px -3px #0d142121;border-radius:6px;z-index:2;position:static}.ce-toolbar__settings-btn--left-oriented:before{left:15px;margin-left:0}.ce-toolbar__settings-btn--right-oriented:before{left:auto;right:15px;margin-left:0}}.ce-toolbar__plus svg,.ce-toolbar__settings-btn svg{width:24px;height:24px}@media (min-width: 651px){.codex-editor--narrow .ce-toolbar__plus{left:5px}}@media (min-width: 651px){.codex-editor--narrow .ce-toolbox .ce-popover{right:0;left:auto;left:initial}}.ce-inline-toolbar{--y-offset: 8px;--color-background-icon-active: rgba(56, 138, 229, .1);--color-text-icon-active: #388AE5;--color-text-primary: black;position:absolute;visibility:hidden;-webkit-transition:opacity .25s ease;transition:opacity .25s ease;will-change:opacity,left,top;top:0;left:0;z-index:3;opacity:1;visibility:visible}.ce-inline-toolbar [hidden]{display:none!important}.ce-inline-toolbar__toggler-and-button-wrapper{display:-webkit-box;display:-ms-flexbox;display:flex;width:100%;padding:0 6px}.ce-inline-toolbar__buttons{display:-webkit-box;display:-ms-flexbox;display:flex}.ce-inline-toolbar__dropdown{display:-webkit-box;display:-ms-flexbox;display:flex;padding:6px;margin:0 6px 0 -6px;-webkit-box-align:center;-ms-flex-align:center;align-items:center;cursor:pointer;border-right:1px solid rgba(201,201,204,.48);-webkit-box-sizing:border-box;box-sizing:border-box}@media (hover: hover){.ce-inline-toolbar__dropdown:hover{background:#eff2f5}}.ce-inline-toolbar__dropdown--hidden{display:none}.ce-inline-toolbar__dropdown-content,.ce-inline-toolbar__dropdown-arrow{display:-webkit-box;display:-ms-flexbox;display:flex}.ce-inline-toolbar__dropdown-content svg,.ce-inline-toolbar__dropdown-arrow svg{width:20px;height:20px}.ce-inline-toolbar__shortcut{opacity:.6;word-spacing:-3px;margin-top:3px}.ce-inline-tool{color:var(--color-text-primary);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;border:0;border-radius:4px;line-height:normal;height:100%;padding:0;width:28px;background-color:transparent;cursor:pointer}@media (max-width: 650px){.ce-inline-tool{width:36px;height:36px}}@media (hover: hover){.ce-inline-tool:hover{background-color:#f8f8f8}}.ce-inline-tool svg{display:block;width:20px;height:20px}@media (max-width: 650px){.ce-inline-tool svg{width:28px;height:28px}}.ce-inline-tool--link .icon--unlink,.ce-inline-tool--unlink .icon--link{display:none}.ce-inline-tool--unlink .icon--unlink{display:inline-block;margin-bottom:-1px}.ce-inline-tool-input{background:#F8F8F8;border:1px solid rgba(226,226,229,.2);border-radius:6px;padding:4px 8px;font-size:14px;line-height:22px;outline:none;margin:0;width:100%;-webkit-box-sizing:border-box;box-sizing:border-box;display:none;font-weight:500;-webkit-appearance:none;font-family:inherit}@media (max-width: 650px){.ce-inline-tool-input{font-size:15px;font-weight:500}}.ce-inline-tool-input::-webkit-input-placeholder{color:#707684}.ce-inline-tool-input::-moz-placeholder{color:#707684}.ce-inline-tool-input:-ms-input-placeholder{color:#707684}.ce-inline-tool-input::-ms-input-placeholder{color:#707684}.ce-inline-tool-input::placeholder{color:#707684}.ce-inline-tool-input--showed{display:block}.ce-inline-tool--active{background:var(--color-background-icon-active);color:var(--color-text-icon-active)}@-webkit-keyframes fade-in{0%{opacity:0}to{opacity:1}}@keyframes fade-in{0%{opacity:0}to{opacity:1}}.ce-block{-webkit-animation:fade-in .3s ease;animation:fade-in .3s ease;-webkit-animation-fill-mode:none;animation-fill-mode:none;-webkit-animation-fill-mode:initial;animation-fill-mode:initial}.ce-block:first-of-type{margin-top:0}.ce-block--selected .ce-block__content{background:#e1f2ff}.ce-block--selected .ce-block__content [contenteditable]{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.ce-block--selected .ce-block__content img,.ce-block--selected .ce-block__content .ce-stub{opacity:.55}.ce-block--stretched .ce-block__content{max-width:none}.ce-block__content{position:relative;max-width:650px;margin:0 auto;-webkit-transition:background-color .15s ease;transition:background-color .15s ease}.ce-block--drop-target .ce-block__content:before{content:"";position:absolute;top:100%;left:-20px;margin-top:-1px;height:8px;width:8px;border:solid #388AE5;border-width:1px 1px 0 0;-webkit-transform-origin:right;transform-origin:right;-webkit-transform:rotate(45deg);transform:rotate(45deg)}.ce-block--drop-target .ce-block__content:after{content:"";position:absolute;top:100%;height:1px;width:100%;color:#388ae5;background:repeating-linear-gradient(90deg,#388AE5,#388AE5 1px,#fff 1px,#fff 6px)}.ce-block a{cursor:pointer;-webkit-text-decoration:underline;text-decoration:underline}.ce-block b{font-weight:700}.ce-block i{font-style:italic}@-webkit-keyframes bounceIn{0%,20%,40%,60%,80%,to{-webkit-animation-timing-function:cubic-bezier(.215,.61,.355,1);animation-timing-function:cubic-bezier(.215,.61,.355,1)}0%{-webkit-transform:scale3d(.9,.9,.9);transform:scale3d(.9,.9,.9)}20%{-webkit-transform:scale3d(1.03,1.03,1.03);transform:scale3d(1.03,1.03,1.03)}60%{-webkit-transform:scale3d(1,1,1);transform:scaleZ(1)}}@keyframes bounceIn{0%,20%,40%,60%,80%,to{-webkit-animation-timing-function:cubic-bezier(.215,.61,.355,1);animation-timing-function:cubic-bezier(.215,.61,.355,1)}0%{-webkit-transform:scale3d(.9,.9,.9);transform:scale3d(.9,.9,.9)}20%{-webkit-transform:scale3d(1.03,1.03,1.03);transform:scale3d(1.03,1.03,1.03)}60%{-webkit-transform:scale3d(1,1,1);transform:scaleZ(1)}}@-webkit-keyframes selectionBounce{0%,20%,40%,60%,80%,to{-webkit-animation-timing-function:cubic-bezier(.215,.61,.355,1);animation-timing-function:cubic-bezier(.215,.61,.355,1)}50%{-webkit-transform:scale3d(1.01,1.01,1.01);transform:scale3d(1.01,1.01,1.01)}70%{-webkit-transform:scale3d(1,1,1);transform:scaleZ(1)}}@keyframes selectionBounce{0%,20%,40%,60%,80%,to{-webkit-animation-timing-function:cubic-bezier(.215,.61,.355,1);animation-timing-function:cubic-bezier(.215,.61,.355,1)}50%{-webkit-transform:scale3d(1.01,1.01,1.01);transform:scale3d(1.01,1.01,1.01)}70%{-webkit-transform:scale3d(1,1,1);transform:scaleZ(1)}}@-webkit-keyframes buttonClicked{0%,20%,40%,60%,80%,to{-webkit-animation-timing-function:cubic-bezier(.215,.61,.355,1);animation-timing-function:cubic-bezier(.215,.61,.355,1)}0%{-webkit-transform:scale3d(.95,.95,.95);transform:scale3d(.95,.95,.95)}60%{-webkit-transform:scale3d(1.02,1.02,1.02);transform:scale3d(1.02,1.02,1.02)}80%{-webkit-transform:scale3d(1,1,1);transform:scaleZ(1)}}@keyframes buttonClicked{0%,20%,40%,60%,80%,to{-webkit-animation-timing-function:cubic-bezier(.215,.61,.355,1);animation-timing-function:cubic-bezier(.215,.61,.355,1)}0%{-webkit-transform:scale3d(.95,.95,.95);transform:scale3d(.95,.95,.95)}60%{-webkit-transform:scale3d(1.02,1.02,1.02);transform:scale3d(1.02,1.02,1.02)}80%{-webkit-transform:scale3d(1,1,1);transform:scaleZ(1)}}.cdx-block{padding:.4em 0}.cdx-block::-webkit-input-placeholder{line-height:normal!important}.cdx-input{border:1px solid rgba(201,201,204,.48);-webkit-box-shadow:inset 0 1px 2px 0 rgba(35,44,72,.06);box-shadow:inset 0 1px 2px #232c480f;border-radius:3px;padding:10px 12px;outline:none;width:100%;-webkit-box-sizing:border-box;box-sizing:border-box}.cdx-input[data-placeholder]:before{position:static!important}.cdx-input[data-placeholder]:before{display:inline-block;width:0;white-space:nowrap;pointer-events:none}.cdx-settings-button{display:-webkit-inline-box;display:-ms-inline-flexbox;display:inline-flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;border-radius:3px;cursor:pointer;border:0;outline:none;background-color:transparent;vertical-align:bottom;color:inherit;margin:0;min-width:26px;min-height:26px}.cdx-settings-button--focused{background:rgba(34,186,255,.08)!important}.cdx-settings-button--focused{-webkit-box-shadow:inset 0 0 0px 1px rgba(7,161,227,.08);box-shadow:inset 0 0 0 1px #07a1e314}.cdx-settings-button--focused-animated{-webkit-animation-name:buttonClicked;animation-name:buttonClicked;-webkit-animation-duration:.25s;animation-duration:.25s}.cdx-settings-button--active{color:#388ae5}.cdx-settings-button svg{width:auto;height:auto}@media (max-width: 650px){.cdx-settings-button svg{width:28px;height:28px}}@media (max-width: 650px){.cdx-settings-button{width:36px;height:36px;border-radius:8px}}@media (hover: hover){.cdx-settings-button:hover{background-color:#eff2f5}}.cdx-loader{position:relative;border:1px solid rgba(201,201,204,.48)}.cdx-loader:before{content:"";position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-11px 0 0 -11px;border:2px solid rgba(201,201,204,.48);border-left-color:#388ae5;border-radius:50%;-webkit-animation:cdxRotation 1.2s infinite linear;animation:cdxRotation 1.2s infinite linear}@-webkit-keyframes cdxRotation{0%{-webkit-transform:rotate(0deg);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes cdxRotation{0%{-webkit-transform:rotate(0deg);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.cdx-button{padding:13px;border-radius:3px;border:1px solid rgba(201,201,204,.48);font-size:14.9px;background:#fff;-webkit-box-shadow:0 2px 2px 0 rgba(18,30,57,.04);box-shadow:0 2px 2px #121e390a;color:#707684;text-align:center;cursor:pointer}@media (hover: hover){.cdx-button:hover{background:#FBFCFE;-webkit-box-shadow:0 1px 3px 0 rgba(18,30,57,.08);box-shadow:0 1px 3px #121e3914}}.cdx-button svg{height:20px;margin-right:.2em;margin-top:-2px}.ce-stub{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;padding:12px 18px;margin:10px 0;border-radius:10px;background:#eff2f5;border:1px solid #EFF0F1;color:#707684;font-size:14px}.ce-stub svg{width:20px;height:20px}.ce-stub__info{margin-left:14px}.ce-stub__title{font-weight:500;text-transform:capitalize}.codex-editor.codex-editor--rtl{direction:rtl}.codex-editor.codex-editor--rtl .cdx-list{padding-left:0;padding-right:40px}.codex-editor.codex-editor--rtl .ce-toolbar__plus{right:-26px;left:auto}.codex-editor.codex-editor--rtl .ce-toolbar__actions{right:auto;left:-26px}@media (max-width: 650px){.codex-editor.codex-editor--rtl .ce-toolbar__actions{margin-left:0;margin-right:auto;padding-right:0;padding-left:10px}}.codex-editor.codex-editor--rtl .ce-settings{left:5px;right:auto}.codex-editor.codex-editor--rtl .ce-settings:before{right:auto;left:25px}.codex-editor.codex-editor--rtl .ce-settings__button:not(:nth-child(3n+3)){margin-left:3px;margin-right:0}.codex-editor.codex-editor--rtl .ce-conversion-tool__icon{margin-right:0;margin-left:10px}.codex-editor.codex-editor--rtl .ce-inline-toolbar__dropdown{border-right:0px solid transparent;border-left:1px solid rgba(201,201,204,.48);margin:0 -6px 0 6px}.codex-editor.codex-editor--rtl .ce-inline-toolbar__dropdown .icon--toggler-down{margin-left:0;margin-right:4px}@media (min-width: 651px){.codex-editor--narrow.codex-editor--rtl .ce-toolbar__plus{left:0;right:5px}}@media (min-width: 651px){.codex-editor--narrow.codex-editor--rtl .ce-toolbar__actions{left:-5px}}.cdx-search-field{--icon-margin-right: 10px;background:#F8F8F8;border:1px solid rgba(226,226,229,.2);border-radius:6px;padding:2px;display:grid;grid-template-columns:auto auto 1fr;grid-template-rows:auto}.cdx-search-field__icon{width:26px;height:26px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;margin-right:var(--icon-margin-right)}.cdx-search-field__icon svg{width:20px;height:20px;color:#707684}.cdx-search-field__input{font-size:14px;outline:none;font-weight:500;font-family:inherit;border:0;background:transparent;margin:0;padding:0;line-height:22px;min-width:calc(100% - 26px - var(--icon-margin-right))}.cdx-search-field__input::-webkit-input-placeholder{color:#707684;font-weight:500}.cdx-search-field__input::-moz-placeholder{color:#707684;font-weight:500}.cdx-search-field__input:-ms-input-placeholder{color:#707684;font-weight:500}.cdx-search-field__input::-ms-input-placeholder{color:#707684;font-weight:500}.cdx-search-field__input::placeholder{color:#707684;font-weight:500}.ce-popover{--border-radius: 6px;--width: 200px;--max-height: 270px;--padding: 6px;--offset-from-target: 8px;--color-border: #EFF0F1;--color-shadow: rgba(13, 20, 33, .1);--color-background: white;--color-text-primary: black;--color-text-secondary: #707684;--color-border-icon: rgba(201, 201, 204, .48);--color-border-icon-disabled: #EFF0F1;--color-text-icon-active: #388AE5;--color-background-icon-active: rgba(56, 138, 229, .1);--color-background-item-focus: rgba(34, 186, 255, .08);--color-shadow-item-focus: rgba(7, 161, 227, .08);--color-background-item-hover: #F8F8F8;--color-background-item-confirm: #E24A4A;--color-background-item-confirm-hover: #CE4343;--popover-top: calc(100% + var(--offset-from-target));--popover-left: 0;--nested-popover-overlap: 4px;--icon-size: 20px;--item-padding: 3px;--item-height: calc(var(--icon-size) + 2 * var(--item-padding))}.ce-popover__container{min-width:var(--width);width:var(--width);max-height:var(--max-height);border-radius:var(--border-radius);overflow:hidden;-webkit-box-sizing:border-box;box-sizing:border-box;-webkit-box-shadow:0px 3px 15px -3px var(--color-shadow);box-shadow:0 3px 15px -3px var(--color-shadow);position:absolute;left:var(--popover-left);top:var(--popover-top);background:var(--color-background);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;z-index:4;opacity:0;max-height:0;pointer-events:none;padding:0;border:none}.ce-popover--opened>.ce-popover__container{opacity:1;padding:var(--padding);max-height:var(--max-height);pointer-events:auto;-webkit-animation:panelShowing .1s ease;animation:panelShowing .1s ease;border:1px solid var(--color-border)}@media (max-width: 650px){.ce-popover--opened>.ce-popover__container{-webkit-animation:panelShowingMobile .25s ease;animation:panelShowingMobile .25s ease}}.ce-popover--open-top .ce-popover__container{--popover-top: calc(-1 * (var(--offset-from-target) + var(--popover-height)))}.ce-popover--open-left .ce-popover__container{--popover-left: calc(-1 * var(--width) + 100%)}.ce-popover__items{overflow-y:auto;-ms-scroll-chaining:none;overscroll-behavior:contain}@media (max-width: 650px){.ce-popover__overlay{position:fixed;top:0;bottom:0;left:0;right:0;background:#1D202B;z-index:3;opacity:.5;-webkit-transition:opacity .12s ease-in;transition:opacity .12s ease-in;will-change:opacity;visibility:visible}}.ce-popover__overlay--hidden{display:none}@media (max-width: 650px){.ce-popover .ce-popover__container{--offset: 5px;position:fixed;max-width:none;min-width:calc(100% - var(--offset) * 2);left:var(--offset);right:var(--offset);bottom:calc(var(--offset) + env(safe-area-inset-bottom));top:auto;border-radius:10px}}.ce-popover__search{margin-bottom:5px}.ce-popover__nothing-found-message{color:#707684;display:none;cursor:default;padding:3px;font-size:14px;line-height:20px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ce-popover__nothing-found-message--displayed{display:block}.ce-popover--nested .ce-popover__container{--popover-left: calc(var(--nesting-level) * (var(--width) - var(--nested-popover-overlap)));top:calc(var(--trigger-item-top) - var(--nested-popover-overlap));position:absolute}.ce-popover--open-top.ce-popover--nested .ce-popover__container{top:calc(var(--trigger-item-top) - var(--popover-height) + var(--item-height) + var(--offset-from-target) + var(--nested-popover-overlap))}.ce-popover--open-left .ce-popover--nested .ce-popover__container{--popover-left: calc(-1 * (var(--nesting-level) + 1) * var(--width) + 100%)}.ce-popover-item-separator{padding:4px 3px}.ce-popover-item-separator--hidden{display:none}.ce-popover-item-separator__line{height:1px;background:var(--color-border);width:100%}.ce-popover-item-html--hidden{display:none}.ce-popover-item{--border-radius: 6px;border-radius:var(--border-radius);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;padding:var(--item-padding);color:var(--color-text-primary);-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;border:none;background:transparent}@media (max-width: 650px){.ce-popover-item{padding:4px}}.ce-popover-item:not(:last-of-type){margin-bottom:1px}.ce-popover-item__icon{width:26px;height:26px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center}.ce-popover-item__icon svg{width:20px;height:20px}@media (max-width: 650px){.ce-popover-item__icon{width:36px;height:36px;border-radius:8px}.ce-popover-item__icon svg{width:28px;height:28px}}.ce-popover-item__icon--tool{margin-right:4px}.ce-popover-item__title{font-size:14px;line-height:20px;font-weight:500;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-right:auto}@media (max-width: 650px){.ce-popover-item__title{font-size:16px}}.ce-popover-item__secondary-title{color:var(--color-text-secondary);font-size:12px;white-space:nowrap;letter-spacing:-.1em;padding-right:5px;opacity:.6}@media (max-width: 650px){.ce-popover-item__secondary-title{display:none}}.ce-popover-item--active{background:var(--color-background-icon-active);color:var(--color-text-icon-active)}.ce-popover-item--disabled{color:var(--color-text-secondary);cursor:default;pointer-events:none}.ce-popover-item--focused:not(.ce-popover-item--no-focus){background:var(--color-background-item-focus)!important}.ce-popover-item--hidden{display:none}@media (hover: hover){.ce-popover-item:hover{cursor:pointer}.ce-popover-item:hover:not(.ce-popover-item--no-hover){background-color:var(--color-background-item-hover)}}.ce-popover-item--confirmation{background:var(--color-background-item-confirm)}.ce-popover-item--confirmation .ce-popover-item__title,.ce-popover-item--confirmation .ce-popover-item__icon{color:#fff}@media (hover: hover){.ce-popover-item--confirmation:not(.ce-popover-item--no-hover):hover{background:var(--color-background-item-confirm-hover)}}.ce-popover-item--confirmation:not(.ce-popover-item--no-focus).ce-popover-item--focused{background:var(--color-background-item-confirm-hover)!important}@-webkit-keyframes panelShowing{0%{opacity:0;-webkit-transform:translateY(-8px) scale(.9);transform:translateY(-8px) scale(.9)}70%{opacity:1;-webkit-transform:translateY(2px);transform:translateY(2px)}to{-webkit-transform:translateY(0);transform:translateY(0)}}@keyframes panelShowing{0%{opacity:0;-webkit-transform:translateY(-8px) scale(.9);transform:translateY(-8px) scale(.9)}70%{opacity:1;-webkit-transform:translateY(2px);transform:translateY(2px)}to{-webkit-transform:translateY(0);transform:translateY(0)}}@-webkit-keyframes panelShowingMobile{0%{opacity:0;-webkit-transform:translateY(14px) scale(.98);transform:translateY(14px) scale(.98)}70%{opacity:1;-webkit-transform:translateY(-4px);transform:translateY(-4px)}to{-webkit-transform:translateY(0);transform:translateY(0)}}@keyframes panelShowingMobile{0%{opacity:0;-webkit-transform:translateY(14px) scale(.98);transform:translateY(14px) scale(.98)}70%{opacity:1;-webkit-transform:translateY(-4px);transform:translateY(-4px)}to{-webkit-transform:translateY(0);transform:translateY(0)}}.wobble{-webkit-animation-name:wobble;animation-name:wobble;-webkit-animation-duration:.4s;animation-duration:.4s}@-webkit-keyframes wobble{0%{-webkit-transform:translate3d(0,0,0);transform:translateZ(0)}15%{-webkit-transform:translate3d(-9%,0,0);transform:translate3d(-9%,0,0)}30%{-webkit-transform:translate3d(9%,0,0);transform:translate3d(9%,0,0)}45%{-webkit-transform:translate3d(-4%,0,0);transform:translate3d(-4%,0,0)}60%{-webkit-transform:translate3d(4%,0,0);transform:translate3d(4%,0,0)}75%{-webkit-transform:translate3d(-1%,0,0);transform:translate3d(-1%,0,0)}to{-webkit-transform:translate3d(0,0,0);transform:translateZ(0)}}@keyframes wobble{0%{-webkit-transform:translate3d(0,0,0);transform:translateZ(0)}15%{-webkit-transform:translate3d(-9%,0,0);transform:translate3d(-9%,0,0)}30%{-webkit-transform:translate3d(9%,0,0);transform:translate3d(9%,0,0)}45%{-webkit-transform:translate3d(-4%,0,0);transform:translate3d(-4%,0,0)}60%{-webkit-transform:translate3d(4%,0,0);transform:translate3d(4%,0,0)}75%{-webkit-transform:translate3d(-1%,0,0);transform:translate3d(-1%,0,0)}to{-webkit-transform:translate3d(0,0,0);transform:translateZ(0)}}.ce-popover-header{margin-bottom:8px;margin-top:4px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center}.ce-popover-header__text{font-size:18px;font-weight:600}.ce-popover-header__back-button{border:0;background:transparent;width:36px;height:36px;color:var(--color-text-primary)}.ce-popover-header__back-button svg{display:block;width:28px;height:28px}.ce-popover--inline{--height: 38px;--height-mobile: 46px;--container-padding: 4px;position:relative}.ce-popover--inline .ce-popover__custom-content{margin-bottom:0}.ce-popover--inline .ce-popover__items{display:-webkit-box;display:-ms-flexbox;display:flex}.ce-popover--inline .ce-popover__container{-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;padding:var(--container-padding);height:var(--height);top:0;min-width:-webkit-max-content;min-width:-moz-max-content;min-width:max-content;width:-webkit-max-content;width:-moz-max-content;width:max-content;-webkit-animation:none;animation:none}@media (max-width: 650px){.ce-popover--inline .ce-popover__container{height:var(--height-mobile);position:absolute}}.ce-popover--inline .ce-popover-item-separator{padding:0 4px}.ce-popover--inline .ce-popover-item-separator__line{height:100%;width:1px}.ce-popover--inline .ce-popover-item{border-radius:4px;padding:4px}.ce-popover--inline .ce-popover-item__icon--tool{-webkit-box-shadow:none;box-shadow:none;background:transparent;margin-right:0}.ce-popover--inline .ce-popover-item__icon{width:auto;width:initial;height:auto;height:initial}.ce-popover--inline .ce-popover-item__icon svg{width:20px;height:20px}@media (max-width: 650px){.ce-popover--inline .ce-popover-item__icon svg{width:28px;height:28px}}.ce-popover--inline .ce-popover-item:not(:last-of-type){margin-bottom:0;margin-bottom:initial}.ce-popover--inline .ce-popover-item-html{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center}.ce-popover--inline .ce-popover-item__icon--chevron-right{-webkit-transform:rotate(90deg);transform:rotate(90deg)}.ce-popover--inline .ce-popover--nested-level-1 .ce-popover__container{--offset: 3px;left:0;top:calc(var(--height) + var(--offset))}@media (max-width: 650px){.ce-popover--inline .ce-popover--nested-level-1 .ce-popover__container{top:calc(var(--height-mobile) + var(--offset))}}.ce-popover--inline .ce-popover--nested .ce-popover__container{min-width:var(--width);width:var(--width);height:-webkit-fit-content;height:-moz-fit-content;height:fit-content;padding:6px;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column}.ce-popover--inline .ce-popover--nested .ce-popover__items{display:block;width:100%}.ce-popover--inline .ce-popover--nested .ce-popover-item{border-radius:6px;padding:3px}@media (max-width: 650px){.ce-popover--inline .ce-popover--nested .ce-popover-item{padding:4px}}.ce-popover--inline .ce-popover--nested .ce-popover-item__icon--tool{margin-right:4px}.ce-popover--inline .ce-popover--nested .ce-popover-item__icon{width:26px;height:26px}.ce-popover--inline .ce-popover--nested .ce-popover-item-separator{padding:4px 3px}.ce-popover--inline .ce-popover--nested .ce-popover-item-separator__line{width:100%;height:1px}.codex-editor [data-placeholder]:empty:before,.codex-editor [data-placeholder][data-empty=true]:before{pointer-events:none;color:#707684;cursor:text;content:attr(data-placeholder)}.codex-editor [data-placeholder-active]:empty:before,.codex-editor [data-placeholder-active][data-empty=true]:before{pointer-events:none;color:#707684;cursor:text}.codex-editor [data-placeholder-active]:empty:focus:before,.codex-editor [data-placeholder-active][data-empty=true]:focus:before{content:attr(data-placeholder-active)}.ce-hint--align-start{text-align:left}.ce-hint--align-center{text-align:center}.ce-hint__description{opacity:.6;margin-top:3px}
 `;
-class fu extends _ {
+class Eu extends O {
   constructor() {
-    super(...arguments), this.isMobile = !1, this.contentRectCache = null, this.resizeDebouncer = Gr(() => {
+    super(...arguments), this.isMobile = !1, this.contentRectCache = null, this.resizeDebouncer = Qr(() => {
       this.windowResize();
-    }, 200), this.selectionChangeDebounced = Gr(() => {
+    }, 200), this.selectionChangeDebounced = Qr(() => {
       this.selectionChanged();
-    }, Gd), this.documentTouchedListener = (e) => {
+    }, iu), this.documentTouchedListener = (e) => {
       this.documentTouched(e);
     };
   }
@@ -10690,7 +10711,7 @@ class fu extends _ {
    * Check for mobile mode and save the result
    */
   setIsMobile() {
-    const e = window.innerWidth < xi;
+    const e = window.innerWidth < Si;
     e !== this.isMobile && this.eventsDispatcher.emit(Ze, {
       isEnabled: this.isMobile
     }), this.isMobile = e;
@@ -10714,7 +10735,7 @@ class fu extends _ {
         return;
       const n = f.make("style", null, {
         id: e,
-        textContent: ai.toString()
+        textContent: ci.toString()
       });
       this.config.style && !J(this.config.style) && this.config.style.nonce && n.setAttribute("nonce", this.config.style.nonce), t.prepend(n);
     } else {
@@ -10722,7 +10743,7 @@ class fu extends _ {
         return;
       const n = f.make("style", null, {
         id: e,
-        textContent: ai.toString()
+        textContent: ci.toString()
       });
       this.config.style && !J(this.config.style) && this.config.style.nonce && n.setAttribute("nonce", this.config.style.nonce), f.prepend(document.head, n);
     }
@@ -10766,7 +10787,7 @@ class fu extends _ {
     let e;
     this.readOnlyMutableListeners.on(this.nodes.redactor, "mousemove", uo((t) => {
       const n = t.target.closest(".ce-block");
-      this.Editor.BlockSelection.anyBlockSelected || n && e !== n && (e = n, this.eventsDispatcher.emit(Xi, {
+      this.Editor.BlockSelection.anyBlockSelected || n && e !== n && (e = n, this.eventsDispatcher.emit(Qi, {
         block: this.Editor.BlockManager.getBlockByChildNode(n)
       }));
     }, 20), {
@@ -10792,14 +10813,14 @@ class fu extends _ {
    */
   documentKeydown(e) {
     switch (e.keyCode) {
-      case S.ENTER:
+      case T.ENTER:
         this.enterPressed(e);
         break;
-      case S.BACKSPACE:
-      case S.DELETE:
+      case T.BACKSPACE:
+      case T.DELETE:
         this.backspacePressed(e);
         break;
-      case S.ESC:
+      case T.ESC:
         this.escapePressed(e);
         break;
       default:
@@ -10917,8 +10938,8 @@ class fu extends _ {
     const t = e.target, n = e.metaKey || e.ctrlKey, r = f.getClosestAnchor(t);
     if (r && n) {
       e.stopImmediatePropagation(), e.stopPropagation();
-      const i = r.getAttribute("href"), s = Ha(i);
-      Ua(s);
+      const i = r.getAttribute("href"), s = Xa(i);
+      Za(s);
       return;
     }
     this.processBottomZoneClick(e);
@@ -10967,51 +10988,51 @@ class fu extends _ {
   enableInputsEmptyMark() {
     function e(t) {
       const n = t.target;
-      Ei(n);
+      Ti(n);
     }
     this.readOnlyMutableListeners.on(this.nodes.wrapper, "input", e), this.readOnlyMutableListeners.on(this.nodes.wrapper, "focusin", e), this.readOnlyMutableListeners.on(this.nodes.wrapper, "focusout", e);
   }
 }
-const gu = {
+const Cu = {
   // API Modules
-  BlocksAPI: Ja,
-  CaretAPI: tl,
-  EventsAPI: ol,
-  I18nAPI: nl,
-  API: rl,
-  InlineToolbarAPI: il,
-  ListenersAPI: sl,
-  NotifierAPI: dl,
-  ReadOnlyAPI: ul,
-  SanitizerAPI: vl,
-  SaverAPI: yl,
-  SelectionAPI: kl,
-  ToolsAPI: wl,
-  StylesAPI: xl,
-  ToolbarAPI: El,
-  TooltipAPI: Ol,
-  UiAPI: _l,
+  BlocksAPI: ll,
+  CaretAPI: dl,
+  EventsAPI: ul,
+  I18nAPI: hl,
+  API: pl,
+  InlineToolbarAPI: fl,
+  ListenersAPI: gl,
+  NotifierAPI: yl,
+  ReadOnlyAPI: kl,
+  SanitizerAPI: Bl,
+  SaverAPI: _l,
+  SelectionAPI: Ol,
+  ToolsAPI: Il,
+  StylesAPI: Ml,
+  ToolbarAPI: Ll,
+  TooltipAPI: Dl,
+  UiAPI: Rl,
   // Toolbar Modules
-  BlockSettings: tc,
-  Toolbar: cc,
-  InlineToolbar: dc,
+  BlockSettings: dc,
+  Toolbar: vc,
+  InlineToolbar: yc,
   // Modules
-  BlockEvents: Ud,
-  BlockManager: qd,
-  BlockSelection: Kd,
-  Caret: Yd,
-  CrossBlockSelection: Vd,
-  DragNDrop: Xd,
-  ModificationsObserver: Qd,
-  Paste: Jd,
-  ReadOnly: eu,
-  RectangleSelection: tu,
-  Renderer: ou,
-  Saver: nu,
-  Tools: Ms,
-  UI: fu
+  BlockEvents: Zd,
+  BlockManager: eu,
+  BlockSelection: tu,
+  Caret: ou,
+  CrossBlockSelection: nu,
+  DragNDrop: ru,
+  ModificationsObserver: au,
+  Paste: lu,
+  ReadOnly: cu,
+  RectangleSelection: du,
+  Renderer: uu,
+  Saver: hu,
+  Tools: As,
+  UI: Eu
 };
-class mu {
+class Su {
   /**
    * @param {EditorConfig} config - user configuration
    */
@@ -11039,7 +11060,7 @@ class mu {
       ...e
     } : this.config = {
       holder: e
-    }, po(!!this.config.holderId, "config.holderId", "config.holder"), this.config.holderId && !this.config.holder && (this.config.holder = this.config.holderId, this.config.holderId = null), this.config.holder == null && (this.config.holder = "editorjs"), this.config.shadowRoot && _a(this.config.shadowRoot), this.config.logLevel || (this.config.logLevel = yi.VERBOSE), Aa(this.config.logLevel), po(!!this.config.initialBlock, "config.initialBlock", "config.defaultBlock"), this.config.defaultBlock = this.config.defaultBlock || this.config.initialBlock || "paragraph", this.config.minHeight = this.config.minHeight !== void 0 ? this.config.minHeight : 300;
+    }, po(!!this.config.holderId, "config.holderId", "config.holder"), this.config.holderId && !this.config.holder && (this.config.holder = this.config.holderId, this.config.holderId = null), this.config.holder == null && (this.config.holder = "editorjs"), this.config.shadowRoot && Ra(this.config.shadowRoot), this.config.logLevel || (this.config.logLevel = xi.VERBOSE), za(this.config.logLevel), po(!!this.config.initialBlock, "config.initialBlock", "config.defaultBlock"), this.config.defaultBlock = this.config.defaultBlock || this.config.initialBlock || "paragraph", this.config.minHeight = this.config.minHeight !== void 0 ? this.config.minHeight : 300;
     const r = {
       type: this.config.defaultBlock,
       data: {}
@@ -11102,7 +11123,7 @@ class mu {
         try {
           await this.moduleInstances[t].prepare();
         } catch (n) {
-          if (n instanceof Si)
+          if (n instanceof Oi)
             throw new Error(n.message);
           L(`Module ${t} was skipped because of %o`, "warn", n);
         }
@@ -11120,7 +11141,7 @@ class mu {
    * Make modules instances and save it to the @property this.moduleInstances
    */
   constructModules() {
-    Object.entries(gu).forEach(([e, t]) => {
+    Object.entries(Cu).forEach(([e, t]) => {
       try {
         this.moduleInstances[e] = new t({
           config: this.configuration,
@@ -11152,7 +11173,7 @@ class mu {
     return t;
   }
 }
-class bu {
+class Tu {
   /** Editor version */
   static get version() {
     return "2.31.6";
@@ -11164,7 +11185,7 @@ class bu {
     let t = () => {
     };
     z(e) && D(e.onReady) && (t = e.onReady);
-    const n = new mu(e);
+    const n = new Su(e);
     this.isReady = n.isReady.then(() => {
       this.exportAPI(n), t();
     });
@@ -11178,7 +11199,7 @@ class bu {
     const t = ["configuration"], n = () => {
       Object.values(e.moduleInstances).forEach((r) => {
         D(r.destroy) && r.destroy(), r.listeners.removeAll();
-      }), Bl(), e = null;
+      }), jl(), e = null;
       for (const r in this)
         Object.prototype.hasOwnProperty.call(this, r) && delete this[r];
       Object.setPrototypeOf(this, null);
@@ -11218,8 +11239,8 @@ class bu {
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const vu = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 7L6 12M6 17L6 12M6 12L12 12M12 7V12M12 17L12 12"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M19 17V10.2135C19 10.1287 18.9011 10.0824 18.836 10.1367L16 12.5"/></svg>', yu = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 7L6 12M6 17L6 12M6 12L12 12M12 7V12M12 17L12 12"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 11C16 10 19 9.5 19 12C19 13.9771 16.0684 13.9997 16.0012 16.8981C15.9999 16.9533 16.0448 17 16.1 17L19.3 17"/></svg>', ku = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 7L6 12M6 17L6 12M6 12L12 12M12 7V12M12 17L12 12"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 11C16 10.5 16.8323 10 17.6 10C18.3677 10 19.5 10.311 19.5 11.5C19.5 12.5315 18.7474 12.9022 18.548 12.9823C18.5378 12.9864 18.5395 13.0047 18.5503 13.0063C18.8115 13.0456 20 13.3065 20 14.8C20 16 19.5 17 17.8 17C17.8 17 16 17 16 16.3"/></svg>', wu = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 7L6 12M6 17L6 12M6 12L12 12M12 7V12M12 17L12 12"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M18 10L15.2834 14.8511C15.246 14.9178 15.294 15 15.3704 15C16.8489 15 18.7561 15 20.2 15M19 17C19 15.7187 19 14.8813 19 13.6"/></svg>', xu = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 7L6 12M6 17L6 12M6 12L12 12M12 7V12M12 17L12 12"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 15.9C16 15.9 16.3768 17 17.8 17C19.5 17 20 15.6199 20 14.7C20 12.7323 17.6745 12.0486 16.1635 12.9894C16.094 13.0327 16 12.9846 16 12.9027V10.1C16 10.0448 16.0448 10 16.1 10H19.8"/></svg>', Eu = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 7L6 12M6 17L6 12M6 12L12 12M12 7V12M12 17L12 12"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M19.5 10C16.5 10.5 16 13.3285 16 15M16 15V15C16 16.1046 16.8954 17 18 17H18.3246C19.3251 17 20.3191 16.3492 20.2522 15.3509C20.0612 12.4958 16 12.6611 16 15Z"/></svg>', Cu = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9 7L9 12M9 17V12M9 12L15 12M15 7V12M15 17L15 12"/></svg>';
-let Tu = class {
+const Bu = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 7L6 12M6 17L6 12M6 12L12 12M12 7V12M12 17L12 12"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M19 17V10.2135C19 10.1287 18.9011 10.0824 18.836 10.1367L16 12.5"/></svg>', _u = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 7L6 12M6 17L6 12M6 12L12 12M12 7V12M12 17L12 12"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 11C16 10 19 9.5 19 12C19 13.9771 16.0684 13.9997 16.0012 16.8981C15.9999 16.9533 16.0448 17 16.1 17L19.3 17"/></svg>', Ou = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 7L6 12M6 17L6 12M6 12L12 12M12 7V12M12 17L12 12"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 11C16 10.5 16.8323 10 17.6 10C18.3677 10 19.5 10.311 19.5 11.5C19.5 12.5315 18.7474 12.9022 18.548 12.9823C18.5378 12.9864 18.5395 13.0047 18.5503 13.0063C18.8115 13.0456 20 13.3065 20 14.8C20 16 19.5 17 17.8 17C17.8 17 16 17 16 16.3"/></svg>', Iu = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 7L6 12M6 17L6 12M6 12L12 12M12 7V12M12 17L12 12"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M18 10L15.2834 14.8511C15.246 14.9178 15.294 15 15.3704 15C16.8489 15 18.7561 15 20.2 15M19 17C19 15.7187 19 14.8813 19 13.6"/></svg>', Mu = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 7L6 12M6 17L6 12M6 12L12 12M12 7V12M12 17L12 12"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 15.9C16 15.9 16.3768 17 17.8 17C19.5 17 20 15.6199 20 14.7C20 12.7323 17.6745 12.0486 16.1635 12.9894C16.094 13.0327 16 12.9846 16 12.9027V10.1C16 10.0448 16.0448 10 16.1 10H19.8"/></svg>', Lu = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M6 7L6 12M6 17L6 12M6 12L12 12M12 7V12M12 17L12 12"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M19.5 10C16.5 10.5 16 13.3285 16 15M16 15V15C16 16.1046 16.8954 17 18 17H18.3246C19.3251 17 20.3191 16.3492 20.2522 15.3509C20.0612 12.4958 16 12.6611 16 15Z"/></svg>', Pu = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9 7L9 12M9 17V12M9 12L15 12M15 7V12M15 17L15 12"/></svg>';
+let Au = class {
   constructor({ data: e, config: t, api: n, readOnly: r }) {
     this.api = n, this.readOnly = r, this._settings = t, this._data = this.normalizeData(e), this._element = this.getTag();
   }
@@ -11424,32 +11445,32 @@ let Tu = class {
       {
         number: 1,
         tag: "H1",
-        svg: vu
+        svg: Bu
       },
       {
         number: 2,
         tag: "H2",
-        svg: yu
+        svg: _u
       },
       {
         number: 3,
         tag: "H3",
-        svg: ku
+        svg: Ou
       },
       {
         number: 4,
         tag: "H4",
-        svg: wu
+        svg: Iu
       },
       {
         number: 5,
         tag: "H5",
-        svg: xu
+        svg: Mu
       },
       {
         number: 6,
         tag: "H6",
-        svg: Eu
+        svg: Lu
       }
     ];
     return this._settings.levels ? e.filter(
@@ -11512,7 +11533,7 @@ let Tu = class {
    */
   static get toolbox() {
     return {
-      icon: Cu,
+      icon: Pu,
       title: "Heading"
     };
   }
@@ -11527,9 +11548,9 @@ let Tu = class {
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const Su = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M18 7L6 7"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M18 17H6"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 12L8 12"/></svg>', Bu = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M17 7L5 7"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M17 17H5"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M13 12L5 12"/></svg>', Ou = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 10.8182L9 10.8182C8.80222 10.8182 8.60888 10.7649 8.44443 10.665C8.27998 10.5651 8.15181 10.4231 8.07612 10.257C8.00043 10.0909 7.98063 9.90808 8.01922 9.73174C8.0578 9.55539 8.15304 9.39341 8.29289 9.26627C8.43275 9.13913 8.61093 9.05255 8.80491 9.01747C8.99889 8.98239 9.19996 9.00039 9.38268 9.0692C9.56541 9.13801 9.72159 9.25453 9.83147 9.40403C9.94135 9.55353 10 9.72929 10 9.90909L10 12.1818C10 12.664 9.78929 13.1265 9.41421 13.4675C9.03914 13.8084 8.53043 14 8 14"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 10.8182L15 10.8182C14.8022 10.8182 14.6089 10.7649 14.4444 10.665C14.28 10.5651 14.1518 10.4231 14.0761 10.257C14.0004 10.0909 13.9806 9.90808 14.0192 9.73174C14.0578 9.55539 14.153 9.39341 14.2929 9.26627C14.4327 9.13913 14.6109 9.05255 14.8049 9.01747C14.9989 8.98239 15.2 9.00039 15.3827 9.0692C15.5654 9.13801 15.7216 9.25453 15.8315 9.40403C15.9414 9.55353 16 9.72929 16 9.90909L16 12.1818C16 12.664 15.7893 13.1265 15.4142 13.4675C15.0391 13.8084 14.5304 14 14 14"/></svg>';
+const Nu = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M18 7L6 7"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M18 17H6"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16 12L8 12"/></svg>', ju = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M17 7L5 7"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M17 17H5"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M13 12L5 12"/></svg>', Du = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 10.8182L9 10.8182C8.80222 10.8182 8.60888 10.7649 8.44443 10.665C8.27998 10.5651 8.15181 10.4231 8.07612 10.257C8.00043 10.0909 7.98063 9.90808 8.01922 9.73174C8.0578 9.55539 8.15304 9.39341 8.29289 9.26627C8.43275 9.13913 8.61093 9.05255 8.80491 9.01747C8.99889 8.98239 9.19996 9.00039 9.38268 9.0692C9.56541 9.13801 9.72159 9.25453 9.83147 9.40403C9.94135 9.55353 10 9.72929 10 9.90909L10 12.1818C10 12.664 9.78929 13.1265 9.41421 13.4675C9.03914 13.8084 8.53043 14 8 14"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 10.8182L15 10.8182C14.8022 10.8182 14.6089 10.7649 14.4444 10.665C14.28 10.5651 14.1518 10.4231 14.0761 10.257C14.0004 10.0909 13.9806 9.90808 14.0192 9.73174C14.0578 9.55539 14.153 9.39341 14.2929 9.26627C14.4327 9.13913 14.6109 9.05255 14.8049 9.01747C14.9989 8.98239 15.2 9.00039 15.3827 9.0692C15.5654 9.13801 15.7216 9.25453 15.8315 9.40403C15.9414 9.55353 16 9.72929 16 9.90909L16 12.1818C16 12.664 15.7893 13.1265 15.4142 13.4675C15.0391 13.8084 14.5304 14 14 14"/></svg>';
 var Bt = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
-function _u(o) {
+function Ru(o) {
   if (o.__esModule)
     return o;
   var e = o.default;
@@ -11550,10 +11571,10 @@ function _u(o) {
     });
   }), t;
 }
-var ft = {}, Cn = {}, Tn = {};
-Object.defineProperty(Tn, "__esModule", { value: !0 });
-Tn.allInputsSelector = Iu;
-function Iu() {
+var ft = {}, Cn = {}, Sn = {};
+Object.defineProperty(Sn, "__esModule", { value: !0 });
+Sn.allInputsSelector = $u;
+function $u() {
   var o = ["text", "password", "email", "number", "search", "tel", "url"];
   return "[contenteditable=true], textarea, input:not([type]), " + o.map(function(e) {
     return 'input[type="'.concat(e, '"]');
@@ -11561,15 +11582,15 @@ function Iu() {
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.allInputsSelector = void 0;
-  var e = Tn;
+  var e = Sn;
   Object.defineProperty(o, "allInputsSelector", { enumerable: !0, get: function() {
     return e.allInputsSelector;
   } });
 })(Cn);
-var Me = {}, Sn = {};
-Object.defineProperty(Sn, "__esModule", { value: !0 });
-Sn.isNativeInput = Mu;
-function Mu(o) {
+var Me = {}, Tn = {};
+Object.defineProperty(Tn, "__esModule", { value: !0 });
+Tn.isNativeInput = Hu;
+function Hu(o) {
   var e = [
     "INPUT",
     "TEXTAREA"
@@ -11578,15 +11599,15 @@ function Mu(o) {
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isNativeInput = void 0;
-  var e = Sn;
+  var e = Tn;
   Object.defineProperty(o, "isNativeInput", { enumerable: !0, get: function() {
     return e.isNativeInput;
   } });
 })(Me);
-var Ls = {}, Bn = {};
+var Ns = {}, Bn = {};
 Object.defineProperty(Bn, "__esModule", { value: !0 });
-Bn.append = Lu;
-function Lu(o, e) {
+Bn.append = Fu;
+function Fu(o, e) {
   Array.isArray(e) ? e.forEach(function(t) {
     o.appendChild(t);
   }) : o.appendChild(e);
@@ -11597,11 +11618,11 @@ function Lu(o, e) {
   Object.defineProperty(o, "append", { enumerable: !0, get: function() {
     return e.append;
   } });
-})(Ls);
-var On = {}, _n = {};
-Object.defineProperty(_n, "__esModule", { value: !0 });
-_n.blockElements = Pu;
-function Pu() {
+})(Ns);
+var _n = {}, On = {};
+Object.defineProperty(On, "__esModule", { value: !0 });
+On.blockElements = Uu;
+function Uu() {
   return [
     "address",
     "article",
@@ -11646,15 +11667,15 @@ function Pu() {
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.blockElements = void 0;
-  var e = _n;
+  var e = On;
   Object.defineProperty(o, "blockElements", { enumerable: !0, get: function() {
     return e.blockElements;
   } });
-})(On);
-var Ps = {}, In = {};
+})(_n);
+var js = {}, In = {};
 Object.defineProperty(In, "__esModule", { value: !0 });
-In.calculateBaseline = Au;
-function Au(o) {
+In.calculateBaseline = zu;
+function zu(o) {
   var e = window.getComputedStyle(o), t = parseFloat(e.fontSize), n = parseFloat(e.lineHeight) || t * 1.2, r = parseFloat(e.paddingTop), i = parseFloat(e.borderTopWidth), s = parseFloat(e.marginTop), a = t * 0.8, l = (n - t) / 2, c = s + i + r + l + a;
   return c;
 }
@@ -11664,11 +11685,11 @@ function Au(o) {
   Object.defineProperty(o, "calculateBaseline", { enumerable: !0, get: function() {
     return e.calculateBaseline;
   } });
-})(Ps);
-var As = {}, Mn = {}, Ln = {}, Pn = {};
+})(js);
+var Ds = {}, Mn = {}, Ln = {}, Pn = {};
 Object.defineProperty(Pn, "__esModule", { value: !0 });
-Pn.isContentEditable = Nu;
-function Nu(o) {
+Pn.isContentEditable = Wu;
+function Wu(o) {
   return o.contentEditable === "true";
 }
 (function(o) {
@@ -11679,11 +11700,11 @@ function Nu(o) {
   } });
 })(Ln);
 Object.defineProperty(Mn, "__esModule", { value: !0 });
-Mn.canSetCaret = Ru;
-var ju = Me, Du = Ln;
-function Ru(o) {
+Mn.canSetCaret = Yu;
+var qu = Me, Ku = Ln;
+function Yu(o) {
   var e = !0;
-  if ((0, ju.isNativeInput)(o))
+  if ((0, qu.isNativeInput)(o))
     switch (o.type) {
       case "file":
       case "checkbox":
@@ -11697,7 +11718,7 @@ function Ru(o) {
         break;
     }
   else
-    e = (0, Du.isContentEditable)(o);
+    e = (0, Ku.isContentEditable)(o);
   return e;
 }
 (function(o) {
@@ -11706,9 +11727,9 @@ function Ru(o) {
   Object.defineProperty(o, "canSetCaret", { enumerable: !0, get: function() {
     return e.canSetCaret;
   } });
-})(As);
+})(Ds);
 var $t = {}, An = {};
-function $u(o, e, t) {
+function Vu(o, e, t) {
   const n = t.value !== void 0 ? "value" : "get", r = t[n], i = `#${e}Cache`;
   if (t[n] = function(...s) {
     return this[i] === void 0 && (this[i] = r.apply(this, s)), this[i];
@@ -11720,7 +11741,7 @@ function $u(o, e, t) {
   }
   return t;
 }
-function Ns() {
+function Rs() {
   const o = {
     win: !1,
     mac: !1,
@@ -11732,18 +11753,18 @@ function Ns() {
 function Nn(o) {
   return o != null && o !== "" && (typeof o != "object" || Object.keys(o).length > 0);
 }
-function Hu(o) {
+function Xu(o) {
   return !Nn(o);
 }
-const Fu = () => typeof window < "u" && window.navigator !== null && Nn(window.navigator.platform) && (/iP(ad|hone|od)/.test(window.navigator.platform) || window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1);
-function Uu(o) {
-  const e = Ns();
+const Gu = () => typeof window < "u" && window.navigator !== null && Nn(window.navigator.platform) && (/iP(ad|hone|od)/.test(window.navigator.platform) || window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1);
+function Zu(o) {
+  const e = Rs();
   return o = o.replace(/shift/gi, "⇧").replace(/backspace/gi, "⌫").replace(/enter/gi, "⏎").replace(/up/gi, "↑").replace(/left/gi, "→").replace(/down/gi, "↓").replace(/right/gi, "←").replace(/escape/gi, "⎋").replace(/insert/gi, "Ins").replace(/delete/gi, "␡").replace(/\+/gi, "+"), e.mac ? o = o.replace(/ctrl|cmd/gi, "⌘").replace(/alt/gi, "⌥") : o = o.replace(/cmd/gi, "Ctrl").replace(/windows/gi, "WIN"), o;
 }
-function zu(o) {
+function Qu(o) {
   return o[0].toUpperCase() + o.slice(1);
 }
-function Wu(o) {
+function Ju(o) {
   const e = document.createElement("div");
   e.style.position = "absolute", e.style.left = "-999px", e.style.bottom = "-999px", e.innerHTML = o, document.body.appendChild(e);
   const t = window.getSelection(), n = document.createRange();
@@ -11751,7 +11772,7 @@ function Wu(o) {
     throw new Error("Cannot copy text to clipboard");
   t.removeAllRanges(), t.addRange(n), document.execCommand("copy"), document.body.removeChild(e);
 }
-function qu(o, e, t) {
+function eh(o, e, t) {
   let n;
   return (...r) => {
     const i = this, s = () => {
@@ -11763,28 +11784,28 @@ function qu(o, e, t) {
 function ke(o) {
   return Object.prototype.toString.call(o).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 }
-function Ku(o) {
+function th(o) {
   return ke(o) === "boolean";
 }
-function js(o) {
+function $s(o) {
   return ke(o) === "function" || ke(o) === "asyncfunction";
 }
-function Yu(o) {
-  return js(o) && /^\s*class\s+/.test(o.toString());
+function oh(o) {
+  return $s(o) && /^\s*class\s+/.test(o.toString());
 }
-function Vu(o) {
+function nh(o) {
   return ke(o) === "number";
 }
 function gt(o) {
   return ke(o) === "object";
 }
-function Xu(o) {
+function rh(o) {
   return Promise.resolve(o) === o;
 }
-function Gu(o) {
+function ih(o) {
   return ke(o) === "string";
 }
-function Zu(o) {
+function sh(o) {
   return ke(o) === "undefined";
 }
 function wo(o, ...e) {
@@ -11796,21 +11817,21 @@ function wo(o, ...e) {
       gt(t[n]) ? (o[n] === void 0 && Object.assign(o, { [n]: {} }), wo(o[n], t[n])) : Object.assign(o, { [n]: t[n] });
   return wo(o, ...e);
 }
-function Qu(o, e, t) {
+function ah(o, e, t) {
   const n = `«${e}» is deprecated and will be removed in the next major release. Please use the «${t}» instead.`;
   o && console.warn(n);
 }
-function Ju(o) {
+function lh(o) {
   try {
     return new URL(o).href;
   } catch {
   }
   return o.substring(0, 2) === "//" ? window.location.protocol + o : window.location.origin + o;
 }
-function eh(o) {
+function ch(o) {
   return o > 47 && o < 58 || o === 32 || o === 13 || o === 229 || o > 64 && o < 91 || o > 95 && o < 112 || o > 185 && o < 193 || o > 218 && o < 223;
 }
-const th = {
+const dh = {
   BACKSPACE: 8,
   TAB: 9,
   ENTER: 13,
@@ -11826,14 +11847,14 @@ const th = {
   DELETE: 46,
   META: 91,
   SLASH: 191
-}, oh = {
+}, uh = {
   LEFT: 0,
   WHEEL: 1,
   RIGHT: 2,
   BACKWARD: 3,
   FORWARD: 4
 };
-class nh {
+class hh {
   constructor() {
     this.completed = Promise.resolve();
   }
@@ -11847,7 +11868,7 @@ class nh {
     });
   }
 }
-function rh(o, e, t = void 0) {
+function ph(o, e, t = void 0) {
   let n, r, i, s = null, a = 0;
   t || (t = {});
   const l = function() {
@@ -11860,43 +11881,43 @@ function rh(o, e, t = void 0) {
     return n = this, r = arguments, d <= 0 || d > e ? (s && (clearTimeout(s), s = null), a = c, i = o.apply(n, r), s === null && (n = r = null)) : !s && t.trailing !== !1 && (s = setTimeout(l, d)), i;
   };
 }
-const ih = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const fh = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  PromiseQueue: nh,
-  beautifyShortcut: Uu,
-  cacheable: $u,
-  capitalize: zu,
-  copyTextToClipboard: Wu,
-  debounce: qu,
+  PromiseQueue: hh,
+  beautifyShortcut: Zu,
+  cacheable: Vu,
+  capitalize: Qu,
+  copyTextToClipboard: Ju,
+  debounce: eh,
   deepMerge: wo,
-  deprecationAssert: Qu,
-  getUserOS: Ns,
-  getValidUrl: Ju,
-  isBoolean: Ku,
-  isClass: Yu,
-  isEmpty: Hu,
-  isFunction: js,
-  isIosDevice: Fu,
-  isNumber: Vu,
+  deprecationAssert: ah,
+  getUserOS: Rs,
+  getValidUrl: lh,
+  isBoolean: th,
+  isClass: oh,
+  isEmpty: Xu,
+  isFunction: $s,
+  isIosDevice: Gu,
+  isNumber: nh,
   isObject: gt,
-  isPrintableKey: eh,
-  isPromise: Xu,
-  isString: Gu,
-  isUndefined: Zu,
-  keyCodes: th,
-  mouseButtons: oh,
+  isPrintableKey: ch,
+  isPromise: rh,
+  isString: ih,
+  isUndefined: sh,
+  keyCodes: dh,
+  mouseButtons: uh,
   notEmpty: Nn,
-  throttle: rh,
+  throttle: ph,
   typeOf: ke
-}, Symbol.toStringTag, { value: "Module" })), jn = /* @__PURE__ */ _u(ih);
+}, Symbol.toStringTag, { value: "Module" })), jn = /* @__PURE__ */ Ru(fh);
 Object.defineProperty(An, "__esModule", { value: !0 });
-An.containsOnlyInlineElements = lh;
-var sh = jn, ah = On;
-function lh(o) {
+An.containsOnlyInlineElements = bh;
+var gh = jn, mh = _n;
+function bh(o) {
   var e;
-  (0, sh.isString)(o) ? (e = document.createElement("div"), e.innerHTML = o) : e = o;
+  (0, gh.isString)(o) ? (e = document.createElement("div"), e.innerHTML = o) : e = o;
   var t = function(n) {
-    return !(0, ah.blockElements)().includes(n.tagName.toLowerCase()) && Array.from(n.children).every(t);
+    return !(0, mh.blockElements)().includes(n.tagName.toLowerCase()) && Array.from(n.children).every(t);
   };
   return Array.from(e.children).every(t);
 }
@@ -11907,10 +11928,10 @@ function lh(o) {
     return e.containsOnlyInlineElements;
   } });
 })($t);
-var Ds = {}, Dn = {}, Ht = {}, Rn = {};
+var Hs = {}, Dn = {}, Ht = {}, Rn = {};
 Object.defineProperty(Rn, "__esModule", { value: !0 });
-Rn.make = ch;
-function ch(o, e, t) {
+Rn.make = vh;
+function vh(o, e, t) {
   var n;
   e === void 0 && (e = null), t === void 0 && (t = {});
   var r = document.createElement(o);
@@ -11933,10 +11954,10 @@ function ch(o, e, t) {
   } });
 })(Ht);
 Object.defineProperty(Dn, "__esModule", { value: !0 });
-Dn.fragmentToString = uh;
-var dh = Ht;
-function uh(o) {
-  var e = (0, dh.make)("div");
+Dn.fragmentToString = kh;
+var yh = Ht;
+function kh(o) {
+  var e = (0, yh.make)("div");
   return e.appendChild(o), e.innerHTML;
 }
 (function(o) {
@@ -11945,14 +11966,14 @@ function uh(o) {
   Object.defineProperty(o, "fragmentToString", { enumerable: !0, get: function() {
     return e.fragmentToString;
   } });
-})(Ds);
-var Rs = {}, $n = {};
+})(Hs);
+var Fs = {}, $n = {};
 Object.defineProperty($n, "__esModule", { value: !0 });
-$n.getContentLength = ph;
-var hh = Me;
-function ph(o) {
+$n.getContentLength = xh;
+var wh = Me;
+function xh(o) {
   var e, t;
-  return (0, hh.isNativeInput)(o) ? o.value.length : o.nodeType === Node.TEXT_NODE ? o.length : (t = (e = o.textContent) === null || e === void 0 ? void 0 : e.length) !== null && t !== void 0 ? t : 0;
+  return (0, wh.isNativeInput)(o) ? o.value.length : o.nodeType === Node.TEXT_NODE ? o.length : (t = (e = o.textContent) === null || e === void 0 ? void 0 : e.length) !== null && t !== void 0 ? t : 0;
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.getContentLength = void 0;
@@ -11960,19 +11981,19 @@ function ph(o) {
   Object.defineProperty(o, "getContentLength", { enumerable: !0, get: function() {
     return e.getContentLength;
   } });
-})(Rs);
-var Hn = {}, Fn = {}, li = Bt && Bt.__spreadArray || function(o, e, t) {
+})(Fs);
+var Hn = {}, Fn = {}, di = Bt && Bt.__spreadArray || function(o, e, t) {
   if (t || arguments.length === 2)
     for (var n = 0, r = e.length, i; n < r; n++)
       (i || !(n in e)) && (i || (i = Array.prototype.slice.call(e, 0, n)), i[n] = e[n]);
   return o.concat(i || Array.prototype.slice.call(e));
 };
 Object.defineProperty(Fn, "__esModule", { value: !0 });
-Fn.getDeepestBlockElements = $s;
-var fh = $t;
-function $s(o) {
-  return (0, fh.containsOnlyInlineElements)(o) ? [o] : Array.from(o.children).reduce(function(e, t) {
-    return li(li([], e, !0), $s(t), !0);
+Fn.getDeepestBlockElements = Us;
+var Eh = $t;
+function Us(o) {
+  return (0, Eh.containsOnlyInlineElements)(o) ? [o] : Array.from(o.children).reduce(function(e, t) {
+    return di(di([], e, !0), Us(t), !0);
   }, []);
 }
 (function(o) {
@@ -11982,10 +12003,10 @@ function $s(o) {
     return e.getDeepestBlockElements;
   } });
 })(Hn);
-var Hs = {}, Un = {}, Ft = {}, zn = {};
+var zs = {}, Un = {}, Ft = {}, zn = {};
 Object.defineProperty(zn, "__esModule", { value: !0 });
-zn.isLineBreakTag = gh;
-function gh(o) {
+zn.isLineBreakTag = Ch;
+function Ch(o) {
   return [
     "BR",
     "WBR"
@@ -12000,8 +12021,8 @@ function gh(o) {
 })(Ft);
 var Ut = {}, Wn = {};
 Object.defineProperty(Wn, "__esModule", { value: !0 });
-Wn.isSingleTag = mh;
-function mh(o) {
+Wn.isSingleTag = Sh;
+function Sh(o) {
   return [
     "AREA",
     "BASE",
@@ -12029,21 +12050,21 @@ function mh(o) {
   } });
 })(Ut);
 Object.defineProperty(Un, "__esModule", { value: !0 });
-Un.getDeepestNode = Fs;
-var bh = Me, vh = Ft, yh = Ut;
-function Fs(o, e) {
+Un.getDeepestNode = Ws;
+var Th = Me, Bh = Ft, _h = Ut;
+function Ws(o, e) {
   e === void 0 && (e = !1);
   var t = e ? "lastChild" : "firstChild", n = e ? "previousSibling" : "nextSibling";
   if (o.nodeType === Node.ELEMENT_NODE && o[t]) {
     var r = o[t];
-    if ((0, yh.isSingleTag)(r) && !(0, bh.isNativeInput)(r) && !(0, vh.isLineBreakTag)(r))
+    if ((0, _h.isSingleTag)(r) && !(0, Th.isNativeInput)(r) && !(0, Bh.isLineBreakTag)(r))
       if (r[n])
         r = r[n];
       else if (r.parentNode !== null && r.parentNode[n])
         r = r.parentNode[n];
       else
         return r.parentNode;
-    return Fs(r, e);
+    return Ws(r, e);
   }
   return o;
 }
@@ -12053,19 +12074,19 @@ function Fs(o, e) {
   Object.defineProperty(o, "getDeepestNode", { enumerable: !0, get: function() {
     return e.getDeepestNode;
   } });
-})(Hs);
-var Us = {}, qn = {}, it = Bt && Bt.__spreadArray || function(o, e, t) {
+})(zs);
+var qs = {}, qn = {}, it = Bt && Bt.__spreadArray || function(o, e, t) {
   if (t || arguments.length === 2)
     for (var n = 0, r = e.length, i; n < r; n++)
       (i || !(n in e)) && (i || (i = Array.prototype.slice.call(e, 0, n)), i[n] = e[n]);
   return o.concat(i || Array.prototype.slice.call(e));
 };
 Object.defineProperty(qn, "__esModule", { value: !0 });
-qn.findAllInputs = Ch;
-var kh = $t, wh = Hn, xh = Cn, Eh = Me;
-function Ch(o) {
-  return Array.from(o.querySelectorAll((0, xh.allInputsSelector)())).reduce(function(e, t) {
-    return (0, Eh.isNativeInput)(t) || (0, kh.containsOnlyInlineElements)(t) ? it(it([], e, !0), [t], !1) : it(it([], e, !0), (0, wh.getDeepestBlockElements)(t), !0);
+qn.findAllInputs = Ph;
+var Oh = $t, Ih = Hn, Mh = Cn, Lh = Me;
+function Ph(o) {
+  return Array.from(o.querySelectorAll((0, Mh.allInputsSelector)())).reduce(function(e, t) {
+    return (0, Lh.isNativeInput)(t) || (0, Oh.containsOnlyInlineElements)(t) ? it(it([], e, !0), [t], !1) : it(it([], e, !0), (0, Ih.getDeepestBlockElements)(t), !0);
   }, []);
 }
 (function(o) {
@@ -12074,11 +12095,11 @@ function Ch(o) {
   Object.defineProperty(o, "findAllInputs", { enumerable: !0, get: function() {
     return e.findAllInputs;
   } });
-})(Us);
-var zs = {}, Kn = {};
+})(qs);
+var Ks = {}, Kn = {};
 Object.defineProperty(Kn, "__esModule", { value: !0 });
-Kn.isCollapsedWhitespaces = Th;
-function Th(o) {
+Kn.isCollapsedWhitespaces = Ah;
+function Ah(o) {
   return !/[^\t\n\r ]/.test(o);
 }
 (function(o) {
@@ -12087,13 +12108,13 @@ function Th(o) {
   Object.defineProperty(o, "isCollapsedWhitespaces", { enumerable: !0, get: function() {
     return e.isCollapsedWhitespaces;
   } });
-})(zs);
+})(Ks);
 var Yn = {}, Vn = {};
 Object.defineProperty(Vn, "__esModule", { value: !0 });
-Vn.isElement = Bh;
-var Sh = jn;
-function Bh(o) {
-  return (0, Sh.isNumber)(o) ? !1 : !!o && !!o.nodeType && o.nodeType === Node.ELEMENT_NODE;
+Vn.isElement = jh;
+var Nh = jn;
+function jh(o) {
+  return (0, Nh.isNumber)(o) ? !1 : !!o && !!o.nodeType && o.nodeType === Node.ELEMENT_NODE;
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isElement = void 0;
@@ -12102,10 +12123,10 @@ function Bh(o) {
     return e.isElement;
   } });
 })(Yn);
-var Ws = {}, Xn = {}, Gn = {}, Zn = {};
+var Ys = {}, Xn = {}, Gn = {}, Zn = {};
 Object.defineProperty(Zn, "__esModule", { value: !0 });
-Zn.isLeaf = Oh;
-function Oh(o) {
+Zn.isLeaf = Dh;
+function Dh(o) {
   return o === null ? !1 : o.childNodes.length === 0;
 }
 (function(o) {
@@ -12117,11 +12138,11 @@ function Oh(o) {
 })(Gn);
 var Qn = {}, Jn = {};
 Object.defineProperty(Jn, "__esModule", { value: !0 });
-Jn.isNodeEmpty = Ph;
-var _h = Ft, Ih = Yn, Mh = Me, Lh = Ut;
-function Ph(o, e) {
+Jn.isNodeEmpty = Uh;
+var Rh = Ft, $h = Yn, Hh = Me, Fh = Ut;
+function Uh(o, e) {
   var t = "";
-  return (0, Lh.isSingleTag)(o) && !(0, _h.isLineBreakTag)(o) ? !1 : ((0, Ih.isElement)(o) && (0, Mh.isNativeInput)(o) ? t = o.value : o.textContent !== null && (t = o.textContent.replace("​", "")), e !== void 0 && (t = t.replace(new RegExp(e, "g"), "")), t.trim().length === 0);
+  return (0, Fh.isSingleTag)(o) && !(0, Rh.isLineBreakTag)(o) ? !1 : ((0, $h.isElement)(o) && (0, Hh.isNativeInput)(o) ? t = o.value : o.textContent !== null && (t = o.textContent.replace("​", "")), e !== void 0 && (t = t.replace(new RegExp(e, "g"), "")), t.trim().length === 0);
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isNodeEmpty = void 0;
@@ -12131,14 +12152,14 @@ function Ph(o, e) {
   } });
 })(Qn);
 Object.defineProperty(Xn, "__esModule", { value: !0 });
-Xn.isEmpty = jh;
-var Ah = Gn, Nh = Qn;
-function jh(o, e) {
+Xn.isEmpty = qh;
+var zh = Gn, Wh = Qn;
+function qh(o, e) {
   o.normalize();
   for (var t = [o]; t.length > 0; ) {
     var n = t.shift();
     if (n) {
-      if (o = n, (0, Ah.isLeaf)(o) && !(0, Nh.isNodeEmpty)(o, e))
+      if (o = n, (0, zh.isLeaf)(o) && !(0, Wh.isNodeEmpty)(o, e))
         return !1;
       t.push.apply(t, Array.from(o.childNodes));
     }
@@ -12151,13 +12172,13 @@ function jh(o, e) {
   Object.defineProperty(o, "isEmpty", { enumerable: !0, get: function() {
     return e.isEmpty;
   } });
-})(Ws);
-var qs = {}, er = {};
+})(Ys);
+var Vs = {}, er = {};
 Object.defineProperty(er, "__esModule", { value: !0 });
-er.isFragment = Rh;
-var Dh = jn;
-function Rh(o) {
-  return (0, Dh.isNumber)(o) ? !1 : !!o && !!o.nodeType && o.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
+er.isFragment = Yh;
+var Kh = jn;
+function Yh(o) {
+  return (0, Kh.isNumber)(o) ? !1 : !!o && !!o.nodeType && o.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isFragment = void 0;
@@ -12165,13 +12186,13 @@ function Rh(o) {
   Object.defineProperty(o, "isFragment", { enumerable: !0, get: function() {
     return e.isFragment;
   } });
-})(qs);
-var Ks = {}, tr = {};
+})(Vs);
+var Xs = {}, tr = {};
 Object.defineProperty(tr, "__esModule", { value: !0 });
-tr.isHTMLString = Hh;
-var $h = Ht;
-function Hh(o) {
-  var e = (0, $h.make)("div");
+tr.isHTMLString = Xh;
+var Vh = Ht;
+function Xh(o) {
+  var e = (0, Vh.make)("div");
   return e.innerHTML = o, e.childElementCount > 0;
 }
 (function(o) {
@@ -12180,11 +12201,11 @@ function Hh(o) {
   Object.defineProperty(o, "isHTMLString", { enumerable: !0, get: function() {
     return e.isHTMLString;
   } });
-})(Ks);
-var Ys = {}, or = {};
+})(Xs);
+var Gs = {}, or = {};
 Object.defineProperty(or, "__esModule", { value: !0 });
-or.offset = Fh;
-function Fh(o) {
+or.offset = Gh;
+function Gh(o) {
   var e = o.getBoundingClientRect(), t = window.pageXOffset || document.documentElement.scrollLeft, n = window.pageYOffset || document.documentElement.scrollTop, r = e.top + n, i = e.left + t;
   return {
     top: r,
@@ -12199,11 +12220,11 @@ function Fh(o) {
   Object.defineProperty(o, "offset", { enumerable: !0, get: function() {
     return e.offset;
   } });
-})(Ys);
-var Vs = {}, nr = {};
+})(Gs);
+var Zs = {}, nr = {};
 Object.defineProperty(nr, "__esModule", { value: !0 });
-nr.prepend = Uh;
-function Uh(o, e) {
+nr.prepend = Zh;
+function Zh(o, e) {
   Array.isArray(e) ? (e = e.reverse(), e.forEach(function(t) {
     return o.prepend(t);
   })) : o.prepend(e);
@@ -12214,7 +12235,7 @@ function Uh(o, e) {
   Object.defineProperty(o, "prepend", { enumerable: !0, get: function() {
     return e.prepend;
   } });
-})(Vs);
+})(Zs);
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.prepend = o.offset = o.make = o.isLineBreakTag = o.isSingleTag = o.isNodeEmpty = o.isLeaf = o.isHTMLString = o.isFragment = o.isEmpty = o.isElement = o.isContentEditable = o.isCollapsedWhitespaces = o.findAllInputs = o.isNativeInput = o.allInputsSelector = o.getDeepestNode = o.getDeepestBlockElements = o.getContentLength = o.fragmentToString = o.containsOnlyInlineElements = o.canSetCaret = o.calculateBaseline = o.blockElements = o.append = void 0;
   var e = Cn;
@@ -12225,19 +12246,19 @@ function Uh(o, e) {
   Object.defineProperty(o, "isNativeInput", { enumerable: !0, get: function() {
     return t.isNativeInput;
   } });
-  var n = Ls;
+  var n = Ns;
   Object.defineProperty(o, "append", { enumerable: !0, get: function() {
     return n.append;
   } });
-  var r = On;
+  var r = _n;
   Object.defineProperty(o, "blockElements", { enumerable: !0, get: function() {
     return r.blockElements;
   } });
-  var i = Ps;
+  var i = js;
   Object.defineProperty(o, "calculateBaseline", { enumerable: !0, get: function() {
     return i.calculateBaseline;
   } });
-  var s = As;
+  var s = Ds;
   Object.defineProperty(o, "canSetCaret", { enumerable: !0, get: function() {
     return s.canSetCaret;
   } });
@@ -12245,11 +12266,11 @@ function Uh(o, e) {
   Object.defineProperty(o, "containsOnlyInlineElements", { enumerable: !0, get: function() {
     return a.containsOnlyInlineElements;
   } });
-  var l = Ds;
+  var l = Hs;
   Object.defineProperty(o, "fragmentToString", { enumerable: !0, get: function() {
     return l.fragmentToString;
   } });
-  var c = Rs;
+  var c = Fs;
   Object.defineProperty(o, "getContentLength", { enumerable: !0, get: function() {
     return c.getContentLength;
   } });
@@ -12257,15 +12278,15 @@ function Uh(o, e) {
   Object.defineProperty(o, "getDeepestBlockElements", { enumerable: !0, get: function() {
     return d.getDeepestBlockElements;
   } });
-  var u = Hs;
+  var u = zs;
   Object.defineProperty(o, "getDeepestNode", { enumerable: !0, get: function() {
     return u.getDeepestNode;
   } });
-  var h = Us;
+  var h = qs;
   Object.defineProperty(o, "findAllInputs", { enumerable: !0, get: function() {
     return h.findAllInputs;
   } });
-  var g = zs;
+  var g = Ks;
   Object.defineProperty(o, "isCollapsedWhitespaces", { enumerable: !0, get: function() {
     return g.isCollapsedWhitespaces;
   } });
@@ -12277,15 +12298,15 @@ function Uh(o, e) {
   Object.defineProperty(o, "isElement", { enumerable: !0, get: function() {
     return v.isElement;
   } });
-  var B = Ws;
+  var B = Ys;
   Object.defineProperty(o, "isEmpty", { enumerable: !0, get: function() {
     return B.isEmpty;
   } });
-  var O = qs;
+  var _ = Vs;
   Object.defineProperty(o, "isFragment", { enumerable: !0, get: function() {
-    return O.isFragment;
+    return _.isFragment;
   } });
-  var k = Ks;
+  var k = Xs;
   Object.defineProperty(o, "isHTMLString", { enumerable: !0, get: function() {
     return k.isHTMLString;
   } });
@@ -12309,17 +12330,17 @@ function Uh(o, e) {
   Object.defineProperty(o, "make", { enumerable: !0, get: function() {
     return G.make;
   } });
-  var y = Ys;
+  var y = Gs;
   Object.defineProperty(o, "offset", { enumerable: !0, get: function() {
     return y.offset;
   } });
-  var m = Vs;
+  var m = Zs;
   Object.defineProperty(o, "prepend", { enumerable: !0, get: function() {
     return m.prepend;
   } });
 })(ft);
-var Xs = /* @__PURE__ */ ((o) => (o.Left = "left", o.Center = "center", o))(Xs || {});
-let zh = class mt {
+var Qs = /* @__PURE__ */ ((o) => (o.Left = "left", o.Center = "center", o))(Qs || {});
+let Qh = class mt {
   /**
    * Render plugin`s main Element and fill it with saved data
    * @param params - Quote Tool constructor params
@@ -12333,7 +12354,7 @@ let zh = class mt {
     this.api = n, this.readOnly = r, this.quotePlaceholder = n.i18n.t(t?.quotePlaceholder ?? mt.DEFAULT_QUOTE_PLACEHOLDER), this.captionPlaceholder = n.i18n.t(t?.captionPlaceholder ?? mt.DEFAULT_CAPTION_PLACEHOLDER), this.data = {
       text: e.text || "",
       caption: e.caption || "",
-      alignment: Object.values(Xs).includes(e.alignment) ? e.alignment : t?.defaultAlignment ?? s
+      alignment: Object.values(Qs).includes(e.alignment) ? e.alignment : t?.defaultAlignment ?? s
     }, this.css = {
       baseClass: this.api.styles.block,
       wrapper: "cdx-quote",
@@ -12357,7 +12378,7 @@ let zh = class mt {
    */
   static get toolbox() {
     return {
-      icon: Ou,
+      icon: Du,
       title: "Quote"
     };
   }
@@ -12437,11 +12458,11 @@ let zh = class mt {
     return [
       {
         name: "left",
-        icon: Bu
+        icon: ju
       },
       {
         name: "center",
-        icon: Su
+        icon: Nu
       }
     ];
   }
@@ -12523,7 +12544,7 @@ let zh = class mt {
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-function Wh(o, e) {
+function Jh(o, e) {
   let t = "";
   for (; t !== `
 ` && e > 0; )
@@ -12531,7 +12552,7 @@ function Wh(o, e) {
   return t === `
 ` && (e += 1), e;
 }
-const qh = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8L5 12L9 16"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 8L19 12L15 16"/></svg>';
+const ep = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8L5 12L9 16"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 8L19 12L15 16"/></svg>';
 class rr {
   /**
    * Notify core that read-only mode is supported
@@ -12622,7 +12643,7 @@ class rr {
    */
   static get toolbox() {
     return {
-      icon: qh,
+      icon: ep,
       title: "Code"
     };
   }
@@ -12664,7 +12685,7 @@ class rr {
     if (!n)
       a = r + s.length, t.value = i.substring(0, r) + s + i.substring(r);
     else {
-      const l = Wh(i, r);
+      const l = Jh(i, r);
       if (i.substr(l, s.length) !== s)
         return;
       t.value = i.substring(0, l) + i.substring(l + s.length), a = r - s.length;
@@ -12696,7 +12717,7 @@ class rr {
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const Kh = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.6954 5C17.912 5 18.8468 6.07716 18.6755 7.28165L17.426 16.0659C17.3183 16.8229 16.7885 17.4522 16.061 17.6873L12.6151 18.8012C12.2152 18.9304 11.7848 18.9304 11.3849 18.8012L7.93898 17.6873C7.21148 17.4522 6.6817 16.8229 6.57403 16.0659L5.32454 7.28165C5.15322 6.07716 6.088 5 7.30461 5H16.6954Z"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 8.4H9L9.42857 11.7939H14.5714L14.3571 13.2788L14.1429 14.7636L12 15.4L9.85714 14.7636L9.77143 14.3394"/></svg>';
+const tp = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.6954 5C17.912 5 18.8468 6.07716 18.6755 7.28165L17.426 16.0659C17.3183 16.8229 16.7885 17.4522 16.061 17.6873L12.6151 18.8012C12.2152 18.9304 11.7848 18.9304 11.3849 18.8012L7.93898 17.6873C7.21148 17.4522 6.6817 16.8229 6.57403 16.0659L5.32454 7.28165C5.15322 6.07716 6.088 5 7.30461 5H16.6954Z"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 8.4H9L9.42857 11.7939H14.5714L14.3571 13.2788L14.1429 14.7636L12 15.4L9.85714 14.7636L9.77143 14.3394"/></svg>';
 class ir {
   /**
    * Notify core that read-only mode is supported
@@ -12733,7 +12754,7 @@ class ir {
    */
   static get toolbox() {
     return {
-      icon: Kh,
+      icon: tp,
       title: "Raw HTML"
     };
   }
@@ -12833,9 +12854,9 @@ class ir {
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const Yh = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7 12L10.4884 15.8372C10.5677 15.9245 10.705 15.9245 10.7844 15.8372L17 9"/></svg>', ci = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9.2 12L11.0586 13.8586C11.1367 13.9367 11.2633 13.9367 11.3414 13.8586L14.7 10.5"/><rect width="14" height="14" x="5" y="5" stroke="currentColor" stroke-width="2" rx="4"/></svg>', di = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><line x1="9" x2="19" y1="7" y2="7" stroke="currentColor" stroke-linecap="round" stroke-width="2"/><line x1="9" x2="19" y1="12" y2="12" stroke="currentColor" stroke-linecap="round" stroke-width="2"/><line x1="9" x2="19" y1="17" y2="17" stroke="currentColor" stroke-linecap="round" stroke-width="2"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5.00001 17H4.99002"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5.00001 12H4.99002"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5.00001 7H4.99002"/></svg>', ui = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><line x1="12" x2="19" y1="7" y2="7" stroke="currentColor" stroke-linecap="round" stroke-width="2"/><line x1="12" x2="19" y1="12" y2="12" stroke="currentColor" stroke-linecap="round" stroke-width="2"/><line x1="12" x2="19" y1="17" y2="17" stroke="currentColor" stroke-linecap="round" stroke-width="2"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7.79999 14L7.79999 7.2135C7.79999 7.12872 7.7011 7.0824 7.63597 7.13668L4.79999 9.5"/></svg>', Vh = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 14.2L10 7.4135C10 7.32872 9.90111 7.28241 9.83598 7.33668L7 9.7" stroke="black" stroke-width="1.6" stroke-linecap="round"/><path d="M13.2087 14.2H13.2" stroke="black" stroke-width="1.6" stroke-linecap="round"/></svg>', Xh = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.2087 14.2H13.2" stroke="black" stroke-width="1.6" stroke-linecap="round"/><path d="M10 14.2L10 9.5" stroke="black" stroke-width="1.6" stroke-linecap="round"/><path d="M10 7.01L10 7" stroke="black" stroke-width="1.8" stroke-linecap="round"/></svg>', Gh = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.2087 14.2H13.2" stroke="black" stroke-width="1.6" stroke-linecap="round"/><path d="M10 14.2L10 7.2" stroke="black" stroke-width="1.6" stroke-linecap="round"/></svg>', Zh = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.0087 14.2H16" stroke="black" stroke-width="1.6" stroke-linecap="round"/><path d="M7 14.2L7.78865 12M13 14.2L12.1377 12M7.78865 12C7.78865 12 9.68362 7 10 7C10.3065 7 12.1377 12 12.1377 12M7.78865 12L12.1377 12" stroke="black" stroke-width="1.6" stroke-linecap="round"/></svg>', Qh = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.2087 14.2H14.2" stroke="black" stroke-width="1.6" stroke-linecap="round"/><path d="M11.5 14.5C11.5 14.5 11 13.281 11 12.5M7 9.5C7 9.5 7.5 8.5 9 8.5C10.5 8.5 11 9.5 11 10.5L11 11.5M11 11.5L11 12.5M11 11.5C11 11.5 7 11 7 13C7 15.3031 11 15 11 12.5" stroke="black" stroke-width="1.6" stroke-linecap="round"/></svg>', Jh = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 14.2L8 7.4135C8 7.32872 7.90111 7.28241 7.83598 7.33668L5 9.7" stroke="black" stroke-width="1.6" stroke-linecap="round"/><path d="M14 13L16.4167 10.7778M16.4167 10.7778L14 8.5M16.4167 10.7778H11.6562" stroke="black" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-var Ot = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
-function ep(o) {
+const op = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7 12L10.4884 15.8372C10.5677 15.9245 10.705 15.9245 10.7844 15.8372L17 9"/></svg>', ui = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M9.2 12L11.0586 13.8586C11.1367 13.9367 11.2633 13.9367 11.3414 13.8586L14.7 10.5"/><rect width="14" height="14" x="5" y="5" stroke="currentColor" stroke-width="2" rx="4"/></svg>', hi = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><line x1="9" x2="19" y1="7" y2="7" stroke="currentColor" stroke-linecap="round" stroke-width="2"/><line x1="9" x2="19" y1="12" y2="12" stroke="currentColor" stroke-linecap="round" stroke-width="2"/><line x1="9" x2="19" y1="17" y2="17" stroke="currentColor" stroke-linecap="round" stroke-width="2"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5.00001 17H4.99002"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5.00001 12H4.99002"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5.00001 7H4.99002"/></svg>', pi = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><line x1="12" x2="19" y1="7" y2="7" stroke="currentColor" stroke-linecap="round" stroke-width="2"/><line x1="12" x2="19" y1="12" y2="12" stroke="currentColor" stroke-linecap="round" stroke-width="2"/><line x1="12" x2="19" y1="17" y2="17" stroke="currentColor" stroke-linecap="round" stroke-width="2"/><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7.79999 14L7.79999 7.2135C7.79999 7.12872 7.7011 7.0824 7.63597 7.13668L4.79999 9.5"/></svg>', np = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 14.2L10 7.4135C10 7.32872 9.90111 7.28241 9.83598 7.33668L7 9.7" stroke="black" stroke-width="1.6" stroke-linecap="round"/><path d="M13.2087 14.2H13.2" stroke="black" stroke-width="1.6" stroke-linecap="round"/></svg>', rp = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.2087 14.2H13.2" stroke="black" stroke-width="1.6" stroke-linecap="round"/><path d="M10 14.2L10 9.5" stroke="black" stroke-width="1.6" stroke-linecap="round"/><path d="M10 7.01L10 7" stroke="black" stroke-width="1.8" stroke-linecap="round"/></svg>', ip = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.2087 14.2H13.2" stroke="black" stroke-width="1.6" stroke-linecap="round"/><path d="M10 14.2L10 7.2" stroke="black" stroke-width="1.6" stroke-linecap="round"/></svg>', sp = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.0087 14.2H16" stroke="black" stroke-width="1.6" stroke-linecap="round"/><path d="M7 14.2L7.78865 12M13 14.2L12.1377 12M7.78865 12C7.78865 12 9.68362 7 10 7C10.3065 7 12.1377 12 12.1377 12M7.78865 12L12.1377 12" stroke="black" stroke-width="1.6" stroke-linecap="round"/></svg>', ap = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.2087 14.2H14.2" stroke="black" stroke-width="1.6" stroke-linecap="round"/><path d="M11.5 14.5C11.5 14.5 11 13.281 11 12.5M7 9.5C7 9.5 7.5 8.5 9 8.5C10.5 8.5 11 9.5 11 10.5L11 11.5M11 11.5L11 12.5M11 11.5C11 11.5 7 11 7 13C7 15.3031 11 15 11 12.5" stroke="black" stroke-width="1.6" stroke-linecap="round"/></svg>', lp = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8 14.2L8 7.4135C8 7.32872 7.90111 7.28241 7.83598 7.33668L5 9.7" stroke="black" stroke-width="1.6" stroke-linecap="round"/><path d="M14 13L16.4167 10.7778M16.4167 10.7778L14 8.5M16.4167 10.7778H11.6562" stroke="black" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var _t = typeof globalThis < "u" ? globalThis : typeof window < "u" ? window : typeof global < "u" ? global : typeof self < "u" ? self : {};
+function cp(o) {
   if (o.__esModule)
     return o;
   var e = o.default;
@@ -12858,8 +12879,8 @@ function ep(o) {
 }
 var A = {}, sr = {}, ar = {};
 Object.defineProperty(ar, "__esModule", { value: !0 });
-ar.allInputsSelector = tp;
-function tp() {
+ar.allInputsSelector = dp;
+function dp() {
   var o = ["text", "password", "email", "number", "search", "tel", "url"];
   return "[contenteditable=true], textarea, input:not([type]), " + o.map(function(e) {
     return 'input[type="'.concat(e, '"]');
@@ -12874,8 +12895,8 @@ function tp() {
 })(sr);
 var Le = {}, lr = {};
 Object.defineProperty(lr, "__esModule", { value: !0 });
-lr.isNativeInput = op;
-function op(o) {
+lr.isNativeInput = up;
+function up(o) {
   var e = [
     "INPUT",
     "TEXTAREA"
@@ -12889,10 +12910,10 @@ function op(o) {
     return e.isNativeInput;
   } });
 })(Le);
-var Gs = {}, cr = {};
+var Js = {}, cr = {};
 Object.defineProperty(cr, "__esModule", { value: !0 });
-cr.append = np;
-function np(o, e) {
+cr.append = hp;
+function hp(o, e) {
   Array.isArray(e) ? e.forEach(function(t) {
     o.appendChild(t);
   }) : o.appendChild(e);
@@ -12903,11 +12924,11 @@ function np(o, e) {
   Object.defineProperty(o, "append", { enumerable: !0, get: function() {
     return e.append;
   } });
-})(Gs);
+})(Js);
 var dr = {}, ur = {};
 Object.defineProperty(ur, "__esModule", { value: !0 });
-ur.blockElements = rp;
-function rp() {
+ur.blockElements = pp;
+function pp() {
   return [
     "address",
     "article",
@@ -12957,10 +12978,10 @@ function rp() {
     return e.blockElements;
   } });
 })(dr);
-var Zs = {}, hr = {};
+var ea = {}, hr = {};
 Object.defineProperty(hr, "__esModule", { value: !0 });
-hr.calculateBaseline = ip;
-function ip(o) {
+hr.calculateBaseline = fp;
+function fp(o) {
   var e = window.getComputedStyle(o), t = parseFloat(e.fontSize), n = parseFloat(e.lineHeight) || t * 1.2, r = parseFloat(e.paddingTop), i = parseFloat(e.borderTopWidth), s = parseFloat(e.marginTop), a = t * 0.8, l = (n - t) / 2, c = s + i + r + l + a;
   return c;
 }
@@ -12970,11 +12991,11 @@ function ip(o) {
   Object.defineProperty(o, "calculateBaseline", { enumerable: !0, get: function() {
     return e.calculateBaseline;
   } });
-})(Zs);
-var Qs = {}, pr = {}, fr = {}, gr = {};
+})(ea);
+var ta = {}, pr = {}, fr = {}, gr = {};
 Object.defineProperty(gr, "__esModule", { value: !0 });
-gr.isContentEditable = sp;
-function sp(o) {
+gr.isContentEditable = gp;
+function gp(o) {
   return o.contentEditable === "true";
 }
 (function(o) {
@@ -12985,11 +13006,11 @@ function sp(o) {
   } });
 })(fr);
 Object.defineProperty(pr, "__esModule", { value: !0 });
-pr.canSetCaret = cp;
-var ap = Le, lp = fr;
-function cp(o) {
+pr.canSetCaret = vp;
+var mp = Le, bp = fr;
+function vp(o) {
   var e = !0;
-  if ((0, ap.isNativeInput)(o))
+  if ((0, mp.isNativeInput)(o))
     switch (o.type) {
       case "file":
       case "checkbox":
@@ -13003,7 +13024,7 @@ function cp(o) {
         break;
     }
   else
-    e = (0, lp.isContentEditable)(o);
+    e = (0, bp.isContentEditable)(o);
   return e;
 }
 (function(o) {
@@ -13012,9 +13033,9 @@ function cp(o) {
   Object.defineProperty(o, "canSetCaret", { enumerable: !0, get: function() {
     return e.canSetCaret;
   } });
-})(Qs);
+})(ta);
 var zt = {}, mr = {};
-function dp(o, e, t) {
+function yp(o, e, t) {
   const n = t.value !== void 0 ? "value" : "get", r = t[n], i = `#${e}Cache`;
   if (t[n] = function(...s) {
     return this[i] === void 0 && (this[i] = r.apply(this, s)), this[i];
@@ -13026,7 +13047,7 @@ function dp(o, e, t) {
   }
   return t;
 }
-function Js() {
+function oa() {
   const o = {
     win: !1,
     mac: !1,
@@ -13038,18 +13059,18 @@ function Js() {
 function br(o) {
   return o != null && o !== "" && (typeof o != "object" || Object.keys(o).length > 0);
 }
-function up(o) {
+function kp(o) {
   return !br(o);
 }
-const hp = () => typeof window < "u" && window.navigator !== null && br(window.navigator.platform) && (/iP(ad|hone|od)/.test(window.navigator.platform) || window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1);
-function pp(o) {
-  const e = Js();
+const wp = () => typeof window < "u" && window.navigator !== null && br(window.navigator.platform) && (/iP(ad|hone|od)/.test(window.navigator.platform) || window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1);
+function xp(o) {
+  const e = oa();
   return o = o.replace(/shift/gi, "⇧").replace(/backspace/gi, "⌫").replace(/enter/gi, "⏎").replace(/up/gi, "↑").replace(/left/gi, "→").replace(/down/gi, "↓").replace(/right/gi, "←").replace(/escape/gi, "⎋").replace(/insert/gi, "Ins").replace(/delete/gi, "␡").replace(/\+/gi, "+"), e.mac ? o = o.replace(/ctrl|cmd/gi, "⌘").replace(/alt/gi, "⌥") : o = o.replace(/cmd/gi, "Ctrl").replace(/windows/gi, "WIN"), o;
 }
-function fp(o) {
+function Ep(o) {
   return o[0].toUpperCase() + o.slice(1);
 }
-function gp(o) {
+function Cp(o) {
   const e = document.createElement("div");
   e.style.position = "absolute", e.style.left = "-999px", e.style.bottom = "-999px", e.innerHTML = o, document.body.appendChild(e);
   const t = window.getSelection(), n = document.createRange();
@@ -13057,7 +13078,7 @@ function gp(o) {
     throw new Error("Cannot copy text to clipboard");
   t.removeAllRanges(), t.addRange(n), document.execCommand("copy"), document.body.removeChild(e);
 }
-function mp(o, e, t) {
+function Sp(o, e, t) {
   let n;
   return (...r) => {
     const i = this, s = () => {
@@ -13069,28 +13090,28 @@ function mp(o, e, t) {
 function we(o) {
   return Object.prototype.toString.call(o).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 }
-function bp(o) {
+function Tp(o) {
   return we(o) === "boolean";
 }
-function ea(o) {
+function na(o) {
   return we(o) === "function" || we(o) === "asyncfunction";
 }
-function vp(o) {
-  return ea(o) && /^\s*class\s+/.test(o.toString());
+function Bp(o) {
+  return na(o) && /^\s*class\s+/.test(o.toString());
 }
-function yp(o) {
+function _p(o) {
   return we(o) === "number";
 }
 function bt(o) {
   return we(o) === "object";
 }
-function kp(o) {
+function Op(o) {
   return Promise.resolve(o) === o;
 }
-function wp(o) {
+function Ip(o) {
   return we(o) === "string";
 }
-function xp(o) {
+function Mp(o) {
   return we(o) === "undefined";
 }
 function xo(o, ...e) {
@@ -13102,21 +13123,21 @@ function xo(o, ...e) {
       bt(t[n]) ? (o[n] === void 0 && Object.assign(o, { [n]: {} }), xo(o[n], t[n])) : Object.assign(o, { [n]: t[n] });
   return xo(o, ...e);
 }
-function Ep(o, e, t) {
+function Lp(o, e, t) {
   const n = `«${e}» is deprecated and will be removed in the next major release. Please use the «${t}» instead.`;
   o && console.warn(n);
 }
-function Cp(o) {
+function Pp(o) {
   try {
     return new URL(o).href;
   } catch {
   }
   return o.substring(0, 2) === "//" ? window.location.protocol + o : window.location.origin + o;
 }
-function Tp(o) {
+function Ap(o) {
   return o > 47 && o < 58 || o === 32 || o === 13 || o === 229 || o > 64 && o < 91 || o > 95 && o < 112 || o > 185 && o < 193 || o > 218 && o < 223;
 }
-const Sp = {
+const Np = {
   BACKSPACE: 8,
   TAB: 9,
   ENTER: 13,
@@ -13132,14 +13153,14 @@ const Sp = {
   DELETE: 46,
   META: 91,
   SLASH: 191
-}, Bp = {
+}, jp = {
   LEFT: 0,
   WHEEL: 1,
   RIGHT: 2,
   BACKWARD: 3,
   FORWARD: 4
 };
-class Op {
+class Dp {
   constructor() {
     this.completed = Promise.resolve();
   }
@@ -13153,7 +13174,7 @@ class Op {
     });
   }
 }
-function _p(o, e, t = void 0) {
+function Rp(o, e, t = void 0) {
   let n, r, i, s = null, a = 0;
   t || (t = {});
   const l = function() {
@@ -13166,43 +13187,43 @@ function _p(o, e, t = void 0) {
     return n = this, r = arguments, d <= 0 || d > e ? (s && (clearTimeout(s), s = null), a = c, i = o.apply(n, r), s === null && (n = r = null)) : !s && t.trailing !== !1 && (s = setTimeout(l, d)), i;
   };
 }
-const Ip = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const $p = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  PromiseQueue: Op,
-  beautifyShortcut: pp,
-  cacheable: dp,
-  capitalize: fp,
-  copyTextToClipboard: gp,
-  debounce: mp,
+  PromiseQueue: Dp,
+  beautifyShortcut: xp,
+  cacheable: yp,
+  capitalize: Ep,
+  copyTextToClipboard: Cp,
+  debounce: Sp,
   deepMerge: xo,
-  deprecationAssert: Ep,
-  getUserOS: Js,
-  getValidUrl: Cp,
-  isBoolean: bp,
-  isClass: vp,
-  isEmpty: up,
-  isFunction: ea,
-  isIosDevice: hp,
-  isNumber: yp,
+  deprecationAssert: Lp,
+  getUserOS: oa,
+  getValidUrl: Pp,
+  isBoolean: Tp,
+  isClass: Bp,
+  isEmpty: kp,
+  isFunction: na,
+  isIosDevice: wp,
+  isNumber: _p,
   isObject: bt,
-  isPrintableKey: Tp,
-  isPromise: kp,
-  isString: wp,
-  isUndefined: xp,
-  keyCodes: Sp,
-  mouseButtons: Bp,
+  isPrintableKey: Ap,
+  isPromise: Op,
+  isString: Ip,
+  isUndefined: Mp,
+  keyCodes: Np,
+  mouseButtons: jp,
   notEmpty: br,
-  throttle: _p,
+  throttle: Rp,
   typeOf: we
-}, Symbol.toStringTag, { value: "Module" })), vr = /* @__PURE__ */ ep(Ip);
+}, Symbol.toStringTag, { value: "Module" })), vr = /* @__PURE__ */ cp($p);
 Object.defineProperty(mr, "__esModule", { value: !0 });
-mr.containsOnlyInlineElements = Pp;
-var Mp = vr, Lp = dr;
-function Pp(o) {
+mr.containsOnlyInlineElements = Up;
+var Hp = vr, Fp = dr;
+function Up(o) {
   var e;
-  (0, Mp.isString)(o) ? (e = document.createElement("div"), e.innerHTML = o) : e = o;
+  (0, Hp.isString)(o) ? (e = document.createElement("div"), e.innerHTML = o) : e = o;
   var t = function(n) {
-    return !(0, Lp.blockElements)().includes(n.tagName.toLowerCase()) && Array.from(n.children).every(t);
+    return !(0, Fp.blockElements)().includes(n.tagName.toLowerCase()) && Array.from(n.children).every(t);
   };
   return Array.from(e.children).every(t);
 }
@@ -13213,10 +13234,10 @@ function Pp(o) {
     return e.containsOnlyInlineElements;
   } });
 })(zt);
-var ta = {}, yr = {}, Wt = {}, kr = {};
+var ra = {}, yr = {}, Wt = {}, kr = {};
 Object.defineProperty(kr, "__esModule", { value: !0 });
-kr.make = Ap;
-function Ap(o, e, t) {
+kr.make = zp;
+function zp(o, e, t) {
   var n;
   e === void 0 && (e = null), t === void 0 && (t = {});
   var r = document.createElement(o);
@@ -13239,10 +13260,10 @@ function Ap(o, e, t) {
   } });
 })(Wt);
 Object.defineProperty(yr, "__esModule", { value: !0 });
-yr.fragmentToString = jp;
-var Np = Wt;
-function jp(o) {
-  var e = (0, Np.make)("div");
+yr.fragmentToString = qp;
+var Wp = Wt;
+function qp(o) {
+  var e = (0, Wp.make)("div");
   return e.appendChild(o), e.innerHTML;
 }
 (function(o) {
@@ -13251,14 +13272,14 @@ function jp(o) {
   Object.defineProperty(o, "fragmentToString", { enumerable: !0, get: function() {
     return e.fragmentToString;
   } });
-})(ta);
-var oa = {}, wr = {};
+})(ra);
+var ia = {}, wr = {};
 Object.defineProperty(wr, "__esModule", { value: !0 });
-wr.getContentLength = Rp;
-var Dp = Le;
-function Rp(o) {
+wr.getContentLength = Yp;
+var Kp = Le;
+function Yp(o) {
   var e, t;
-  return (0, Dp.isNativeInput)(o) ? o.value.length : o.nodeType === Node.TEXT_NODE ? o.length : (t = (e = o.textContent) === null || e === void 0 ? void 0 : e.length) !== null && t !== void 0 ? t : 0;
+  return (0, Kp.isNativeInput)(o) ? o.value.length : o.nodeType === Node.TEXT_NODE ? o.length : (t = (e = o.textContent) === null || e === void 0 ? void 0 : e.length) !== null && t !== void 0 ? t : 0;
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.getContentLength = void 0;
@@ -13266,19 +13287,19 @@ function Rp(o) {
   Object.defineProperty(o, "getContentLength", { enumerable: !0, get: function() {
     return e.getContentLength;
   } });
-})(oa);
-var xr = {}, Er = {}, hi = Ot && Ot.__spreadArray || function(o, e, t) {
+})(ia);
+var xr = {}, Er = {}, fi = _t && _t.__spreadArray || function(o, e, t) {
   if (t || arguments.length === 2)
     for (var n = 0, r = e.length, i; n < r; n++)
       (i || !(n in e)) && (i || (i = Array.prototype.slice.call(e, 0, n)), i[n] = e[n]);
   return o.concat(i || Array.prototype.slice.call(e));
 };
 Object.defineProperty(Er, "__esModule", { value: !0 });
-Er.getDeepestBlockElements = na;
-var $p = zt;
-function na(o) {
-  return (0, $p.containsOnlyInlineElements)(o) ? [o] : Array.from(o.children).reduce(function(e, t) {
-    return hi(hi([], e, !0), na(t), !0);
+Er.getDeepestBlockElements = sa;
+var Vp = zt;
+function sa(o) {
+  return (0, Vp.containsOnlyInlineElements)(o) ? [o] : Array.from(o.children).reduce(function(e, t) {
+    return fi(fi([], e, !0), sa(t), !0);
   }, []);
 }
 (function(o) {
@@ -13288,10 +13309,10 @@ function na(o) {
     return e.getDeepestBlockElements;
   } });
 })(xr);
-var ra = {}, Cr = {}, qt = {}, Tr = {};
-Object.defineProperty(Tr, "__esModule", { value: !0 });
-Tr.isLineBreakTag = Hp;
-function Hp(o) {
+var aa = {}, Cr = {}, qt = {}, Sr = {};
+Object.defineProperty(Sr, "__esModule", { value: !0 });
+Sr.isLineBreakTag = Xp;
+function Xp(o) {
   return [
     "BR",
     "WBR"
@@ -13299,15 +13320,15 @@ function Hp(o) {
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isLineBreakTag = void 0;
-  var e = Tr;
+  var e = Sr;
   Object.defineProperty(o, "isLineBreakTag", { enumerable: !0, get: function() {
     return e.isLineBreakTag;
   } });
 })(qt);
-var Kt = {}, Sr = {};
-Object.defineProperty(Sr, "__esModule", { value: !0 });
-Sr.isSingleTag = Fp;
-function Fp(o) {
+var Kt = {}, Tr = {};
+Object.defineProperty(Tr, "__esModule", { value: !0 });
+Tr.isSingleTag = Gp;
+function Gp(o) {
   return [
     "AREA",
     "BASE",
@@ -13329,27 +13350,27 @@ function Fp(o) {
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isSingleTag = void 0;
-  var e = Sr;
+  var e = Tr;
   Object.defineProperty(o, "isSingleTag", { enumerable: !0, get: function() {
     return e.isSingleTag;
   } });
 })(Kt);
 Object.defineProperty(Cr, "__esModule", { value: !0 });
-Cr.getDeepestNode = ia;
-var Up = Le, zp = qt, Wp = Kt;
-function ia(o, e) {
+Cr.getDeepestNode = la;
+var Zp = Le, Qp = qt, Jp = Kt;
+function la(o, e) {
   e === void 0 && (e = !1);
   var t = e ? "lastChild" : "firstChild", n = e ? "previousSibling" : "nextSibling";
   if (o.nodeType === Node.ELEMENT_NODE && o[t]) {
     var r = o[t];
-    if ((0, Wp.isSingleTag)(r) && !(0, Up.isNativeInput)(r) && !(0, zp.isLineBreakTag)(r))
+    if ((0, Jp.isSingleTag)(r) && !(0, Zp.isNativeInput)(r) && !(0, Qp.isLineBreakTag)(r))
       if (r[n])
         r = r[n];
       else if (r.parentNode !== null && r.parentNode[n])
         r = r.parentNode[n];
       else
         return r.parentNode;
-    return ia(r, e);
+    return la(r, e);
   }
   return o;
 }
@@ -13359,19 +13380,19 @@ function ia(o, e) {
   Object.defineProperty(o, "getDeepestNode", { enumerable: !0, get: function() {
     return e.getDeepestNode;
   } });
-})(ra);
-var sa = {}, Br = {}, st = Ot && Ot.__spreadArray || function(o, e, t) {
+})(aa);
+var ca = {}, Br = {}, st = _t && _t.__spreadArray || function(o, e, t) {
   if (t || arguments.length === 2)
     for (var n = 0, r = e.length, i; n < r; n++)
       (i || !(n in e)) && (i || (i = Array.prototype.slice.call(e, 0, n)), i[n] = e[n]);
   return o.concat(i || Array.prototype.slice.call(e));
 };
 Object.defineProperty(Br, "__esModule", { value: !0 });
-Br.findAllInputs = Xp;
-var qp = zt, Kp = xr, Yp = sr, Vp = Le;
-function Xp(o) {
-  return Array.from(o.querySelectorAll((0, Yp.allInputsSelector)())).reduce(function(e, t) {
-    return (0, Vp.isNativeInput)(t) || (0, qp.containsOnlyInlineElements)(t) ? st(st([], e, !0), [t], !1) : st(st([], e, !0), (0, Kp.getDeepestBlockElements)(t), !0);
+Br.findAllInputs = rf;
+var ef = zt, tf = xr, of = sr, nf = Le;
+function rf(o) {
+  return Array.from(o.querySelectorAll((0, of.allInputsSelector)())).reduce(function(e, t) {
+    return (0, nf.isNativeInput)(t) || (0, ef.containsOnlyInlineElements)(t) ? st(st([], e, !0), [t], !1) : st(st([], e, !0), (0, tf.getDeepestBlockElements)(t), !0);
   }, []);
 }
 (function(o) {
@@ -13380,26 +13401,26 @@ function Xp(o) {
   Object.defineProperty(o, "findAllInputs", { enumerable: !0, get: function() {
     return e.findAllInputs;
   } });
-})(sa);
-var aa = {}, Or = {};
-Object.defineProperty(Or, "__esModule", { value: !0 });
-Or.isCollapsedWhitespaces = Gp;
-function Gp(o) {
+})(ca);
+var da = {}, _r = {};
+Object.defineProperty(_r, "__esModule", { value: !0 });
+_r.isCollapsedWhitespaces = sf;
+function sf(o) {
   return !/[^\t\n\r ]/.test(o);
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isCollapsedWhitespaces = void 0;
-  var e = Or;
+  var e = _r;
   Object.defineProperty(o, "isCollapsedWhitespaces", { enumerable: !0, get: function() {
     return e.isCollapsedWhitespaces;
   } });
-})(aa);
-var _r = {}, Ir = {};
+})(da);
+var Or = {}, Ir = {};
 Object.defineProperty(Ir, "__esModule", { value: !0 });
-Ir.isElement = Qp;
-var Zp = vr;
-function Qp(o) {
-  return (0, Zp.isNumber)(o) ? !1 : !!o && !!o.nodeType && o.nodeType === Node.ELEMENT_NODE;
+Ir.isElement = lf;
+var af = vr;
+function lf(o) {
+  return (0, af.isNumber)(o) ? !1 : !!o && !!o.nodeType && o.nodeType === Node.ELEMENT_NODE;
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isElement = void 0;
@@ -13407,11 +13428,11 @@ function Qp(o) {
   Object.defineProperty(o, "isElement", { enumerable: !0, get: function() {
     return e.isElement;
   } });
-})(_r);
-var la = {}, Mr = {}, Lr = {}, Pr = {};
+})(Or);
+var ua = {}, Mr = {}, Lr = {}, Pr = {};
 Object.defineProperty(Pr, "__esModule", { value: !0 });
-Pr.isLeaf = Jp;
-function Jp(o) {
+Pr.isLeaf = cf;
+function cf(o) {
   return o === null ? !1 : o.childNodes.length === 0;
 }
 (function(o) {
@@ -13423,11 +13444,11 @@ function Jp(o) {
 })(Lr);
 var Ar = {}, Nr = {};
 Object.defineProperty(Nr, "__esModule", { value: !0 });
-Nr.isNodeEmpty = rf;
-var ef = qt, tf = _r, of = Le, nf = Kt;
-function rf(o, e) {
+Nr.isNodeEmpty = ff;
+var df = qt, uf = Or, hf = Le, pf = Kt;
+function ff(o, e) {
   var t = "";
-  return (0, nf.isSingleTag)(o) && !(0, ef.isLineBreakTag)(o) ? !1 : ((0, tf.isElement)(o) && (0, of.isNativeInput)(o) ? t = o.value : o.textContent !== null && (t = o.textContent.replace("​", "")), e !== void 0 && (t = t.replace(new RegExp(e, "g"), "")), t.trim().length === 0);
+  return (0, pf.isSingleTag)(o) && !(0, df.isLineBreakTag)(o) ? !1 : ((0, uf.isElement)(o) && (0, hf.isNativeInput)(o) ? t = o.value : o.textContent !== null && (t = o.textContent.replace("​", "")), e !== void 0 && (t = t.replace(new RegExp(e, "g"), "")), t.trim().length === 0);
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isNodeEmpty = void 0;
@@ -13437,14 +13458,14 @@ function rf(o, e) {
   } });
 })(Ar);
 Object.defineProperty(Mr, "__esModule", { value: !0 });
-Mr.isEmpty = lf;
-var sf = Lr, af = Ar;
-function lf(o, e) {
+Mr.isEmpty = bf;
+var gf = Lr, mf = Ar;
+function bf(o, e) {
   o.normalize();
   for (var t = [o]; t.length > 0; ) {
     var n = t.shift();
     if (n) {
-      if (o = n, (0, sf.isLeaf)(o) && !(0, af.isNodeEmpty)(o, e))
+      if (o = n, (0, gf.isLeaf)(o) && !(0, mf.isNodeEmpty)(o, e))
         return !1;
       t.push.apply(t, Array.from(o.childNodes));
     }
@@ -13457,13 +13478,13 @@ function lf(o, e) {
   Object.defineProperty(o, "isEmpty", { enumerable: !0, get: function() {
     return e.isEmpty;
   } });
-})(la);
-var ca = {}, jr = {};
+})(ua);
+var ha = {}, jr = {};
 Object.defineProperty(jr, "__esModule", { value: !0 });
-jr.isFragment = df;
-var cf = vr;
-function df(o) {
-  return (0, cf.isNumber)(o) ? !1 : !!o && !!o.nodeType && o.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
+jr.isFragment = yf;
+var vf = vr;
+function yf(o) {
+  return (0, vf.isNumber)(o) ? !1 : !!o && !!o.nodeType && o.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isFragment = void 0;
@@ -13471,13 +13492,13 @@ function df(o) {
   Object.defineProperty(o, "isFragment", { enumerable: !0, get: function() {
     return e.isFragment;
   } });
-})(ca);
-var da = {}, Dr = {};
+})(ha);
+var pa = {}, Dr = {};
 Object.defineProperty(Dr, "__esModule", { value: !0 });
-Dr.isHTMLString = hf;
-var uf = Wt;
-function hf(o) {
-  var e = (0, uf.make)("div");
+Dr.isHTMLString = wf;
+var kf = Wt;
+function wf(o) {
+  var e = (0, kf.make)("div");
   return e.innerHTML = o, e.childElementCount > 0;
 }
 (function(o) {
@@ -13486,11 +13507,11 @@ function hf(o) {
   Object.defineProperty(o, "isHTMLString", { enumerable: !0, get: function() {
     return e.isHTMLString;
   } });
-})(da);
-var ua = {}, Rr = {};
+})(pa);
+var fa = {}, Rr = {};
 Object.defineProperty(Rr, "__esModule", { value: !0 });
-Rr.offset = pf;
-function pf(o) {
+Rr.offset = xf;
+function xf(o) {
   var e = o.getBoundingClientRect(), t = window.pageXOffset || document.documentElement.scrollLeft, n = window.pageYOffset || document.documentElement.scrollTop, r = e.top + n, i = e.left + t;
   return {
     top: r,
@@ -13505,11 +13526,11 @@ function pf(o) {
   Object.defineProperty(o, "offset", { enumerable: !0, get: function() {
     return e.offset;
   } });
-})(ua);
-var ha = {}, $r = {};
+})(fa);
+var ga = {}, $r = {};
 Object.defineProperty($r, "__esModule", { value: !0 });
-$r.prepend = ff;
-function ff(o, e) {
+$r.prepend = Ef;
+function Ef(o, e) {
   Array.isArray(e) ? (e = e.reverse(), e.forEach(function(t) {
     return o.prepend(t);
   })) : o.prepend(e);
@@ -13520,7 +13541,7 @@ function ff(o, e) {
   Object.defineProperty(o, "prepend", { enumerable: !0, get: function() {
     return e.prepend;
   } });
-})(ha);
+})(ga);
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.prepend = o.offset = o.make = o.isLineBreakTag = o.isSingleTag = o.isNodeEmpty = o.isLeaf = o.isHTMLString = o.isFragment = o.isEmpty = o.isElement = o.isContentEditable = o.isCollapsedWhitespaces = o.findAllInputs = o.isNativeInput = o.allInputsSelector = o.getDeepestNode = o.getDeepestBlockElements = o.getContentLength = o.fragmentToString = o.containsOnlyInlineElements = o.canSetCaret = o.calculateBaseline = o.blockElements = o.append = void 0;
   var e = sr;
@@ -13531,7 +13552,7 @@ function ff(o, e) {
   Object.defineProperty(o, "isNativeInput", { enumerable: !0, get: function() {
     return t.isNativeInput;
   } });
-  var n = Gs;
+  var n = Js;
   Object.defineProperty(o, "append", { enumerable: !0, get: function() {
     return n.append;
   } });
@@ -13539,11 +13560,11 @@ function ff(o, e) {
   Object.defineProperty(o, "blockElements", { enumerable: !0, get: function() {
     return r.blockElements;
   } });
-  var i = Zs;
+  var i = ea;
   Object.defineProperty(o, "calculateBaseline", { enumerable: !0, get: function() {
     return i.calculateBaseline;
   } });
-  var s = Qs;
+  var s = ta;
   Object.defineProperty(o, "canSetCaret", { enumerable: !0, get: function() {
     return s.canSetCaret;
   } });
@@ -13551,11 +13572,11 @@ function ff(o, e) {
   Object.defineProperty(o, "containsOnlyInlineElements", { enumerable: !0, get: function() {
     return a.containsOnlyInlineElements;
   } });
-  var l = ta;
+  var l = ra;
   Object.defineProperty(o, "fragmentToString", { enumerable: !0, get: function() {
     return l.fragmentToString;
   } });
-  var c = oa;
+  var c = ia;
   Object.defineProperty(o, "getContentLength", { enumerable: !0, get: function() {
     return c.getContentLength;
   } });
@@ -13563,15 +13584,15 @@ function ff(o, e) {
   Object.defineProperty(o, "getDeepestBlockElements", { enumerable: !0, get: function() {
     return d.getDeepestBlockElements;
   } });
-  var u = ra;
+  var u = aa;
   Object.defineProperty(o, "getDeepestNode", { enumerable: !0, get: function() {
     return u.getDeepestNode;
   } });
-  var h = sa;
+  var h = ca;
   Object.defineProperty(o, "findAllInputs", { enumerable: !0, get: function() {
     return h.findAllInputs;
   } });
-  var g = aa;
+  var g = da;
   Object.defineProperty(o, "isCollapsedWhitespaces", { enumerable: !0, get: function() {
     return g.isCollapsedWhitespaces;
   } });
@@ -13579,19 +13600,19 @@ function ff(o, e) {
   Object.defineProperty(o, "isContentEditable", { enumerable: !0, get: function() {
     return p.isContentEditable;
   } });
-  var v = _r;
+  var v = Or;
   Object.defineProperty(o, "isElement", { enumerable: !0, get: function() {
     return v.isElement;
   } });
-  var B = la;
+  var B = ua;
   Object.defineProperty(o, "isEmpty", { enumerable: !0, get: function() {
     return B.isEmpty;
   } });
-  var O = ca;
+  var _ = ha;
   Object.defineProperty(o, "isFragment", { enumerable: !0, get: function() {
-    return O.isFragment;
+    return _.isFragment;
   } });
-  var k = da;
+  var k = pa;
   Object.defineProperty(o, "isHTMLString", { enumerable: !0, get: function() {
     return k.isHTMLString;
   } });
@@ -13615,11 +13636,11 @@ function ff(o, e) {
   Object.defineProperty(o, "make", { enumerable: !0, get: function() {
     return G.make;
   } });
-  var y = ua;
+  var y = fa;
   Object.defineProperty(o, "offset", { enumerable: !0, get: function() {
     return y.offset;
   } });
-  var m = ha;
+  var m = ga;
   Object.defineProperty(o, "prepend", { enumerable: !0, get: function() {
     return m.prepend;
   } });
@@ -13756,20 +13777,20 @@ class re {
     return {};
   }
 }
-function Te(o) {
+function Se(o) {
   return o.nodeType === Node.ELEMENT_NODE;
 }
 var Xe = {}, Hr = {}, Yt = {}, Vt = {};
 Object.defineProperty(Vt, "__esModule", { value: !0 });
-Vt.getContenteditableSlice = mf;
-var gf = A;
-function mf(o, e, t, n, r) {
+Vt.getContenteditableSlice = Sf;
+var Cf = A;
+function Sf(o, e, t, n, r) {
   var i;
   r === void 0 && (r = !1);
   var s = document.createRange();
   if (n === "left" ? (s.setStart(o, 0), s.setEnd(e, t)) : (s.setStart(e, t), s.setEnd(o, o.childNodes.length)), r === !0) {
     var a = s.extractContents();
-    return (0, gf.fragmentToString)(a);
+    return (0, Cf.fragmentToString)(a);
   }
   var l = s.cloneContents(), c = document.createElement("div");
   c.appendChild(l);
@@ -13777,11 +13798,11 @@ function mf(o, e, t, n, r) {
   return d;
 }
 Object.defineProperty(Yt, "__esModule", { value: !0 });
-Yt.checkContenteditableSliceForEmptiness = yf;
-var bf = A, vf = Vt;
-function yf(o, e, t, n) {
-  var r = (0, vf.getContenteditableSlice)(o, e, t, n);
-  return (0, bf.isCollapsedWhitespaces)(r);
+Yt.checkContenteditableSliceForEmptiness = _f;
+var Tf = A, Bf = Vt;
+function _f(o, e, t, n) {
+  var r = (0, Bf.getContenteditableSlice)(o, e, t, n);
+  return (0, Tf.isCollapsedWhitespaces)(r);
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.checkContenteditableSliceForEmptiness = void 0;
@@ -13790,21 +13811,21 @@ function yf(o, e, t, n) {
     return e.checkContenteditableSliceForEmptiness;
   } });
 })(Hr);
-var pa = {};
+var ma = {};
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.getContenteditableSlice = void 0;
   var e = Vt;
   Object.defineProperty(o, "getContenteditableSlice", { enumerable: !0, get: function() {
     return e.getContenteditableSlice;
   } });
-})(pa);
-var fa = {}, Fr = {};
+})(ma);
+var ba = {}, Fr = {};
 Object.defineProperty(Fr, "__esModule", { value: !0 });
-Fr.focus = wf;
-var kf = A;
-function wf(o, e) {
+Fr.focus = If;
+var Of = A;
+function If(o, e) {
   var t, n;
-  if (e === void 0 && (e = !0), (0, kf.isNativeInput)(o)) {
+  if (e === void 0 && (e = !0), (0, Of.isNativeInput)(o)) {
     o.focus();
     var r = e ? 0 : o.value.length;
     o.setSelectionRange(r, r);
@@ -13838,11 +13859,11 @@ function wf(o, e) {
   Object.defineProperty(o, "focus", { enumerable: !0, get: function() {
     return e.focus;
   } });
-})(fa);
+})(ba);
 var Ur = {}, Xt = {};
 Object.defineProperty(Xt, "__esModule", { value: !0 });
-Xt.getCaretNodeAndOffset = xf;
-function xf() {
+Xt.getCaretNodeAndOffset = Mf;
+function Mf() {
   var o = window.getSelection();
   if (o === null)
     return [null, 0];
@@ -13856,10 +13877,10 @@ function xf() {
     return e.getCaretNodeAndOffset;
   } });
 })(Ur);
-var ga = {}, Gt = {};
+var va = {}, Gt = {};
 Object.defineProperty(Gt, "__esModule", { value: !0 });
-Gt.getRange = Ef;
-function Ef() {
+Gt.getRange = Lf;
+function Lf() {
   var o = window.getSelection();
   return o && o.rangeCount ? o.getRangeAt(0) : null;
 }
@@ -13869,19 +13890,19 @@ function Ef() {
   Object.defineProperty(o, "getRange", { enumerable: !0, get: function() {
     return e.getRange;
   } });
-})(ga);
-var ma = {}, zr = {};
+})(va);
+var ya = {}, zr = {};
 Object.defineProperty(zr, "__esModule", { value: !0 });
-zr.isCaretAtEndOfInput = Sf;
-var pi = A, Cf = Ur, Tf = Hr;
-function Sf(o) {
-  var e = (0, pi.getDeepestNode)(o, !0);
+zr.isCaretAtEndOfInput = Nf;
+var gi = A, Pf = Ur, Af = Hr;
+function Nf(o) {
+  var e = (0, gi.getDeepestNode)(o, !0);
   if (e === null)
     return !0;
-  if ((0, pi.isNativeInput)(e))
+  if ((0, gi.isNativeInput)(e))
     return e.selectionEnd === e.value.length;
-  var t = (0, Cf.getCaretNodeAndOffset)(), n = t[0], r = t[1];
-  return n === null ? !1 : (0, Tf.checkContenteditableSliceForEmptiness)(o, n, r, "right");
+  var t = (0, Pf.getCaretNodeAndOffset)(), n = t[0], r = t[1];
+  return n === null ? !1 : (0, Af.checkContenteditableSliceForEmptiness)(o, n, r, "right");
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isCaretAtEndOfInput = void 0;
@@ -13889,12 +13910,12 @@ function Sf(o) {
   Object.defineProperty(o, "isCaretAtEndOfInput", { enumerable: !0, get: function() {
     return e.isCaretAtEndOfInput;
   } });
-})(ma);
-var ba = {}, Wr = {};
+})(ya);
+var ka = {}, Wr = {};
 Object.defineProperty(Wr, "__esModule", { value: !0 });
-Wr.isCaretAtStartOfInput = _f;
-var at = A, Bf = Xt, Of = Yt;
-function _f(o) {
+Wr.isCaretAtStartOfInput = Rf;
+var at = A, jf = Xt, Df = Yt;
+function Rf(o) {
   var e = (0, at.getDeepestNode)(o);
   if (e === null || (0, at.isEmpty)(o))
     return !0;
@@ -13902,8 +13923,8 @@ function _f(o) {
     return e.selectionEnd === 0;
   if ((0, at.isEmpty)(o))
     return !0;
-  var t = (0, Bf.getCaretNodeAndOffset)(), n = t[0], r = t[1];
-  return n === null ? !1 : (0, Of.checkContenteditableSliceForEmptiness)(o, n, r, "left");
+  var t = (0, jf.getCaretNodeAndOffset)(), n = t[0], r = t[1];
+  return n === null ? !1 : (0, Df.checkContenteditableSliceForEmptiness)(o, n, r, "left");
 }
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.isCaretAtStartOfInput = void 0;
@@ -13911,13 +13932,13 @@ function _f(o) {
   Object.defineProperty(o, "isCaretAtStartOfInput", { enumerable: !0, get: function() {
     return e.isCaretAtStartOfInput;
   } });
-})(ba);
-var va = {}, qr = {};
+})(ka);
+var wa = {}, qr = {};
 Object.defineProperty(qr, "__esModule", { value: !0 });
-qr.save = Lf;
-var If = A, Mf = Gt;
-function Lf() {
-  var o = (0, Mf.getRange)(), e = (0, If.make)("span");
+qr.save = Ff;
+var $f = A, Hf = Gt;
+function Ff() {
+  var o = (0, Hf.getRange)(), e = (0, $f.make)("span");
   if (e.id = "cursor", e.hidden = !0, !!o)
     return o.insertNode(e), function() {
       var t = window.getSelection();
@@ -13932,18 +13953,18 @@ function Lf() {
   Object.defineProperty(o, "save", { enumerable: !0, get: function() {
     return e.save;
   } });
-})(va);
+})(wa);
 (function(o) {
   Object.defineProperty(o, "__esModule", { value: !0 }), o.save = o.isCaretAtStartOfInput = o.isCaretAtEndOfInput = o.getRange = o.getCaretNodeAndOffset = o.focus = o.getContenteditableSlice = o.checkContenteditableSliceForEmptiness = void 0;
   var e = Hr;
   Object.defineProperty(o, "checkContenteditableSliceForEmptiness", { enumerable: !0, get: function() {
     return e.checkContenteditableSliceForEmptiness;
   } });
-  var t = pa;
+  var t = ma;
   Object.defineProperty(o, "getContenteditableSlice", { enumerable: !0, get: function() {
     return t.getContenteditableSlice;
   } });
-  var n = fa;
+  var n = ba;
   Object.defineProperty(o, "focus", { enumerable: !0, get: function() {
     return n.focus;
   } });
@@ -13951,19 +13972,19 @@ function Lf() {
   Object.defineProperty(o, "getCaretNodeAndOffset", { enumerable: !0, get: function() {
     return r.getCaretNodeAndOffset;
   } });
-  var i = ga;
+  var i = va;
   Object.defineProperty(o, "getRange", { enumerable: !0, get: function() {
     return i.getRange;
   } });
-  var s = ma;
+  var s = ya;
   Object.defineProperty(o, "isCaretAtEndOfInput", { enumerable: !0, get: function() {
     return s.isCaretAtEndOfInput;
   } });
-  var a = ba;
+  var a = ka;
   Object.defineProperty(o, "isCaretAtStartOfInput", { enumerable: !0, get: function() {
     return a.isCaretAtStartOfInput;
   } });
-  var l = va;
+  var l = wa;
   Object.defineProperty(o, "save", { enumerable: !0, get: function() {
     return l.save;
   } });
@@ -14016,7 +14037,7 @@ class F {
       innerHTML: e,
       contentEditable: (!this.readOnly).toString()
     }), i = A.make("span", F.CSS.checkbox), s = A.make("div", F.CSS.checkboxContainer);
-    return t.checked === !0 && s.classList.add(F.CSS.itemChecked), i.innerHTML = Yh, s.appendChild(i), n.appendChild(s), n.appendChild(r), n;
+    return t.checked === !0 && s.classList.add(F.CSS.itemChecked), i.innerHTML = op, s.appendChild(i), n.appendChild(s), n.appendChild(r), n;
   }
   /**
    * Return the item content
@@ -14078,10 +14099,10 @@ function de(o, e = !0) {
   let t = o;
   return o.classList.contains(W.item) && (t = o.querySelector(`.${W.itemChildren}`)), t === null ? [] : Array.from(e ? t.querySelectorAll(`:scope > .${W.item}`) : t.querySelectorAll(`.${W.item}`));
 }
-function Pf(o) {
+function Uf(o) {
   return o.nextElementSibling === null;
 }
-function Af(o) {
+function zf(o) {
   return o.querySelector(`.${W.itemChildren}`) !== null;
 }
 function ve(o) {
@@ -14108,7 +14129,7 @@ class ao {
     if (!e)
       return null;
     let t = e.anchorNode;
-    return !t || (Te(t) || (t = t.parentNode), !t) || !Te(t) ? null : t.closest(`.${W.item}`);
+    return !t || (Se(t) || (t = t.parentNode), !t) || !Se(t) ? null : t.closest(`.${W.item}`);
   }
   /**
    * Method that returns nesting level of the current item, null if there is no selection
@@ -14119,7 +14140,7 @@ class ao {
       return null;
     let t = e.parentNode, n = 0;
     for (; t !== null && t !== this.listWrapper; )
-      Te(t) && t.classList.contains(W.item) && (n += 1), t = t.parentNode;
+      Se(t) && t.classList.contains(W.item) && (n += 1), t = t.parentNode;
     return n + 1;
   }
   /**
@@ -14288,7 +14309,7 @@ class ao {
       return;
     const r = ((t = this.renderer) == null ? void 0 : t.getItemContent(n).trim().length) === 0, i = n.parentNode === this.listWrapper, s = n.previousElementSibling === null, a = this.api.blocks.getCurrentBlockIndex();
     if (i && r)
-      if (Pf(n) && !Af(n)) {
+      if (Uf(n) && !zf(n)) {
         s ? this.convertItemToDefaultBlock(a, !0) : this.convertItemToDefaultBlock();
         return;
       } else {
@@ -14328,7 +14349,7 @@ class ao {
    * @param item - list item to be unshifted
    */
   unshiftItem(e) {
-    if (!e.parentNode || !Te(e.parentNode))
+    if (!e.parentNode || !Se(e.parentNode))
       return;
     const t = e.parentNode.closest(`.${W.item}`);
     if (!t)
@@ -14387,10 +14408,10 @@ class ao {
    */
   mergeItemWithPrevious(e) {
     const t = e.previousElementSibling, n = e.parentNode;
-    if (n === null || !Te(n))
+    if (n === null || !Se(n))
       return;
     const r = n.closest(`.${W.item}`);
-    if (!t && !r || t && !Te(t))
+    if (!t && !r || t && !Se(t))
       return;
     let i;
     if (t) {
@@ -14434,7 +14455,7 @@ class ao {
         return;
     }
     const r = n.previousSibling;
-    if (r === null || !Te(r))
+    if (r === null || !Se(r))
       return;
     const i = ve(r);
     if (i)
@@ -14514,7 +14535,7 @@ const Ae = {
   input: `${X}-start-with-field__input`,
   startWithElementWrapperInvalid: `${X}-start-with-field--invalid`
 };
-function Nf(o, { value: e, placeholder: t, attributes: n, sanitize: r }) {
+function Wf(o, { value: e, placeholder: t, attributes: n, sanitize: r }) {
   const i = A.make("div", Ae.wrapper), s = A.make("input", Ae.input, {
     placeholder: t,
     /**
@@ -14557,43 +14578,43 @@ const Ke = /* @__PURE__ */ new Map([
    * Value that represents upper alpha characters for counters
    */
   ["Upper Alpha", "upper-alpha"]
-]), fi = /* @__PURE__ */ new Map([
+]), mi = /* @__PURE__ */ new Map([
   /**
    * Value that represents Icon for Numeric counter type
    */
-  ["numeric", Vh],
+  ["numeric", np],
   /**
    * Value that represents Icon for Lower Roman counter type
    */
-  ["lower-roman", Xh],
+  ["lower-roman", rp],
   /**
    * Value that represents Icon for Upper Roman counter type
    */
-  ["upper-roman", Gh],
+  ["upper-roman", ip],
   /**
    * Value that represents Icon for Lower Alpha counter type
    */
-  ["lower-alpha", Qh],
+  ["lower-alpha", ap],
   /**
    * Value that represents Icon for Upper Alpha counter type
    */
-  ["upper-alpha", Zh]
+  ["upper-alpha", sp]
 ]);
-function jf(o) {
+function qf(o) {
   return o.replace(/\D+/g, "");
 }
-function Df(o) {
+function Kf(o) {
   return typeof o.items[0] == "string";
 }
-function Rf(o) {
+function Yf(o) {
   return !("meta" in o);
 }
-function $f(o) {
+function Vf(o) {
   return typeof o.items[0] != "string" && "text" in o.items[0] && "checked" in o.items[0] && typeof o.items[0].text == "string" && typeof o.items[0].checked == "boolean";
 }
-function Hf(o) {
+function Xf(o) {
   const e = [];
-  return Df(o) ? (o.items.forEach((t) => {
+  return Kf(o) ? (o.items.forEach((t) => {
     e.push({
       content: t,
       meta: {},
@@ -14603,7 +14624,7 @@ function Hf(o) {
     style: o.style,
     meta: {},
     items: e
-  }) : $f(o) ? (o.items.forEach((t) => {
+  }) : Vf(o) ? (o.items.forEach((t) => {
     e.push({
       content: t.text,
       meta: {
@@ -14615,13 +14636,13 @@ function Hf(o) {
     style: "checklist",
     meta: {},
     items: e
-  }) : Rf(o) ? {
+  }) : Yf(o) ? {
     style: o.style,
     meta: {},
     items: o.items
   } : structuredClone(o);
 }
-class _t {
+class Ot {
   /**
    * Notify core that read-only mode is supported
    */
@@ -14642,21 +14663,21 @@ class _t {
   static get toolbox() {
     return [
       {
-        icon: di,
+        icon: hi,
         title: "Unordered List",
         data: {
           style: "unordered"
         }
       },
       {
-        icon: ui,
+        icon: pi,
         title: "Ordered List",
         data: {
           style: "ordered"
         }
       },
       {
-        icon: ci,
+        icon: ui,
         title: "Checklist",
         data: {
           style: "checklist"
@@ -14678,7 +14699,7 @@ class _t {
    */
   static get conversionConfig() {
     return {
-      export: (e) => _t.joinRecursive(e),
+      export: (e) => Ot.joinRecursive(e),
       import: (e, t) => ({
         meta: {},
         items: [
@@ -14724,7 +14745,7 @@ class _t {
       meta: {},
       items: []
     };
-    this.data = Object.keys(e).length ? Hf(e) : a, this.listStyle === "ordered" && this.data.meta.counterType === void 0 && (this.data.meta.counterType = "numeric"), this.changeTabulatorByStyle();
+    this.data = Object.keys(e).length ? Xf(e) : a, this.listStyle === "ordered" && this.data.meta.counterType === void 0 && (this.data.meta.counterType = "numeric"), this.changeTabulatorByStyle();
   }
   /**
    * Convert from list to text for conversionConfig
@@ -14732,7 +14753,7 @@ class _t {
    * @returns - string of the recursively merged contents of the items of the list
    */
   static joinRecursive(e) {
-    return e.items.map((t) => `${t.content} ${_t.joinRecursive(t)}`).join("");
+    return e.items.map((t) => `${t.content} ${Ot.joinRecursive(t)}`).join("");
   }
   /**
    * Function that is responsible for content rendering
@@ -14763,7 +14784,7 @@ class _t {
     const e = [
       {
         label: this.api.i18n.t("Unordered"),
-        icon: di,
+        icon: hi,
         closeOnActivate: !0,
         isActive: this.listStyle == "unordered",
         onActivate: () => {
@@ -14772,7 +14793,7 @@ class _t {
       },
       {
         label: this.api.i18n.t("Ordered"),
-        icon: ui,
+        icon: pi,
         closeOnActivate: !0,
         isActive: this.listStyle == "ordered",
         onActivate: () => {
@@ -14781,7 +14802,7 @@ class _t {
       },
       {
         label: this.api.i18n.t("Checklist"),
-        icon: ci,
+        icon: ui,
         closeOnActivate: !0,
         isActive: this.listStyle == "checklist",
         onActivate: () => {
@@ -14790,7 +14811,7 @@ class _t {
       }
     ];
     if (this.listStyle === "ordered") {
-      const t = Nf(
+      const t = Wf(
         (i) => this.changeStartWith(Number(i)),
         {
           value: String(this.data.meta.start ?? 1),
@@ -14798,12 +14819,12 @@ class _t {
           attributes: {
             required: "true"
           },
-          sanitize: (i) => jf(i)
+          sanitize: (i) => qf(i)
         }
       ), n = [
         {
           label: this.api.i18n.t("Start with"),
-          icon: Jh,
+          icon: lp,
           children: {
             items: [
               {
@@ -14816,7 +14837,7 @@ class _t {
         }
       ], r = {
         label: this.api.i18n.t("Counter type"),
-        icon: fi.get(this.data.meta.counterType),
+        icon: mi.get(this.data.meta.counterType),
         children: {
           items: []
         }
@@ -14825,7 +14846,7 @@ class _t {
         const a = Ke.get(s);
         this.defaultCounterTypes.includes(a) && r.children.items.push({
           title: this.api.i18n.t(s),
-          icon: fi.get(a),
+          icon: mi.get(a),
           isActive: this.data.meta.counterType === Ke.get(s),
           closeOnActivate: !0,
           onActivate: () => {
@@ -14929,7 +14950,7 @@ class _t {
     console.error("vite-plugin-css-injected-by-js", e);
   }
 })();
-const Ff = {
+const Gf = {
   vimeo: {
     regex: /(?:http[s]?:\/\/)?(?:www.)?(?:player.)?vimeo\.co(?:.+\/([^\/]\d+)(?:#t=[\d]+)?s?$)/,
     embedUrl: "https://player.vimeo.com/video/<%= remote_id %>?title=0&byline=0",
@@ -15106,7 +15127,7 @@ function Eo(o, e, t) {
   }, c;
 }
 Eo.debounce = Eo;
-var Uf = Eo;
+var Zf = Eo;
 class ie {
   /**
    * @param {{data: EmbedData, config: EmbedConfig, api: object}}
@@ -15227,7 +15248,7 @@ class ie {
    */
   static prepare({ config: e = {} }) {
     const { services: t = {} } = e;
-    let n = Object.entries(Ff);
+    let n = Object.entries(Gf);
     const r = Object.entries(t).filter(([s, a]) => typeof a == "boolean" && a === !0).map(([s]) => s), i = Object.entries(t).filter(([s, a]) => typeof a == "object").filter(([s, a]) => ie.checkServiceConfig(a)).map(([s, a]) => {
       const { regex: l, embedUrl: c, html: d, height: u, width: h, id: g } = a;
       return [s, {
@@ -15279,7 +15300,7 @@ class ie {
   embedIsReady(e) {
     let t;
     return new Promise((n, r) => {
-      t = new MutationObserver(Uf.debounce(n, 450)), t.observe(e, {
+      t = new MutationObserver(Zf.debounce(n, 450)), t.observe(e, {
         childList: !0,
         subtree: !0
       });
@@ -15288,12 +15309,12 @@ class ie {
     });
   }
 }
-function zf(o) {
+function Qf(o) {
   return o && o.__esModule && Object.prototype.hasOwnProperty.call(o, "default") ? o.default : o;
 }
-var lo = { exports: {} }, gi;
-function Wf() {
-  return gi || (gi = 1, (function(o, e) {
+var lo = { exports: {} }, bi;
+function Jf() {
+  return bi || (bi = 1, (function(o, e) {
     (function(t, n) {
       o.exports = n();
     })(self, (() => (() => {
@@ -15336,8 +15357,8 @@ function Wf() {
               var B = this[v][0];
               B != null && (p[B] = !0);
             }
-            for (var O = 0; O < c.length; O++) {
-              var k = [].concat(c[O]);
+            for (var _ = 0; _ < c.length; _++) {
+              var k = [].concat(c[_]);
               u && p[k[0]] || (g !== void 0 && (k[5] === void 0 || (k[1] = "@layer".concat(k[5].length > 0 ? " ".concat(k[5]) : "", " {").concat(k[1], "}")), k[5] = g), d && (k[2] && (k[1] = "@media ".concat(k[2], " {").concat(k[1], "}")), k[2] = d), h && (k[4] ? (k[1] = "@supports (".concat(k[4], ") {").concat(k[1], "}"), k[4] = h) : k[4] = "".concat(h)), l.push(k));
             }
           }, l;
@@ -15357,8 +15378,8 @@ function Wf() {
         }
         function c(u, h) {
           for (var g = {}, p = [], v = 0; v < u.length; v++) {
-            var B = u[v], O = h.base ? B[0] + h.base : B[0], k = g[O] || 0, P = "".concat(O, " ").concat(k);
-            g[O] = k + 1;
+            var B = u[v], _ = h.base ? B[0] + h.base : B[0], k = g[_] || 0, P = "".concat(_, " ").concat(k);
+            g[_] = k + 1;
             var M = l(P), N = { css: B[1], media: B[2], sourceMap: B[3], supports: B[4], layer: B[5] };
             if (M !== -1) a[M].references++, a[M].updater(N);
             else {
@@ -15386,11 +15407,11 @@ function Wf() {
               var B = l(g[v]);
               a[B].references--;
             }
-            for (var O = c(p, h), k = 0; k < g.length; k++) {
+            for (var _ = c(p, h), k = 0; k < g.length; k++) {
               var P = l(g[k]);
               a[P].references === 0 && (a[P].updater(), a.splice(P, 1));
             }
-            g = O;
+            g = _;
           };
         };
       }, 659: (s) => {
@@ -15468,7 +15489,7 @@ function Wf() {
       var i = {};
       return (() => {
         r.d(i, { default: () => G });
-        var s = r(72), a = r.n(s), l = r(825), c = r.n(l), d = r(659), u = r.n(d), h = r(56), g = r.n(h), p = r(540), v = r.n(p), B = r(113), O = r.n(B), k = r(523), P = {};
+        var s = r(72), a = r.n(s), l = r(825), c = r.n(l), d = r(659), u = r.n(d), h = r(56), g = r.n(h), p = r(540), v = r.n(p), B = r(113), _ = r.n(B), k = r(523), P = {};
         function M(y) {
           return M = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(m) {
             return typeof m;
@@ -15495,13 +15516,13 @@ function Wf() {
           })(y);
           return M(m) == "symbol" ? m : m + "";
         }
-        P.styleTagTransform = O(), P.setAttributes = g(), P.insert = u().bind(null, "head"), P.domAPI = c(), P.insertStyleElement = v(), a()(k.A, P), k.A && k.A.locals && k.A.locals;
+        P.styleTagTransform = _(), P.setAttributes = g(), P.insert = u().bind(null, "head"), P.domAPI = c(), P.insertStyleElement = v(), a()(k.A, P), k.A && k.A.locals && k.A.locals;
         var G = (function() {
           return y = function b(x, E) {
-            var I = x.configuration, T = x.blocks, H = x.toolbar, Ce = x.save;
+            var I = x.configuration, S = x.blocks, H = x.toolbar, Ce = x.save;
             (function(ce, Ue) {
               if (!(ce instanceof Ue)) throw new TypeError("Cannot call a class as a function");
-            })(this, b), this.toolbar = H, this.borderStyle = E || "1px dashed #aaa", this.api = T, this.holder = typeof I.holder == "string" ? document.getElementById(I.holder) : I.holder, this.readOnly = I.readOnly, this.startBlock = null, this.endBlock = null, this.save = Ce, this.setDragListener(), this.setDropListener();
+            })(this, b), this.toolbar = H, this.borderStyle = E || "1px dashed #aaa", this.api = S, this.holder = typeof I.holder == "string" ? document.getElementById(I.holder) : I.holder, this.readOnly = I.readOnly, this.startBlock = null, this.endBlock = null, this.save = Ce, this.setDragListener(), this.setDropListener();
           }, w = [{ key: "isReadOnlySupported", get: function() {
             return !0;
           } }], (m = [{ key: "setElementCursor", value: function(b) {
@@ -15515,9 +15536,9 @@ function Wf() {
               var x = this.holder.querySelector(".ce-toolbar__settings-btn");
               if (x) this.initializeDragListener(x);
               else {
-                var E = new MutationObserver((function(I, T) {
+                var E = new MutationObserver((function(I, S) {
                   var H = b.holder.querySelector(".ce-toolbar__settings-btn");
-                  H && (b.initializeDragListener(H), T.disconnect());
+                  H && (b.initializeDragListener(H), S.disconnect());
                 }));
                 E.observe(this.holder, { childList: !0, subtree: !0 });
               }
@@ -15535,10 +15556,10 @@ function Wf() {
           } }, { key: "setBorderBlocks", value: function(b, x) {
             var E = this;
             Object.values(b).forEach((function(I) {
-              var T = I.querySelector(".ce-block__content");
-              I !== x ? (T.style.removeProperty("border-top"), T.style.removeProperty("border-bottom")) : Object.keys(b).find((function(H) {
+              var S = I.querySelector(".ce-block__content");
+              I !== x ? (S.style.removeProperty("border-top"), S.style.removeProperty("border-bottom")) : Object.keys(b).find((function(H) {
                 return b[H] === x;
-              })) > E.startBlock ? T.style.borderBottom = E.borderStyle : T.style.borderTop = E.borderStyle;
+              })) > E.startBlock ? S.style.borderBottom = E.borderStyle : S.style.borderTop = E.borderStyle;
             }));
           } }, { key: "setDropListener", value: function() {
             var b = this;
@@ -15547,8 +15568,8 @@ function Wf() {
               if (b.holder.contains(E) && b.startBlock !== null) {
                 var I = b.getDropTarget(E);
                 if (I) {
-                  var T = I.querySelector(".ce-block__content");
-                  T.style.removeProperty("border-top"), T.style.removeProperty("border-bottom"), b.endBlock = b.getTargetPosition(I), b.moveBlocks();
+                  var S = I.querySelector(".ce-block__content");
+                  S.style.removeProperty("border-top"), S.style.removeProperty("border-bottom"), b.endBlock = b.getTargetPosition(I), b.moveBlocks();
                 }
               }
               b.startBlock = null;
@@ -15568,14 +15589,14 @@ function Wf() {
     })()));
   })(lo)), lo.exports;
 }
-var qf = Wf();
-const mi = /* @__PURE__ */ zf(qf);
-var Kf = Object.defineProperty, Yf = Object.getOwnPropertyDescriptor, ot = (o, e, t, n) => {
-  for (var r = n > 1 ? void 0 : n ? Yf(e, t) : e, i = o.length - 1, s; i >= 0; i--)
+var eg = Jf();
+const vi = /* @__PURE__ */ Qf(eg);
+var tg = Object.defineProperty, og = Object.getOwnPropertyDescriptor, ot = (o, e, t, n) => {
+  for (var r = n > 1 ? void 0 : n ? og(e, t) : e, i = o.length - 1, s; i >= 0; i--)
     (s = o[i]) && (r = (n ? s(e, t, r) : s(r)) || r);
-  return n && r && Kf(e, t, r), r;
+  return n && r && tg(e, t, r), r;
 };
-let xe = class extends wa {
+let xe = class extends Ba {
   constructor() {
     super(), this.value = "", this.readonly = !1, this._editorId = "", this._editor = null, this._handleKeyDown = (o) => {
       (o.ctrlKey || o.metaKey) && o.stopPropagation(), o.key === "Enter" && o.stopPropagation();
@@ -15616,7 +15637,7 @@ let xe = class extends wa {
       console.error("EditorJS or container not available");
       return;
     }
-    this._editor = new bu({
+    this._editor = new Tu({
       holder: o,
       placeholder: "Type '/' to insert a block or just start typing something super...",
       data: this._getInitialData(),
@@ -15624,9 +15645,9 @@ let xe = class extends wa {
       readOnly: this.readonly,
       shadowRoot: this.shadowRoot || void 0,
       tools: {
-        header: Tu,
+        header: Au,
         image: this._createUmbracoImageTool(),
-        quote: zh,
+        quote: Qh,
         embed: {
           class: this._createEmbedWithUI(),
           config: {
@@ -15639,7 +15660,7 @@ let xe = class extends wa {
         code: rr,
         raw: ir,
         list: {
-          class: _t,
+          class: Ot,
           inlineToolbar: !0
         },
         //checklist: Checklist,
@@ -15653,48 +15674,85 @@ let xe = class extends wa {
         });
       },
       onReady: () => {
-        mi && new mi(this._editor), this._stopUmbracosInterferingHotKeys();
+        vi && new vi(this._editor), this._stopUmbracosInterferingHotKeys();
       }
     });
   }
+  async _openUmbracoLinkPicker(o) {
+    return (await Yr(this, Ia, {
+      data: {
+        config: {},
+        index: null,
+        isNew: !o?.url
+      },
+      value: {
+        link: o ?? {}
+      }
+    }).catch(() => {
+    }))?.link;
+  }
+  async _openUmbracoMediaPicker(o) {
+    const e = o ? Aa(o) : void 0, n = (await Yr(this, Ma, {
+      data: { multiple: !1 },
+      value: { selection: e ? [e] : [] }
+    }).catch(() => {
+    }))?.selection?.[0];
+    if (!n) return;
+    const r = new La(this), i = new Pa(this), [{ data: s }, { data: a }] = await Promise.all([
+      r.requestItems([n]),
+      i.requestItems([n])
+    ]), l = a?.[0]?.url;
+    if (!l) return;
+    const { width: c, height: d } = await Na(l);
+    return {
+      url: l,
+      alt: s?.[0]?.variants?.[0]?.name ?? s?.[0]?.name ?? "",
+      udi: `umb://media/${n.replace(/-/g, "")}`,
+      width: c,
+      height: d
+    };
+  }
   _createUmbracoLinkTool() {
+    const o = this;
     return class {
       static get isInline() {
         return !0;
       }
-      constructor({ api: e }) {
-        this.api = e, this.button = null, this._state = !1, this.element = null, this.tag = "A", this.class = "cdx-link";
+      constructor({ api: t }) {
+        this.api = t, this.button = null, this._state = !1, this.element = null, this.tag = "A", this.class = "cdx-link";
       }
       render() {
         return this.button = document.createElement("button"), this.button.type = "button", this.button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M7.69998 12.6L7.67896 12.62C6.53993 13.7048 6.52012 15.5155 7.63516 16.625V16.625C8.72293 17.7073 10.4799 17.7102 11.5712 16.6314L13.0263 15.193C14.0703 14.1609 14.2141 12.525 13.3662 11.3266L13.22 11.12"></path><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M16.22 11.12L16.3564 10.9805C17.2895 10.0265 17.3478 8.5207 16.4914 7.49733V7.49733C15.5691 6.39509 13.9269 6.25143 12.8271 7.17675L11.3901 8.38588C10.0935 9.47674 9.95706 11.4241 11.0888 12.6852L11.12 12.72"></path></svg>', this.button.classList.add(this.api.styles.inlineToolButton), this.button;
       }
-      surround(e) {
+      surround(t) {
         if (this.state) {
-          this.unwrap(e);
+          this.unwrap(t);
           return;
         }
-        this.openLinkPicker(e);
+        this.openLinkPicker(t);
       }
-      openLinkPicker(e) {
-        console.log(e), alert("Open link picker to select a link URL!");
+      openLinkPicker(t) {
+        o._openUmbracoLinkPicker().then((n) => {
+          n?.url && this.wrap(t, n.url);
+        });
       }
-      wrap(e, t) {
-        const n = e.extractContents(), r = document.createElement(this.tag);
-        r.classList.add(this.class), r.setAttribute("href", t), r.appendChild(n), e.insertNode(r), this.api.selection.expandToTag(r), this.element = r;
+      wrap(t, n) {
+        const r = t.extractContents(), i = document.createElement(this.tag);
+        i.classList.add(this.class), i.setAttribute("href", n), i.appendChild(r), t.insertNode(i), this.api.selection.expandToTag(i), this.element = i;
       }
-      unwrap(e) {
-        const t = this.api.selection.findParentTag(this.tag, this.class), n = e.extractContents();
-        t.remove(), e.insertNode(n);
+      unwrap(t) {
+        const n = this.api.selection.findParentTag(this.tag, this.class), r = t.extractContents();
+        n.remove(), t.insertNode(r);
       }
       checkState() {
-        const e = this.api.selection.findParentTag(this.tag);
-        this.state = !!e, this.button?.classList.toggle(this.api.styles.inlineToolButtonActive, this.state);
+        const t = this.api.selection.findParentTag(this.tag);
+        this.state = !!t, this.button?.classList.toggle(this.api.styles.inlineToolButtonActive, this.state);
       }
       get state() {
         return this._state;
       }
-      set state(e) {
-        this._state = e, this.button && this.button.classList.toggle(this.api.styles.inlineToolButtonActive, e);
+      set state(t) {
+        this._state = t, this.button && this.button.classList.toggle(this.api.styles.inlineToolButtonActive, t);
       }
       static get sanitize() {
         return { a: { href: !0 } };
@@ -15702,6 +15760,7 @@ let xe = class extends wa {
     };
   }
   _createUmbracoImageTool() {
+    const o = this;
     return class {
       static get toolbox() {
         return {
@@ -15709,25 +15768,36 @@ let xe = class extends wa {
           icon: '<svg width="17" height="15" viewBox="0 0 336 276" xmlns="http://www.w3.org/2000/svg"><path d="M291 150V79c0-19-15-34-34-34H79c-19 0-34 15-34 34v42l67-44 81 72 56-29 42 30zm0 52l-43-30-56 30-81-67-66 39v23c0 19 15 34 34 34h178c17 0 31-13 34-29zM79 0h178c44 0 79 35 79 79v118c0 44-35 79-79 79H79c-44 0-79-35-79-79V79C0 35 35 0 79 0z"/></svg>'
         };
       }
-      constructor({ data: e, api: t, config: n }) {
-        this.api = t, this.config = n || {}, this.data = {
-          url: e.url || "",
-          alt: e.alt || "",
-          udi: e.udi || ""
+      constructor({ data: t, api: n, config: r }) {
+        this.api = n, this.config = r || {}, this.wrapper = null, this.image = null, this.button = null, this.data = {
+          url: t.url || "",
+          alt: t.alt || "",
+          udi: t.udi || ""
         };
       }
       render() {
-        const e = document.createElement("div");
-        e.classList.add("simple-image");
-        const t = document.createElement("img");
-        t.src = this.data.url, t.alt = this.data.alt;
-        const n = document.createElement("button");
-        return n.type = "button", n.classList.add("umb-group-builder__group-add-property", "skriv-let__add-image-button"), n.textContent = this.data.url ? "Change image" : "Select an image", n.addEventListener("click", () => {
+        return this.wrapper = document.createElement("div"), this.wrapper.classList.add("simple-image"), this.image = document.createElement("img"), this.image.src = this.data.url, this.image.alt = this.data.alt, this.image.hidden = !this.data.url, this.image.addEventListener("click", () => {
           this._openMediaPicker();
-        }), e.appendChild(t), e.appendChild(n), e;
+        }), this.button = document.createElement("uui-button"), this.button.type = "button", this.button.classList.add("skriv-let__add-image-button"), this.button.addEventListener("click", () => {
+          this._openMediaPicker();
+        }), this._updateButton(), this.wrapper.appendChild(this.image), this.wrapper.appendChild(this.button), this.wrapper;
+      }
+      rendered() {
+        this.data.url || this.button?.focus();
+      }
+      _updateButton() {
+        if (!this.button) return;
+        const t = !!this.data.url, n = t ? "Change image" : "Select an image";
+        this.button.look = t ? "secondary" : "placeholder", this.button.label = n, this.button.innerHTML = "";
+        const r = document.createElement("uui-icon");
+        r.name = t ? "icon-edit" : "icon-picture", r.setAttribute("aria-hidden", "true");
+        const i = document.createElement("span");
+        i.textContent = n, this.button.append(r, i);
       }
       _openMediaPicker() {
-        alert("Open media picker to select an image!");
+        o._openUmbracoMediaPicker(this.data.udi).then((t) => {
+          t && (this.data.url = t.url, this.data.alt = t.alt, this.data.udi = t.udi, this.data.width = t.width, this.data.height = t.height, this.image && (this.image.src = t.url, this.image.alt = t.alt, this.image.hidden = !1), this._updateButton());
+        });
       }
       save() {
         return {
@@ -15738,8 +15808,8 @@ let xe = class extends wa {
           height: this.data.height
         };
       }
-      validate(e) {
-        return !!(e.url?.trim() && e.udi?.trim());
+      validate(t) {
+        return !!(t.url?.trim() && t.udi?.trim());
       }
     };
   }
@@ -15778,10 +15848,10 @@ let xe = class extends wa {
     });
   }
   _dispatchChangeEvent() {
-    this.dispatchEvent(new Sa());
+    this.dispatchEvent(new Oa());
   }
   render() {
-    return xa`
+    return Ca`
       <div class="skriv-let">
         <div id="${this._editorId}" class="skriv-let__container"></div>
         <input type="hidden" .value=${this.value} />
@@ -15800,8 +15870,8 @@ let xe = class extends wa {
   }
 };
 xe.styles = [
-  Ta,
-  Ea`
+  _a,
+  Sa`
       .skriv-let {
           position: relative;
           background-color: white;
@@ -15905,10 +15975,35 @@ xe.styles = [
       .simple-image img {
           max-width: 100%;
           margin-bottom: 15px;
+          border-radius: var(--uui-border-radius, 6px);
+          border: 1px solid var(--uui-color-border, #e8e8eb);
+      }
+
+      .simple-image img[hidden] {
+          display: none;
       }
 
       .simple-image.withBorder img {
           border: 1px solid #e8e8eb;
+      }
+
+      .skriv-let__add-image-button {
+          --uui-button-padding-top-factor: 3;
+          --uui-button-padding-bottom-factor: 3;
+          width: 100%;
+          font-size: 0.9rem;
+          cursor: pointer;
+      }
+
+      .skriv-let__add-image-button uui-icon {
+          font-size: 1.2em;
+          margin-right: 5px;
+      }
+
+      .simple-image img:not([hidden]) + .skriv-let__add-image-button {
+          width: auto;
+          --uui-button-padding-top-factor: 1;
+          --uui-button-padding-bottom-factor: 1;
       }
 
       .simple-image.withBackground {
@@ -15996,23 +16091,23 @@ xe.styles = [
     `
 ];
 ot([
-  bi({ type: String })
+  yi({ type: String })
 ], xe.prototype, "value", 2);
 ot([
-  bi({ type: Boolean, attribute: "readonly" })
+  yi({ type: Boolean, attribute: "readonly" })
 ], xe.prototype, "readonly", 2);
 ot([
-  vi()
+  ki()
 ], xe.prototype, "_editorId", 2);
 ot([
-  vi()
+  ki()
 ], xe.prototype, "_editor", 2);
 xe = ot([
-  Ca("skrivlet-property-editor-ui")
+  Ta("skrivlet-property-editor-ui")
 ], xe);
-const vg = xe;
+const Lg = xe;
 export {
   xe as SkrivLetPropertyEditorUIElement,
-  vg as default
+  Lg as default
 };
-//# sourceMappingURL=skrivlet-property-editor-ui.element-CvrkZQro.js.map
+//# sourceMappingURL=skrivlet-property-editor-ui.element-DSIqIxeP.js.map

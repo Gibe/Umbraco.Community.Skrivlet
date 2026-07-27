@@ -1,7 +1,13 @@
-import { LitElement, html, css, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
+import { html, css, customElement, property, state } from '@umbraco-cms/backoffice/external/lit';
+import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbTextStyles } from '@umbraco-cms/backoffice/style';
 import type { UmbPropertyEditorUiElement } from '@umbraco-cms/backoffice/property-editor';
 import { UmbChangeEvent } from '@umbraco-cms/backoffice/event';
+import { umbOpenModal } from '@umbraco-cms/backoffice/modal';
+import { UMB_LINK_PICKER_MODAL } from '@umbraco-cms/backoffice/multi-url-picker';
+import type { UmbLinkPickerLink } from '@umbraco-cms/backoffice/multi-url-picker';
+import { UMB_MEDIA_PICKER_MODAL, UmbMediaItemRepository, UmbMediaUrlRepository } from '@umbraco-cms/backoffice/media';
+import { getGuidFromUdi, imageSize } from '@umbraco-cms/backoffice/utils';
 
 import EditorJS, { OutputData } from '@editorjs/editorjs';
 import Header from '@editorjs/header';
@@ -18,7 +24,7 @@ import Embed from '@editorjs/embed';
 import DragDrop from "editorjs-drag-drop";
 
 @customElement('skrivlet-property-editor-ui')
-export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPropertyEditorUiElement {
+export class SkrivLetPropertyEditorUIElement extends UmbLitElement implements UmbPropertyEditorUiElement {
   @property({ type: String })
   public value = '';
 
@@ -132,7 +138,56 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
     });
   }
 
+  private async _openUmbracoLinkPicker(currentLink?: UmbLinkPickerLink): Promise<UmbLinkPickerLink | undefined> {
+    const result = await umbOpenModal(this, UMB_LINK_PICKER_MODAL, {
+      data: {
+        config: {},
+        index: null,
+        isNew: !currentLink?.url,
+      },
+      value: {
+        link: currentLink ?? {},
+      },
+    }).catch(() => undefined);
+
+    return result?.link;
+  }
+
+  private async _openUmbracoMediaPicker(currentMediaUdi?: string): Promise<{ url: string; alt: string; udi: string; width: number; height: number } | undefined> {
+    const currentUnique = currentMediaUdi ? getGuidFromUdi(currentMediaUdi) : undefined;
+
+    const result = await umbOpenModal(this, UMB_MEDIA_PICKER_MODAL, {
+      data: { multiple: false },
+      value: { selection: currentUnique ? [currentUnique] : [] },
+    }).catch(() => undefined);
+
+    const unique = result?.selection?.[0];
+    if (!unique) return undefined;
+
+    const mediaItemRepository = new UmbMediaItemRepository(this);
+    const mediaUrlRepository = new UmbMediaUrlRepository(this);
+
+    const [{ data: items }, { data: urls }] = await Promise.all([
+      mediaItemRepository.requestItems([unique]),
+      mediaUrlRepository.requestItems([unique]),
+    ]);
+
+    const url = urls?.[0]?.url;
+    if (!url) return undefined;
+
+    const { width, height } = await imageSize(url);
+
+    return {
+      url,
+      alt: items?.[0]?.variants?.[0]?.name ?? items?.[0]?.name ?? '',
+      udi: `umb://media/${unique.replace(/-/g, '')}`,
+      width,
+      height,
+    };
+  }
+
   private _createUmbracoLinkTool() {
+    const host = this;
     return class UmbracoLinkTool {
       api: any;
       button: HTMLButtonElement | null;
@@ -168,26 +223,11 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
       }
 
       openLinkPicker(range: any) {
-        console.log(range);
-        alert('Open link picker to select a link URL!');
-        // For now, we'll need to integrate with Umbraco's modern link picker
-        // This will need to be updated when we have access to the new service APIs
-        // if (window.editorService && window.editorService.linkPicker) {
-        //   window.editorService.linkPicker({
-        //     multiPicker: false,
-        //     submit: (result: any) => {
-        //       window.editorService.close();
-        //       if (result.target.udi) {
-        //         this.wrap(range, result.target.udi);
-        //       } else {
-        //         this.wrap(range, result.target.url);
-        //       }
-        //     },
-        //     close: () => {
-        //       window.editorService.close();
-        //     }
-        //   });
-        // }
+        host._openUmbracoLinkPicker().then((link) => {
+          if (link?.url) {
+            this.wrap(range, link.url);
+          }
+        });
       }
 
       wrap(range: any, url: string) {
@@ -229,10 +269,15 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
   }
 
   private _createUmbracoImageTool() {
+    const host = this;
     return class UmbracoImageTool {
       api: any;
       config: any;
       data: { url: any; alt: any; udi: any; width?: number; height?: number; };
+      private wrapper: HTMLElement | null;
+      private image: HTMLImageElement | null;
+      private button: any;
+
       static get toolbox() {
         return {
           title: 'Image',
@@ -243,6 +288,9 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
       constructor({ data, api, config }: any) {
         this.api = api;
         this.config = config || {};
+        this.wrapper = null;
+        this.image = null;
+        this.button = null;
         this.data = {
           url: data.url || '',
           alt: data.alt || '',
@@ -251,48 +299,78 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
       }
 
       render() {
-        const wrapper = document.createElement('div');
-        wrapper.classList.add('simple-image');
+        this.wrapper = document.createElement('div');
+        this.wrapper.classList.add('simple-image');
 
-        const image = document.createElement('img');
-        image.src = this.data.url;
-        image.alt = this.data.alt;
+        this.image = document.createElement('img');
+        this.image.src = this.data.url;
+        this.image.alt = this.data.alt;
+        this.image.hidden = !this.data.url;
 
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.classList.add('umb-group-builder__group-add-property', 'skriv-let__add-image-button');
-        button.textContent = this.data.url ? "Change image" : "Select an image";
-
-        button.addEventListener('click', () => {
+        this.image.addEventListener('click', () => {
           this._openMediaPicker();
         });
 
-        wrapper.appendChild(image);
-        wrapper.appendChild(button);
-        return wrapper;
+        this.button = document.createElement('uui-button');
+        this.button.type = 'button';
+        this.button.classList.add('skriv-let__add-image-button');
+
+        this.button.addEventListener('click', () => {
+          this._openMediaPicker();
+        });
+
+        this._updateButton();
+
+        this.wrapper.appendChild(this.image);
+        this.wrapper.appendChild(this.button);
+        return this.wrapper;
+      }
+
+      rendered() {
+        // Once a freshly inserted (still empty) block is actually in the DOM, focus the picker button.
+        if (!this.data.url) {
+          this.button?.focus();
+        }
+      }
+
+      _updateButton() {
+        if (!this.button) return;
+
+        const hasImage = !!this.data.url;
+        const label = hasImage ? 'Change image' : 'Select an image';
+
+        this.button.look = hasImage ? 'secondary' : 'placeholder';
+        this.button.label = label;
+
+        this.button.innerHTML = '';
+        const icon = document.createElement('uui-icon');
+        icon.name = hasImage ? 'icon-edit' : 'icon-picture';
+        icon.setAttribute('aria-hidden', 'true');
+
+        const labelSpan = document.createElement('span');
+        labelSpan.textContent = label;
+
+        this.button.append(icon, labelSpan);
       }
 
       _openMediaPicker() {
-        alert('Open media picker to select an image!');
-        // if (window.editorService && window.editorService.mediaPicker) {
-        //   window.editorService.mediaPicker({
-        //     onlyImages: true,
-        //     multiPicker: false,
-        //     submit: (item: any) => {
-        //       const imageUrl = item.selection[0].image;
-        //       const imageAlt = item.selection[0].name;
-        //       this.data.url = imageUrl;
-        //       this.data.alt = imageAlt;
-        //       this.data.udi = item.selection[0].udi;
-        //       this.data.width = parseInt(item.selection[0].width);
-        //       this.data.height = parseInt(item.selection[0].height);
-        //       window.editorService.close();
-        //     },
-        //     close: () => {
-        //       window.editorService.close();
-        //     }
-        //   });
-        // }
+        host._openUmbracoMediaPicker(this.data.udi).then((media) => {
+          if (!media) return;
+
+          this.data.url = media.url;
+          this.data.alt = media.alt;
+          this.data.udi = media.udi;
+          this.data.width = media.width;
+          this.data.height = media.height;
+
+          if (this.image) {
+            this.image.src = media.url;
+            this.image.alt = media.alt;
+            this.image.hidden = false;
+          }
+
+          this._updateButton();
+        });
       }
 
       save() {
@@ -514,10 +592,35 @@ export class SkrivLetPropertyEditorUIElement extends LitElement implements UmbPr
       .simple-image img {
           max-width: 100%;
           margin-bottom: 15px;
+          border-radius: var(--uui-border-radius, 6px);
+          border: 1px solid var(--uui-color-border, #e8e8eb);
+      }
+
+      .simple-image img[hidden] {
+          display: none;
       }
 
       .simple-image.withBorder img {
           border: 1px solid #e8e8eb;
+      }
+
+      .skriv-let__add-image-button {
+          --uui-button-padding-top-factor: 3;
+          --uui-button-padding-bottom-factor: 3;
+          width: 100%;
+          font-size: 0.9rem;
+          cursor: pointer;
+      }
+
+      .skriv-let__add-image-button uui-icon {
+          font-size: 1.2em;
+          margin-right: 5px;
+      }
+
+      .simple-image img:not([hidden]) + .skriv-let__add-image-button {
+          width: auto;
+          --uui-button-padding-top-factor: 1;
+          --uui-button-padding-bottom-factor: 1;
       }
 
       .simple-image.withBackground {
