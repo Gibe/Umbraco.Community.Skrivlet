@@ -1,0 +1,12 @@
+@model Umbraco.Community.SkrivLet.Models.SkrivLetBlock<Umbraco.Community.SkrivLet.Converters.UmbracoBlockData>
+@if (Model.Data.Element != null)
+{
+    <div class="sl-umbraco-block" data-content-type="@Model.Data.ContentTypeAlias">
+        @foreach (var property in Model.Data.Element.Properties)
+        {
+            <div class="sl-umbraco-block__property" data-alias="@property.Alias">
+                @property.GetValue()
+            </div>
+        }
+    </div>
+}

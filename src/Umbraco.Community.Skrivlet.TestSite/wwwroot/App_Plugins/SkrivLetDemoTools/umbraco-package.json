@@ -1,0 +1,14 @@
+{
+  "id": "SkrivLet.Demo.Tools",
+  "name": "SkrivLet Demo Tools",
+  "version": "0.0.0",
+  "allowTelemetry": true,
+  "extensions": [
+    {
+      "name": "SkrivLet Demo Tools Bundle",
+      "alias": "SkrivLet.Demo.Tools.Bundle",
+      "type": "bundle",
+      "js": "/App_Plugins/SkrivLetDemoTools/callout-tool-bundle.js"
+    }
+  ]
+}

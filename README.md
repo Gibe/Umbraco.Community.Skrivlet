@@ -65,4 +65,45 @@ For that basic theme, the following are the CSS variables used and their default
 
 ## Extending
 
-We'll be adding ways to add your own block types soon.
+### Adding your own Editor.js tools
+
+You can register your own Editor.js tool from a separate Umbraco package without forking SkrivLet, by registering a `skrivletTool` extension manifest, for example:
+
+    export const manifests: Array<UmbExtensionManifest> = [
+      {
+        type: "skrivletTool",
+        alias: "MyCompany.MyTool",
+        name: "My Tool",
+        js: () => import("./my-tool.js"), // default export must be the Editor.js Tool class
+        css: () => import("./my-tool.css?inline"), // optional - injected into SkrivLet's editor shadow root
+        meta: {
+          toolKey: "myTool", // the key the tool is registered under in Editor.js's `tools: {}` config
+          inlineToolbar: false,
+          config: {},
+        },
+      },
+    ];
+
+`toolKey` can't reuse a built-in key (`header`, `image`, `quote`, `embed`, `code`, `raw`, `list`, `checklist`, `link`) - a manifest that does will be ignored with a console warning.
+
+Registering a client-side tool only affects editing. For a saved block to actually parse and render, also register a matching `IBlockDataConverter` (see the `Converters/` folder for examples such as `ImageBlockDataConverter`) via your own `IComposer`, plus an optional partial view override using the same host-override convention described in [Usage](#usage) above. If no converter is registered for a block type, its data is preserved (not lost) so it can still be recovered once a converter is added.
+
+### Umbraco Blocks
+
+SkrivLet has an "Umbraco Block" tool that lets editors insert a single element-type content item (the same kind of content used by Block List) directly into the flow, with its own properties edited inline via a modal. Block Grid style nested layout areas aren't supported - each SkrivLet block holds exactly one element.
+
+To insert a block, editors pick an element type (only content types marked "is an Element type" are offered), then fill in its properties in a modal backed by that element type's own configured property editors.
+
+The stored data is self-contained - it doesn't reference a separate Block List/Grid property elsewhere on the page:
+
+    {
+      "type": "umbracoBlock",
+      "data": {
+        "contentTypeKey": "...",
+        "contentTypeAlias": "myElement",
+        "udi": "umb://element/...",
+        "values": { "propAlias1": "...", "propAlias2": "..." }
+      }
+    }
+
+On render, SkrivLet resolves the stored values into an `IPublishedElement` (`Model.Data.Element`) so a partial can call `@Model.Data.Element.Value("propAlias")` like any other element. The default partial just dumps each property's raw value - for real projects, override `Views/Partials/SkrivLet/UmbracoBlock.cshtml` (or provide one per element type's own view once you introduce custom logic) using the same host-override convention described in [Usage](#usage).

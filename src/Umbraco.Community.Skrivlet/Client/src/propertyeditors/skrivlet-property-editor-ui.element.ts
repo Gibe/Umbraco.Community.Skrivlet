@@ -8,6 +8,12 @@ import { UMB_LINK_PICKER_MODAL } from '@umbraco-cms/backoffice/multi-url-picker'
 import type { UmbLinkPickerLink } from '@umbraco-cms/backoffice/multi-url-picker';
 import { UMB_MEDIA_PICKER_MODAL, UmbMediaItemRepository, UmbMediaUrlRepository } from '@umbraco-cms/backoffice/media';
 import { getGuidFromUdi, imageSize } from '@umbraco-cms/backoffice/utils';
+import { umbExtensionsRegistry } from '@umbraco-cms/backoffice/extension-registry';
+import { loadManifestPlainCss } from '@umbraco-cms/backoffice/extension-api';
+import type { ManifestSkrivletTool, UmbSkrivletToolLoaderProperty } from './skrivlet-tool.model.js';
+import { UMB_DOCUMENT_TYPE_PICKER_MODAL, UmbDocumentTypeDetailRepository } from '@umbraco-cms/backoffice/document-type';
+import type { UmbDocumentTypeTreeItemModel } from '@umbraco-cms/backoffice/document-type';
+import { UMB_SKRIVLET_BLOCK_EDIT_MODAL } from './skrivlet-block-edit-modal.token.js';
 
 import EditorJS, { OutputData } from '@editorjs/editorjs';
 import Header from '@editorjs/header';
@@ -22,6 +28,29 @@ import Checklist from '@editorjs/checklist';
 import Embed from '@editorjs/embed';
 //@ts-ignore
 import DragDrop from "editorjs-drag-drop";
+
+const BUILT_IN_TOOL_KEYS = new Set(['header', 'image', 'quote', 'embed', 'code', 'raw', 'list', 'checklist', 'link', 'umbracoBlock']);
+
+/**
+ * Resolves a `skrivletTool` manifest's `js` loader to the actual Editor.js Tool class - a bare class
+ * reference, or a loader function/module whose resolved value has a `default` or `api` export. See the
+ * `UmbSkrivletToolLoaderProperty` doc comment for why this isn't just Umbraco's own `loadManifestApi`.
+ */
+async function loadSkrivletToolClass(property: UmbSkrivletToolLoaderProperty): Promise<any> {
+  if (typeof property === 'function') {
+    if (property.prototype) {
+      // Bare class constructor.
+      return property;
+    }
+    const result = await (property as () => Promise<Record<string, unknown>>)();
+    return (result?.default ?? result?.api) as any;
+  }
+  if (typeof property === 'string') {
+    const result = await import(/* @vite-ignore */ property);
+    return result?.default ?? result?.api;
+  }
+  return undefined;
+}
 
 @customElement('skrivlet-property-editor-ui')
 export class SkrivLetPropertyEditorUIElement extends UmbLitElement implements UmbPropertyEditorUiElement {
@@ -89,6 +118,8 @@ export class SkrivLetPropertyEditorUIElement extends UmbLitElement implements Um
       return;
     }
 
+    const thirdPartyTools = await this._getThirdPartyTools();
+
     this._editor = new EditorJS({
       holder: editorContainer,
       placeholder: "Type '/' to insert a block or just start typing something super...",
@@ -97,6 +128,7 @@ export class SkrivLetPropertyEditorUIElement extends UmbLitElement implements Um
       readOnly: this.readonly,
       shadowRoot: this.shadowRoot || undefined,
       tools: {
+        ...thirdPartyTools,
         header: Header,
         image: this._createUmbracoImageTool(),
         quote: Quote,
@@ -116,7 +148,8 @@ export class SkrivLetPropertyEditorUIElement extends UmbLitElement implements Um
           inlineToolbar: true
         },
         //checklist: Checklist,
-        link: this._createUmbracoLinkTool()
+        link: this._createUmbracoLinkTool(),
+        umbracoBlock: this._createUmbracoBlockTool()
       },
       onChange: () => {
         this._stopUmbracosInterferingHotKeys();
@@ -136,6 +169,52 @@ export class SkrivLetPropertyEditorUIElement extends UmbLitElement implements Um
 
       }
     });
+  }
+
+  /**
+   * Merges any third-party tools registered via a `skrivletTool` extension manifest into the
+   * Editor.js `tools: {}` config. A tool that reuses a built-in key (or is otherwise invalid)
+   * is skipped with a console warning rather than breaking the whole editor.
+   */
+  private async _getThirdPartyTools(): Promise<Record<string, unknown>> {
+    const manifests = umbExtensionsRegistry.getByType('skrivletTool') as Array<ManifestSkrivletTool>;
+    const tools: Record<string, unknown> = {};
+
+    await Promise.all(
+      manifests.map(async (manifest) => {
+        const toolKey = manifest.meta?.toolKey;
+        if (!toolKey) {
+          console.warn(`[SkrivLet] Ignoring tool manifest "${manifest.alias}": meta.toolKey is required.`);
+          return;
+        }
+        if (BUILT_IN_TOOL_KEYS.has(toolKey)) {
+          console.warn(`[SkrivLet] Ignoring tool manifest "${manifest.alias}": "${toolKey}" is a reserved built-in tool key.`);
+          return;
+        }
+
+        const toolClass = await loadSkrivletToolClass(manifest.js);
+        if (!toolClass) {
+          console.warn(`[SkrivLet] Ignoring tool manifest "${manifest.alias}": failed to load its tool class.`);
+          return;
+        }
+
+        if (manifest.css) {
+          const css = await loadManifestPlainCss(manifest.css);
+          if (css) this._adoptThirdPartyStylesheet(css);
+        }
+
+        tools[toolKey] = { class: toolClass, config: manifest.meta.config, inlineToolbar: manifest.meta.inlineToolbar };
+      }),
+    );
+
+    return tools;
+  }
+
+  private _adoptThirdPartyStylesheet(css: string) {
+    if (!this.shadowRoot) return;
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(css);
+    this.shadowRoot.adoptedStyleSheets = [...this.shadowRoot.adoptedStyleSheets, sheet];
   }
 
   private async _openUmbracoLinkPicker(currentLink?: UmbLinkPickerLink): Promise<UmbLinkPickerLink | undefined> {
@@ -184,6 +263,31 @@ export class SkrivLetPropertyEditorUIElement extends UmbLitElement implements Um
       width,
       height,
     };
+  }
+
+  /** Lets the editor choose which element type (a Document Type with isElement === true) to insert. */
+  private async _openUmbracoElementTypePicker(): Promise<{ unique: string; alias: string; name: string } | undefined> {
+    const result = await umbOpenModal(this, UMB_DOCUMENT_TYPE_PICKER_MODAL, {
+      data: {
+        filter: (item: UmbDocumentTypeTreeItemModel) => item.isElement,
+      },
+    }).catch(() => undefined);
+
+    const unique = result?.selection?.[0];
+    if (!unique) return undefined;
+
+    const detailRepository = new UmbDocumentTypeDetailRepository(this);
+    const { data: contentType } = await detailRepository.requestByUnique(unique);
+    if (!contentType) return undefined;
+
+    return { unique, alias: contentType.alias, name: contentType.name };
+  }
+
+  /** Opens the bespoke property-editing modal (skrivlet-block-edit-modal.element.ts) for a block instance. */
+  private async _openUmbracoBlockEditModal(contentTypeKey: string, values: Record<string, unknown>) {
+    return umbOpenModal(this, UMB_SKRIVLET_BLOCK_EDIT_MODAL, {
+      data: { contentTypeKey, values },
+    }).catch(() => undefined);
   }
 
   private _createUmbracoLinkTool() {
@@ -385,6 +489,130 @@ export class SkrivLetPropertyEditorUIElement extends UmbLitElement implements Um
 
       validate(savedData: any) {
         return !!(savedData.url?.trim() && savedData.udi?.trim());
+      }
+    };
+  }
+
+  private _createUmbracoBlockTool() {
+    const host = this;
+    return class UmbracoBlockTool {
+      api: any;
+      data: { contentTypeKey: string; contentTypeAlias: string; udi: string; values: Record<string, unknown> };
+      private wrapper: HTMLElement | null;
+      private preview: HTMLElement | null;
+      private button: any;
+
+      static get toolbox() {
+        return {
+          title: 'Umbraco Block',
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>',
+        };
+      }
+
+      constructor({ data }: any) {
+        this.wrapper = null;
+        this.preview = null;
+        this.button = null;
+        this.data = {
+          contentTypeKey: data.contentTypeKey || '',
+          contentTypeAlias: data.contentTypeAlias || '',
+          udi: data.udi || '',
+          values: data.values || {},
+        };
+      }
+
+      render() {
+        this.wrapper = document.createElement('div');
+        this.wrapper.classList.add('skriv-let__umbraco-block');
+
+        this.preview = document.createElement('div');
+        this.preview.classList.add('skriv-let__umbraco-block-preview');
+        this.preview.addEventListener('click', () => this._openEditModal());
+
+        this.button = document.createElement('uui-button');
+        this.button.type = 'button';
+        this.button.classList.add('skriv-let__add-image-button');
+        this.button.addEventListener('click', () => this._openEditModal());
+
+        this._updatePreview();
+        this._updateButton();
+
+        this.wrapper.appendChild(this.preview);
+        this.wrapper.appendChild(this.button);
+        return this.wrapper;
+      }
+
+      rendered() {
+        if (!this.data.contentTypeAlias) {
+          this.button?.focus();
+        }
+      }
+
+      _updatePreview() {
+        if (!this.preview) return;
+        const propertyCount = Object.keys(this.data.values).length;
+        this.preview.hidden = !this.data.contentTypeAlias;
+        this.preview.textContent = this.data.contentTypeAlias
+          ? `${this.data.contentTypeAlias} (${propertyCount} propert${propertyCount === 1 ? 'y' : 'ies'})`
+          : '';
+      }
+
+      _updateButton() {
+        if (!this.button) return;
+
+        const hasBlock = !!this.data.contentTypeAlias;
+        const label = hasBlock ? 'Edit block' : 'Insert block';
+
+        this.button.look = hasBlock ? 'secondary' : 'placeholder';
+        this.button.label = label;
+
+        this.button.innerHTML = '';
+        const icon = document.createElement('uui-icon');
+        icon.name = hasBlock ? 'icon-edit' : 'icon-add';
+        icon.setAttribute('aria-hidden', 'true');
+
+        const labelSpan = document.createElement('span');
+        labelSpan.textContent = label;
+
+        this.button.append(icon, labelSpan);
+      }
+
+      async _openEditModal() {
+        let contentTypeKey = this.data.contentTypeKey;
+        let contentTypeAlias = this.data.contentTypeAlias;
+
+        if (!contentTypeKey) {
+          const picked = await host._openUmbracoElementTypePicker();
+          if (!picked) return;
+          contentTypeKey = picked.unique;
+          contentTypeAlias = picked.alias;
+        }
+
+        const result = await host._openUmbracoBlockEditModal(contentTypeKey, this.data.values);
+        if (!result) return;
+
+        this.data.contentTypeKey = contentTypeKey;
+        this.data.contentTypeAlias = result.contentTypeAlias || contentTypeAlias;
+        this.data.values = result.values;
+        if (!this.data.udi) {
+          this.data.udi = `umb://element/${host._randomUUID().replace(/-/g, '')}`;
+        }
+
+        this._updatePreview();
+        this._updateButton();
+      }
+
+      save() {
+        return {
+          contentTypeKey: this.data.contentTypeKey,
+          contentTypeAlias: this.data.contentTypeAlias,
+          udi: this.data.udi,
+          values: this.data.values,
+        };
+      }
+
+      validate(savedData: any) {
+        return !!(savedData.contentTypeKey?.trim() && savedData.udi?.trim());
       }
     };
   }
@@ -632,6 +860,23 @@ export class SkrivLetPropertyEditorUIElement extends UmbLitElement implements Um
           display: block;
           max-width: 60%;
           margin: 0 auto 15px;
+      }
+
+      /* Umbraco Block */
+      .skriv-let__umbraco-block {
+          padding: 20px 0;
+      }
+
+      .skriv-let__umbraco-block-preview {
+          padding: 10px 12px;
+          margin-bottom: 7px;
+          border: 1px solid var(--uui-color-border, #e8e8eb);
+          border-radius: var(--uui-border-radius, 6px);
+          cursor: pointer;
+      }
+
+      .skriv-let__umbraco-block-preview[hidden] {
+          display: none;
       }
 
       /* Fullscreen */

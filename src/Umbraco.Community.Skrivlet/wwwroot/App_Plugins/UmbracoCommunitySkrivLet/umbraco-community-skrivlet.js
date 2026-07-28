@@ -3,7 +3,7 @@ const t = [
     name: "Umbraco Community Skrivlet",
     alias: "Umbraco.Community.Skrivlet.PropertyEditor",
     type: "propertyEditorUi",
-    js: () => import("./skrivlet-property-editor-ui.element-DSIqIxeP.js"),
+    js: () => import("./skrivlet-property-editor-ui.element-BItUXas9.js"),
     meta: {
       label: "SkrivLet",
       icon: "icon-autofill",
@@ -11,8 +11,16 @@ const t = [
       propertyEditorSchemaAlias: "Umbraco.Plain.String"
     }
   }
+], o = [
+  {
+    type: "modal",
+    alias: "Umbraco.Community.Skrivlet.BlockEditModal",
+    name: "SkrivLet Block Edit Modal",
+    js: () => import("./umbraco-block-edit-modal.element-C2KXtowC.js")
+  }
 ], i = [
-  ...t
+  ...t,
+  ...o
 ];
 export {
   i as manifests

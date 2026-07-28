@@ -49,14 +49,17 @@ namespace Umbraco.Community.SkrivLet.JsonConverters
 						reader.Read();
 						var validConverters = _converters.Where(x => x.CanConvert(baseObj.Type)).ToList();
                         // TODO: This relies on type and id always being before data
-                        
+
 						if (validConverters.Any())
 						{
 							baseObj = validConverters.First().Convert(ref reader, baseObj.Id, baseObj.Type);
 						}
 						else
 						{
-							return baseObj;
+							// No registered IBlockDataConverter for this type - preserve the raw payload
+							// instead of discarding it, so it can still be recovered/rendered later.
+							using var rawDataDocument = JsonDocument.ParseValue(ref reader);
+							baseObj.RawData = rawDataDocument.RootElement.Clone();
 						}
 						break;
 				}
