@@ -41,10 +41,5 @@
   ],
   "Title": "SkrivLet",
   "Description": "A clean WYSIWYG property editor for distraction free writing in Umbraco.",
-  "VersionSpecificPackageIds": [
-    {
-      "UmbracoMajorVersion": 13,
-      "PackageId": "Umbraco.Community.SkrivLet"
-    }
-  ]
+  "VersionSpecificPackageIds": []
 }

@@ -24,10 +24,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="17.4.2" />
-    <PackageReference Include="Umbraco.Cms.Web.Common" Version="17.4.2" />
-    <PackageReference Include="Umbraco.Cms.Api.Common" Version="17.4.2" />
-    <PackageReference Include="Umbraco.Cms.Api.Management" Version="17.4.2" />
+    <!-- Supports Umbraco 17 and 18 - keep the upper bound in step with the newest Umbraco major version this package has actually been tested against -->
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="[17.4.2, 19.0.0)" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="[17.4.2, 19.0.0)" />
+    <PackageReference Include="Umbraco.Cms.Api.Common" Version="[17.4.2, 19.0.0)" />
+    <PackageReference Include="Umbraco.Cms.Api.Management" Version="[17.4.2, 19.0.0)" />
   </ItemGroup>
 
   <ItemGroup>

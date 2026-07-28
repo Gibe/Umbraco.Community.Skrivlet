@@ -142,3 +142,4 @@ _ReSharper.*
 [Bb]in/
 [Oo]bj/
 Thumbs.db
+.agents

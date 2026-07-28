@@ -4,7 +4,7 @@
 
 ![SkrivLet Logo](https://raw.githubusercontent.com/mattbegent/Umbraco.Community.SkrivLet/main/images/skriv-let-logo.png)
 
-A clean WYSIWYG property editor for distraction free writing in Umbraco. Built for Umbraco 17+.
+A clean WYSIWYG property editor for distraction free writing in Umbraco. Built for Umbraco 17 and 18.
 
 ## Demo
 

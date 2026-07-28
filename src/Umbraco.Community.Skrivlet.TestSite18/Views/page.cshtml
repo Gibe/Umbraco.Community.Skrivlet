@@ -1,0 +1,15 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Community.SkrivLet
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<ContentModels.Page>
+@using ContentModels = Umbraco.Cms.Web.Common.PublishedModels;
+@{
+	Layout = null;
+}
+
+<link rel="stylesheet" href="~/App_Plugins/UmbracoCommunitySkrivLet/basic-theme.css">
+
+<h1>@Model.Title</h1>
+
+@Model.Body
+
+@await Html.RenderSkrivLet(Model.Writing)
