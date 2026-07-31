@@ -1,0 +1,88 @@
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Routing
+@using Umbraco.Cms.Core.Strings
+@model IPublishedElement
+@inject IPublishedUrlProvider UrlProvider
+@*
+    Demo host-override partial for the "card" element type - see uSync/v17/ContentTypes/card.config
+    and Composers/SkrivLetDemoComposer.cs, which registers "card" -> this file's path in
+    SkrivLetUmbracoBlockOptions.Views. Unlike Alert Box (which falls back to the library's generic
+    UmbracoBlock.cshtml property dump), this alias gets its own bespoke, styled markup.
+*@
+@{
+    var heading = Model.Value<string>("heading");
+    var body = Model.Value<IHtmlEncodedString>("body");
+    var image = Model.Value<MediaWithCrops>("image");
+    var links = Model.Value<IEnumerable<Link>>("link");
+}
+<div class="sl-demo-card">
+    @if (image != null)
+    {
+        <img class="sl-demo-card__image" src="@image.Content.Url(UrlProvider)" alt="@heading" />
+    }
+    <div class="sl-demo-card__body">
+        @if (!string.IsNullOrEmpty(heading))
+        {
+            <h3 class="sl-demo-card__heading">@heading</h3>
+        }
+        @if (body != null)
+        {
+            <div class="sl-demo-card__text">@Html.Raw(body.ToHtmlString())</div>
+        }
+        @if (links != null)
+        {
+            @foreach (var link in links)
+            {
+                <a class="sl-demo-card__cta" href="@link.Url" target="@link.Target">@link.Name</a>
+            }
+        }
+    </div>
+</div>
+
+<style>
+    .sl-demo-card {
+        display: flex;
+        flex-direction: column;
+        max-width: 360px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        font-family: system-ui, sans-serif;
+    }
+
+    .sl-demo-card__image {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+    }
+
+    .sl-demo-card__body {
+        padding: 1.25rem;
+    }
+
+    .sl-demo-card__heading {
+        margin: 0 0 0.5rem;
+        font-size: 1.25rem;
+    }
+
+    .sl-demo-card__text {
+        margin: 0 0 1rem;
+        color: #444;
+        line-height: 1.5;
+    }
+
+    .sl-demo-card__cta {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        background: #2d2d2d;
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .sl-demo-card__cta:hover {
+        background: #4a4a4a;
+    }
+</style>

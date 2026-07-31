@@ -6,6 +6,7 @@ using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Community.SkrivLet.Converters;
 using Umbraco.Community.SkrivLet.Models;
+using Umbraco.Community.SkrivLet.Options;
 
 namespace Umbraco.Community.SkrivLet.Tests.Converters
 {
@@ -16,7 +17,10 @@ namespace Umbraco.Community.SkrivLet.Tests.Converters
 
         public UmbracoBlockDataConverter Converter()
         {
-            return new UmbracoBlockDataConverter(_contentTypeCache.Object);
+            return new UmbracoBlockDataConverter(
+                _contentTypeCache.Object,
+                new NoopPublishedModelFactory(),
+                Microsoft.Extensions.Options.Options.Create(new SkrivLetUmbracoBlockOptions()));
         }
 
         [SetUp]
@@ -79,6 +83,108 @@ namespace Umbraco.Community.SkrivLet.Tests.Converters
             Assert.That(result!.Data.Element, Is.Not.Null);
             _contentTypeCache.Verify(x => x.Get(PublishedItemType.Content, "myElement"), Times.Once);
             _contentTypeCache.Verify(x => x.Get(PublishedItemType.Element, It.IsAny<string>()), Times.Never);
+        }
+
+        [Test]
+        public void SetsViewOverrideAndViewModelWhenAliasIsRegistered()
+        {
+            var contentTypeMock = new Mock<IPublishedContentType>();
+            _contentTypeCache
+                .Setup(x => x.Get(PublishedItemType.Content, "myElement"))
+                .Returns(contentTypeMock.Object);
+
+            var options = new SkrivLetUmbracoBlockOptions();
+            options.Views["myElement"] = "~/Views/Partials/blocklist/MyElement.cshtml";
+            var converter = new UmbracoBlockDataConverter(
+                _contentTypeCache.Object,
+                new NoopPublishedModelFactory(),
+                Microsoft.Extensions.Options.Options.Create(options));
+
+            var json = "{\"contentTypeKey\":\"11111111-1111-1111-1111-111111111111\"," +
+                        "\"contentTypeAlias\":\"myElement\"," +
+                        "\"udi\":\"umb://element/1234567890abcdef1234567890abcdef\"," +
+                        "\"values\":{}}";
+            var reader = new Utf8JsonReader(Encoding.UTF8.GetBytes(json));
+            reader.Read();
+
+            var result = converter.Convert(ref reader, "test-id", "umbracoBlock") as SkrivLetBlock<UmbracoBlockData>;
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result!.ViewOverride, Is.EqualTo("~/Views/Partials/blocklist/MyElement.cshtml"));
+            Assert.That(result.ViewModel, Is.SameAs(result.Data.Element));
+        }
+
+        [Test]
+        public void LeavesViewOverrideNullWhenAliasIsNotRegistered()
+        {
+            _contentTypeCache
+                .Setup(x => x.Get(PublishedItemType.Content, "myElement"))
+                .Returns((IPublishedContentType?)null);
+
+            var json = "{\"contentTypeAlias\":\"myElement\",\"values\":{}}";
+            var reader = new Utf8JsonReader(Encoding.UTF8.GetBytes(json));
+            reader.Read();
+
+            var result = Converter().Convert(ref reader, "test-id", "umbracoBlock") as SkrivLetBlock<UmbracoBlockData>;
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result!.ViewOverride, Is.Null);
+            Assert.That(result.ViewModel, Is.Null);
+        }
+
+        [Test]
+        public void LeavesViewOverrideNullWhenAliasRegisteredButElementFailsToResolve()
+        {
+            // Content type not yet imported/published - ResolveElement returns null. ViewOverride must
+            // stay null too, otherwise RenderSkrivLetBlock would hand the registered view (which expects
+            // a real IPublishedElement) the wrong model type via its `ViewModel ?? block` fallback.
+            _contentTypeCache
+                .Setup(x => x.Get(PublishedItemType.Content, "myElement"))
+                .Returns((IPublishedContentType?)null);
+
+            var options = new SkrivLetUmbracoBlockOptions();
+            options.Views["myElement"] = "~/Views/Partials/blocklist/MyElement.cshtml";
+            var converter = new UmbracoBlockDataConverter(
+                _contentTypeCache.Object,
+                new NoopPublishedModelFactory(),
+                Microsoft.Extensions.Options.Options.Create(options));
+
+            var json = "{\"contentTypeAlias\":\"myElement\",\"values\":{}}";
+            var reader = new Utf8JsonReader(Encoding.UTF8.GetBytes(json));
+            reader.Read();
+
+            var result = converter.Convert(ref reader, "test-id", "umbracoBlock") as SkrivLetBlock<UmbracoBlockData>;
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result!.Data.Element, Is.Null);
+            Assert.That(result.ViewOverride, Is.Null);
+            Assert.That(result.ViewModel, Is.Null);
+        }
+
+        [Test]
+        public void SkipsUnrecognisedPropertiesInsteadOfThrowing()
+        {
+            // Regression test: "contentTypeName" (editor-UI-only, see README) and an arbitrary nested
+            // property both sit between recognised properties here, to prove Skip() consumes each one's
+            // value (scalar or object) without desyncing the reader for what follows.
+            _contentTypeCache
+                .Setup(x => x.Get(PublishedItemType.Content, "myElement"))
+                .Returns((IPublishedContentType?)null);
+
+            var json = "{\"contentTypeAlias\":\"myElement\"," +
+                        "\"contentTypeName\":\"My Element\"," +
+                        "\"somethingUnexpected\":{\"nested\":[1,2,3]}," +
+                        "\"udi\":\"umb://element/1234567890abcdef1234567890abcdef\"," +
+                        "\"values\":{\"title\":\"Hello\"}}";
+            var reader = new Utf8JsonReader(Encoding.UTF8.GetBytes(json));
+            reader.Read();
+
+            var result = Converter().Convert(ref reader, "test-id", "umbracoBlock") as SkrivLetBlock<UmbracoBlockData>;
+
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result!.Data.ContentTypeAlias, Is.EqualTo("myElement"));
+            Assert.That(result.Data.Udi, Is.Not.Null);
+            Assert.That(result.Data.Values["title"], Is.EqualTo("Hello"));
         }
 
         [Test]

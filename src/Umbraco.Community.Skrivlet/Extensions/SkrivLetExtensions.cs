@@ -18,6 +18,11 @@ namespace Umbraco.Community.SkrivLet.Extensions
 
         public static async Task<IHtmlContent> RenderSkrivLetBlock(this IHtmlHelper html, SkrivLetBlockBase block)
         {
+            if (!string.IsNullOrEmpty(block.ViewOverride))
+            {
+                return await html.PartialAsync(block.ViewOverride, block.ViewModel ?? block);
+            }
+
             return await html.PartialAsync(ResolvePartialPath(html, block.Type ?? string.Empty), block);
         }
 

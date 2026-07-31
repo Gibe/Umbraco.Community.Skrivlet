@@ -101,9 +101,12 @@ The stored data is self-contained - it doesn't reference a separate Block List/G
       "data": {
         "contentTypeKey": "...",
         "contentTypeAlias": "myElement",
+        "contentTypeName": "My Element",
         "udi": "umb://element/...",
         "values": { "propAlias1": "...", "propAlias2": "..." }
       }
     }
+
+`contentTypeName` is only used for the editor's own toolbar preview (server-side rendering always keys off `contentTypeAlias`) - it's not required if you're hand-authoring block data.
 
 On render, SkrivLet resolves the stored values into an `IPublishedElement` (`Model.Data.Element`) so a partial can call `@Model.Data.Element.Value("propAlias")` like any other element. The default partial just dumps each property's raw value - for real projects, override `Views/Partials/SkrivLet/UmbracoBlock.cshtml` (or provide one per element type's own view once you introduce custom logic) using the same host-override convention described in [Usage](#usage).

@@ -1,18 +1,27 @@
 using System.Text.Json;
+using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Community.SkrivLet.Models;
+using Umbraco.Community.SkrivLet.Options;
 
 namespace Umbraco.Community.SkrivLet.Converters
 {
     public class UmbracoBlockDataConverter : IBlockDataConverter
     {
         private readonly IPublishedContentTypeCache _contentTypeCache;
+        private readonly IPublishedModelFactory _publishedModelFactory;
+        private readonly IOptions<SkrivLetUmbracoBlockOptions> _blockViewOptions;
 
-        public UmbracoBlockDataConverter(IPublishedContentTypeCache contentTypeCache)
+        public UmbracoBlockDataConverter(
+            IPublishedContentTypeCache contentTypeCache,
+            IPublishedModelFactory publishedModelFactory,
+            IOptions<SkrivLetUmbracoBlockOptions> blockViewOptions)
         {
             _contentTypeCache = contentTypeCache;
+            _publishedModelFactory = publishedModelFactory;
+            _blockViewOptions = blockViewOptions;
         }
 
         public bool CanConvert(string type)
@@ -80,10 +89,31 @@ namespace Umbraco.Community.SkrivLet.Converters
                             }
                         }
                         break;
+                    default:
+                        // Unrecognised properties (e.g. "contentTypeName", which is editor-UI-only - see
+                        // README's Umbraco Blocks section) still need their value consumed here, or the
+                        // reader desyncs and the next loop iteration finds a value token where it expects
+                        // the next PropertyName, throwing. Skip() advances past the name and its value
+                        // (recursing through objects/arrays) since we're still positioned on the name.
+                        reader.Skip();
+                        break;
                 }
             }
 
             block.Data.Element = ResolveElement(block.Data);
+
+            // Only wired up when Element actually resolved - a registered view expects a real
+            // IPublishedElement model, so leaving ViewOverride set with a null Element (e.g. the
+            // content type hasn't been imported/published yet) would hand the view the wrong model
+            // type via RenderSkrivLetBlock's `block.ViewModel ?? block` fallback and blow up at render time.
+            if (block.Data.Element != null &&
+                block.Data.ContentTypeAlias != null &&
+                _blockViewOptions.Value.Views.TryGetValue(block.Data.ContentTypeAlias, out var viewPath))
+            {
+                block.ViewOverride = viewPath;
+                block.ViewModel = block.Data.Element;
+            }
+
             return block;
         }
 
@@ -119,7 +149,12 @@ namespace Umbraco.Community.SkrivLet.Converters
             }
 
             var key = data.Udi is GuidUdi guidUdi ? guidUdi.Guid : Guid.NewGuid();
-            return new PublishedElement(contentType, key, data.Values, false, new VariationContext());
+            var element = new PublishedElement(contentType, key, data.Values, false, new VariationContext());
+
+            // Wraps the raw element in its ModelsBuilder-generated type when the host has one for this
+            // alias, so a host-registered ViewOverride can use a strongly-typed @model just like it
+            // would for a native Block List item, instead of only ever getting the untyped IPublishedElement.
+            return _publishedModelFactory.CreateModel(element);
         }
     }
 

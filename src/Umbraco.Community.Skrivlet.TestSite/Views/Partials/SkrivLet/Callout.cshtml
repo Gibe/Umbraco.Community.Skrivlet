@@ -1,3 +1,13 @@
 @model Umbraco.Community.SkrivLet.Models.SkrivLetBlock<Umbraco.Community.Skrivlet.TestSite.Converters.CalloutBlockData>
 @* Demo host-override partial for the "callout" example tool - see wwwroot/App_Plugins/SkrivLetDemoTools/. *@
 <div class="sl-callout">@Html.Raw(Model.Data.Text)</div>
+
+<style>
+    .sl-callout {
+        background-color: orange;
+        color: black;
+        padding: 5rem;
+        border-radius: 5rem;
+        margin: 0 0 1rem 0;
+    }
+</style>

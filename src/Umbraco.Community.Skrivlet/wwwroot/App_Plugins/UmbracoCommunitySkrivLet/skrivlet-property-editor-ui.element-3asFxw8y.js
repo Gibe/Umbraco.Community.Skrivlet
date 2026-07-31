@@ -15897,6 +15897,7 @@ let xe = class extends Ta {
         this.wrapper = null, this.preview = null, this.button = null, this.data = {
           contentTypeKey: t.contentTypeKey || "",
           contentTypeAlias: t.contentTypeAlias || "",
+          contentTypeName: t.contentTypeName || "",
           udi: t.udi || "",
           values: t.values || {}
         };
@@ -15909,8 +15910,8 @@ let xe = class extends Ta {
       }
       _updatePreview() {
         if (!this.preview) return;
-        const t = Object.keys(this.data.values).length;
-        this.preview.hidden = !this.data.contentTypeAlias, this.preview.textContent = this.data.contentTypeAlias ? `${this.data.contentTypeAlias} (${t} propert${t === 1 ? "y" : "ies"})` : "";
+        const t = Object.keys(this.data.values).length, n = this.data.contentTypeName || this.data.contentTypeAlias;
+        this.preview.hidden = !this.data.contentTypeAlias, this.preview.textContent = n ? `${n} (${t} propert${t === 1 ? "y" : "ies"})` : "";
       }
       _updateButton() {
         if (!this.button) return;
@@ -15929,12 +15930,13 @@ let xe = class extends Ta {
           t = i.unique, n = i.alias;
         }
         const r = await o._openUmbracoBlockEditModal(t, this.data.values);
-        r && (this.data.contentTypeKey = t, this.data.contentTypeAlias = r.contentTypeAlias || n, this.data.values = r.values, this.data.udi || (this.data.udi = `umb://element/${o._randomUUID().replace(/-/g, "")}`), this._updatePreview(), this._updateButton());
+        r && (this.data.contentTypeKey = t, this.data.contentTypeAlias = r.contentTypeAlias || n, this.data.contentTypeName = r.contentTypeName || this.data.contentTypeName, this.data.values = r.values, this.data.udi || (this.data.udi = `umb://element/${o._randomUUID().replace(/-/g, "")}`), this._updatePreview(), this._updateButton());
       }
       save() {
         return {
           contentTypeKey: this.data.contentTypeKey,
           contentTypeAlias: this.data.contentTypeAlias,
+          contentTypeName: this.data.contentTypeName,
           udi: this.data.udi,
           values: this.data.values
         };
@@ -16258,4 +16260,4 @@ export {
   xe as SkrivLetPropertyEditorUIElement,
   zg as default
 };
-//# sourceMappingURL=skrivlet-property-editor-ui.element-BItUXas9.js.map
+//# sourceMappingURL=skrivlet-property-editor-ui.element-3asFxw8y.js.map

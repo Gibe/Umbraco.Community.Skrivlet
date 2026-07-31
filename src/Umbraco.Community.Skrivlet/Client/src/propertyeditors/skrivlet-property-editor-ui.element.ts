@@ -497,7 +497,7 @@ export class SkrivLetPropertyEditorUIElement extends UmbLitElement implements Um
     const host = this;
     return class UmbracoBlockTool {
       api: any;
-      data: { contentTypeKey: string; contentTypeAlias: string; udi: string; values: Record<string, unknown> };
+      data: { contentTypeKey: string; contentTypeAlias: string; contentTypeName: string; udi: string; values: Record<string, unknown> };
       private wrapper: HTMLElement | null;
       private preview: HTMLElement | null;
       private button: any;
@@ -516,6 +516,7 @@ export class SkrivLetPropertyEditorUIElement extends UmbLitElement implements Um
         this.data = {
           contentTypeKey: data.contentTypeKey || '',
           contentTypeAlias: data.contentTypeAlias || '',
+          contentTypeName: data.contentTypeName || '',
           udi: data.udi || '',
           values: data.values || {},
         };
@@ -551,9 +552,10 @@ export class SkrivLetPropertyEditorUIElement extends UmbLitElement implements Um
       _updatePreview() {
         if (!this.preview) return;
         const propertyCount = Object.keys(this.data.values).length;
+        const displayName = this.data.contentTypeName || this.data.contentTypeAlias;
         this.preview.hidden = !this.data.contentTypeAlias;
-        this.preview.textContent = this.data.contentTypeAlias
-          ? `${this.data.contentTypeAlias} (${propertyCount} propert${propertyCount === 1 ? 'y' : 'ies'})`
+        this.preview.textContent = displayName
+          ? `${displayName} (${propertyCount} propert${propertyCount === 1 ? 'y' : 'ies'})`
           : '';
       }
 
@@ -593,6 +595,7 @@ export class SkrivLetPropertyEditorUIElement extends UmbLitElement implements Um
 
         this.data.contentTypeKey = contentTypeKey;
         this.data.contentTypeAlias = result.contentTypeAlias || contentTypeAlias;
+        this.data.contentTypeName = result.contentTypeName || this.data.contentTypeName;
         this.data.values = result.values;
         if (!this.data.udi) {
           this.data.udi = `umb://element/${host._randomUUID().replace(/-/g, '')}`;
@@ -606,6 +609,7 @@ export class SkrivLetPropertyEditorUIElement extends UmbLitElement implements Um
         return {
           contentTypeKey: this.data.contentTypeKey,
           contentTypeAlias: this.data.contentTypeAlias,
+          contentTypeName: this.data.contentTypeName,
           udi: this.data.udi,
           values: this.data.values,
         };

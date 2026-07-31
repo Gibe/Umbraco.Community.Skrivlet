@@ -18,6 +18,8 @@ export interface UmbSkrivletBlockEditModalValue {
   values: Record<string, unknown>;
   /** The alias of the element type, resolved from the loaded content type - handy for serializing. */
   contentTypeAlias: string;
+  /** The element type's display name, resolved from the loaded content type - friendlier than the alias for UI previews. */
+  contentTypeName: string;
 }
 
 export const SKRIVLET_BLOCK_EDIT_MODAL_ALIAS = 'Umbraco.Community.Skrivlet.BlockEditModal';

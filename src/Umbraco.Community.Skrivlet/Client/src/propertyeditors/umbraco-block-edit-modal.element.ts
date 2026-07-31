@@ -199,8 +199,9 @@ export class UmbSkrivletBlockEditModalElement extends UmbModalBaseElement<
   #handleSave = () => {
     const values = this.#datasetContext?.getValuesRecord() ?? {};
     const contentTypeAlias = this.#structure.getOwnerContentType()?.alias ?? '';
+    const contentTypeName = this._contentTypeName ?? '';
 
-    this.value = { values, contentTypeAlias };
+    this.value = { values, contentTypeAlias, contentTypeName };
     this._submitModal();
   };
 

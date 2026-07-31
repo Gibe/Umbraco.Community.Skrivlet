@@ -1,11 +1,65 @@
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Cms.Core.Routing
+@using Umbraco.Cms.Core.Strings
+@using Umbraco.Extensions
 @model Umbraco.Community.SkrivLet.Models.SkrivLetBlock<Umbraco.Community.SkrivLet.Converters.UmbracoBlockData>
+@inject IPublishedUrlProvider UrlProvider
 @if (Model.Data.Element != null)
 {
     <div class="sl-umbraco-block" data-content-type="@Model.Data.ContentTypeAlias">
         @foreach (var property in Model.Data.Element.Properties)
         {
+            var value = property.GetValue();
             <div class="sl-umbraco-block__property" data-alias="@property.Alias">
-                @property.GetValue()
+                @if (value is IHtmlEncodedString htmlEncoded)
+                {
+                    @* Explicitly unwrapped via Html.Raw rather than relying on @value - Razor only skips
+                       auto-encoding for Microsoft.AspNetCore.Html.IHtmlContent, which Umbraco's own
+                       IHtmlEncodedString (returned by rich text/markdown editors) does not implement.
+                       Depending on UmbracoViewPage.Write to special-case it is not safe here since this
+                       partial may be compiled under a host _ViewImports.cshtml with no matching @inherits. *@
+                    @Html.Raw(htmlEncoded.ToHtmlString())
+                }
+                else if (value is MediaWithCrops media)
+                {
+                    <img src="@media.Content.Url(UrlProvider)" alt="@media.Content.Name" />
+                }
+                else if (value is IEnumerable<MediaWithCrops> mediaItems)
+                {
+                    foreach (var item in mediaItems)
+                    {
+                        <img src="@item.Content.Url(UrlProvider)" alt="@item.Content.Name" />
+                    }
+                }
+                else if (value is Link link)
+                {
+                    <a href="@link.Url" target="@link.Target">@link.Name</a>
+                }
+                else if (value is IEnumerable<Link> links)
+                {
+                    foreach (var item in links)
+                    {
+                        <a href="@item.Url" target="@item.Target">@item.Name</a>
+                    }
+                }
+                else if (value is IEnumerable<IPublishedContent> contentItems)
+                {
+                    <ul>
+                        @foreach (var item in contentItems)
+                        {
+                            <li><a href="@item.Url(UrlProvider)">@item.Name</a></li>
+                        }
+                    </ul>
+                }
+                else if (value is IPublishedContent content)
+                {
+                    <a href="@content.Url(UrlProvider)">@content.Name</a>
+                }
+                else if (value != null)
+                {
+                    @value
+                }
             </div>
         }
     </div>
