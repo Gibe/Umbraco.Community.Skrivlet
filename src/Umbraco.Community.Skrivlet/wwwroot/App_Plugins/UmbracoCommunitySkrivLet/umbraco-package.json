@@ -8,7 +8,7 @@
       "name": "Umbraco Community SkrivLet Bundle",
       "alias": "Umbraco.Community.SkrivLet.Bundle",
       "type": "bundle",
-      "js": "/App_Plugins/UmbracoCommunitySkrivlet/umbraco-community-skrivlet.js"
+      "js": "/App_Plugins/UmbracoCommunitySkrivLet/umbraco-community-skrivlet.js"
     }
   ]
 }
