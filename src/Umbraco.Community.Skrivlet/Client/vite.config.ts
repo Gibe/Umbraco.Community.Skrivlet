@@ -7,7 +7,7 @@ export default defineConfig({
       formats: ["es"],
       fileName: "umbraco-community-skrivlet",
     },
-    outDir: "../wwwroot/App_Plugins/UmbracoCommunitySkrivlet", // your web component will be saved in this location
+    outDir: "../wwwroot/App_Plugins/UmbracoCommunitySkrivLet", // your web component will be saved in this location
     emptyOutDir: true,
     sourcemap: true,
     rollupOptions: {

@@ -1,0 +1,11 @@
+@model Umbraco.Community.SkrivLet.Models.SkrivLetModel;
+@using Umbraco.Community.SkrivLet.Extensions
+
+<article class="sl-article">
+@foreach (var block in Model.Blocks)
+{
+	<div id="@block.Id" class="sl-block">
+		@await Html.RenderSkrivLetBlock(block)
+	</div>
+}
+</article>

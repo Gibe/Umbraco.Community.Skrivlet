@@ -1,21 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <StaticWebAssetBasePath>/</StaticWebAssetBasePath>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Product>Umbraco.Community.Umbraco.Community.Skrivlet</Product>
-    <PackageId>Umbraco.Community.Umbraco.Community.Skrivlet</PackageId>
-    <Title>Umbraco .Community .Skrivlet </Title>
+    <Product>Umbraco.Community.SkrivLet</Product>
+    <PackageId>Umbraco.Community.SkrivLet</PackageId>
+    <Title>Umbraco.Community.Skrivlet</Title>
     <Description>...</Description>
     <PackageTags>umbraco;umbraco-marketplace</PackageTags>
     <Authors>Steve Temple</Authors>
     <Copyright>$([System.DateTime]::UtcNow.ToString(`yyyy`)) © Steve Temple</Copyright>
-    <PackageProjectUrl>https://github.com/stevetemple/Umbraco.Community.Skrivlet</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/stevetemple/Umbraco.Community.Skrivlet</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/gibe/Umbraco.Community.Skrivlet</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/gibe/Umbraco.Community.Skrivlet</RepositoryUrl>
     <PackageReadmeFile>README_nuget.md</PackageReadmeFile>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -23,12 +24,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="*" />
-    <PackageReference Include="Umbraco.Cms.Web.Common" Version="*" />
-    <PackageReference Include="Umbraco.Cms.Api.Common" Version="*" />
-    <PackageReference Include="Umbraco.Cms.Api.Management" Version="*" />
+    <!-- Supports Umbraco 17 and 18 - keep the upper bound in step with the newest Umbraco major version this package has actually been tested against -->
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="[17.4.2, 19.0.0)" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="[17.4.2, 19.0.0)" />
+    <PackageReference Include="Umbraco.Cms.Api.Common" Version="[17.4.2, 19.0.0)" />
+    <PackageReference Include="Umbraco.Cms.Api.Management" Version="[17.4.2, 19.0.0)" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <!-- Dont include the client folder as part of packaging nuget build -->
     <Content Remove="Client\**" />
@@ -36,7 +38,7 @@
     <!-- However make the Umbraco-package.json included for dotnet pack or nuget package and visible to the solution -->
     <None Include="Client\public\umbraco-package.json" Pack="false" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Include="..\..\docs\README_nuget.md">
       <Pack>True</Pack>

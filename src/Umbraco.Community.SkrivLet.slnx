@@ -1,0 +1,17 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="../.github/CONTRIBUTING.md" />
+    <File Path="../.github/README.md" />
+    <File Path="../docs/README_nuget.md" />
+    <File Path="../umbraco-marketplace.json" />
+  </Folder>
+  <Project Path="Umbraco.Community.SkrivLet.Tests/Umbraco.Community.SkrivLet.Tests.csproj" Id="3bfad6e4-7c56-4b73-8999-0b2538d3dc2d" />
+  <Project Path="Umbraco.Community.Skrivlet.TestSite/Umbraco.Community.SkrivLet.TestSite.csproj" />
+  <Project Path="Umbraco.Community.Skrivlet.TestSite18/Umbraco.Community.Skrivlet.TestSite18.csproj" />
+  <Project Path="Umbraco.Community.Skrivlet/Umbraco.Community.SkrivLet.csproj" />
+</Solution>

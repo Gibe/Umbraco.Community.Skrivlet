@@ -1,7 +1,7 @@
-namespace Umbraco.Community.Skrivlet
+namespace Umbraco.Community.SkrivLet
 {
-    public class Constants
-    {
-        public const string ApiName = "umbracocommunityskrivlet";
+	public static class Constants
+	{
+        public const string EditorName = "Umbraco.Community.Skrivlet.PropertyEditor";
     }
 }
