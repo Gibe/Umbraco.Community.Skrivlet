@@ -2,18 +2,18 @@ using System.Text.Json;
 using Umbraco.Community.SkrivLet.Converters;
 using Umbraco.Community.SkrivLet.Models;
 
-namespace Umbraco.Community.Skrivlet.TestSite.Converters
+namespace Umbraco.Community.Skrivlet.TestSite18.Converters
 {
     /// <summary>
-    /// Server-side half of the "Callout" example tool demonstrating SkrivLet's extension point - see
-    /// wwwroot/App_Plugins/SkrivLetDemoTools/callout-tool-bundle.js for the matching client-side tool,
+    /// Server-side half of the "Confetti" example tool demonstrating SkrivLet's extension point - see
+    /// wwwroot/App_Plugins/SkrivLetDemoTools/confetti-tool-bundle.js for the matching client-side tool,
     /// and Composers/SkrivLetDemoComposer.cs for where this gets registered.
     /// </summary>
-    public class CalloutBlockDataConverter : IBlockDataConverter
+    public class ConfettiBlockDataConverter : IBlockDataConverter
     {
         public bool CanConvert(string type)
         {
-            return type.Equals("callout");
+            return type.Equals("confetti");
         }
 
         public SkrivLetBlockBase Convert(ref Utf8JsonReader reader, string id, string type)
@@ -23,7 +23,7 @@ namespace Umbraco.Community.Skrivlet.TestSite.Converters
                 throw new JsonException();
             }
 
-            var block = new SkrivLetBlock<CalloutBlockData>(id, type);
+            var block = new SkrivLetBlock<ConfettiBlockData>(id, type);
             while (reader.Read())
             {
                 if (reader.TokenType == JsonTokenType.EndObject)
@@ -49,7 +49,7 @@ namespace Umbraco.Community.Skrivlet.TestSite.Converters
         }
     }
 
-    public class CalloutBlockData
+    public class ConfettiBlockData
     {
         public string? Text { get; set; }
     }

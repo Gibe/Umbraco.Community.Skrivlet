@@ -46,13 +46,16 @@ namespace Umbraco.Community.SkrivLet.JsonConverters
 						baseObj.Type = reader.GetString();
 						break;
 					case "data":
+						// Advance to the start of the data value (object/array/etc.)
 						reader.Read();
-						var validConverters = _converters.Where(x => x.CanConvert(baseObj.Type)).ToList();
-                        // TODO: This relies on type and id always being before data
 
-						if (validConverters.Any())
+						var type = baseObj.Type ?? string.Empty;
+						var id = baseObj.Id ?? string.Empty;
+
+						var converter = _converters.FirstOrDefault(x => x.CanConvert(type));
+						if (converter is not null)
 						{
-							baseObj = validConverters.First().Convert(ref reader, baseObj.Id, baseObj.Type);
+							baseObj = converter.Convert(ref reader, id, type);
 						}
 						else
 						{
@@ -61,6 +64,7 @@ namespace Umbraco.Community.SkrivLet.JsonConverters
 							using var rawDataDocument = JsonDocument.ParseValue(ref reader);
 							baseObj.RawData = rawDataDocument.RootElement.Clone();
 						}
+
 						break;
 				}
 			}

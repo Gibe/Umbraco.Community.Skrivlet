@@ -52,11 +52,11 @@ namespace Umbraco.Community.SkrivLet.Converters
                         break;
                     case "width":
                         reader.Read();
-                        block.Data.Width = reader.GetInt16();
+                        block.Data.Width = reader.GetInt32();
                         break;
                     case "height":
                         reader.Read();
-                        block.Data.Height = reader.GetInt16();
+                        block.Data.Height = reader.GetInt32();
                         break;
                 }
             }

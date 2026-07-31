@@ -3,7 +3,7 @@ const t = [
     name: "Umbraco Community Skrivlet",
     alias: "Umbraco.Community.Skrivlet.PropertyEditor",
     type: "propertyEditorUi",
-    js: () => import("./skrivlet-property-editor-ui.element-3asFxw8y.js"),
+    js: () => import("./skrivlet-property-editor-ui.element-CsFq7l0i.js"),
     meta: {
       label: "SkrivLet",
       icon: "icon-autofill",

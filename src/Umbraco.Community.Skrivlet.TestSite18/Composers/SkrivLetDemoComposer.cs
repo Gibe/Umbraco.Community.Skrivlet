@@ -7,14 +7,14 @@ using Umbraco.Community.SkrivLet.Converters;
 namespace Umbraco.Community.Skrivlet.TestSite18.Composers
 {
     /// <summary>
-    /// Registers the demo "Callout" IBlockDataConverter - the server-side half of SkrivLet's
+    /// Registers the demo "Confetti" IBlockDataConverter - the server-side half of SkrivLet's
     /// "bring your own Editor.js tool" extension point (see README's "Extending" section).
     /// </summary>
     public class SkrivLetDemoComposer : IComposer
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            builder.Services.AddTransient<IBlockDataConverter, CalloutBlockDataConverter>();
+            builder.Services.AddTransient<IBlockDataConverter, ConfettiBlockDataConverter>();
         }
     }
 }

@@ -8,7 +8,7 @@ using Umbraco.Community.SkrivLet.Options;
 namespace Umbraco.Community.Skrivlet.TestSite.Composers
 {
     /// <summary>
-    /// Registers the demo "Callout" IBlockDataConverter - the server-side half of SkrivLet's
+    /// Registers the demo "Confetti" IBlockDataConverter - the server-side half of SkrivLet's
     /// "bring your own Editor.js tool" extension point (see README's "Extending" section) - plus the
     /// "card" alias -> custom partial mapping demonstrating SkrivLetUmbracoBlockOptions (see
     /// uSync/v17/ContentTypes/card.config and Views/Partials/SkrivLet/Card.cshtml). Unlike Alert Box,
@@ -19,7 +19,7 @@ namespace Umbraco.Community.Skrivlet.TestSite.Composers
     {
         public void Compose(IUmbracoBuilder builder)
         {
-            builder.Services.AddTransient<IBlockDataConverter, CalloutBlockDataConverter>();
+            builder.Services.AddTransient<IBlockDataConverter, ConfettiBlockDataConverter>();
 
             builder.Services.Configure<SkrivLetUmbracoBlockOptions>(options =>
             {

@@ -39,17 +39,17 @@ namespace Umbraco.Community.SkrivLet.Converters
 
             if (udi is not GuidUdi guidUdi)
             {
-                return string.Empty;
+                return match.Value;
             }
 
             if (!_umbracoContextAccessor.TryGetUmbracoContext(out var context))
             {
-                return string.Empty;
+                return match.Value;
             }
             var content = context.Content.GetById(guidUdi.Guid);
             if (content == null)
             {
-                return string.Empty;
+                return match.Value;
             }
             return $"{match.Groups[1].Value}{content.Url(_publishedUrlProvider)}\"";
         }

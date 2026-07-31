@@ -8,7 +8,7 @@
       "name": "SkrivLet Demo Tools Bundle",
       "alias": "SkrivLet.Demo.Tools.Bundle",
       "type": "bundle",
-      "js": "/App_Plugins/SkrivLetDemoTools/callout-tool-bundle.js"
+      "js": "/App_Plugins/SkrivLetDemoTools/confetti-tool-bundle.js"
     }
   ]
 }

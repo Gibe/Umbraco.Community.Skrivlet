@@ -1,0 +1,66 @@
+@model Umbraco.Community.SkrivLet.Models.SkrivLetBlock<Umbraco.Community.Skrivlet.TestSite.Converters.ConfettiBlockData>
+@* Demo host-override partial for the "confetti" example tool - see wwwroot/App_Plugins/SkrivLetDemoTools/. *@
+<div class="sl-confetti">@Html.Raw(Model.Data.Text)</div>
+
+<style>
+    .sl-confetti {
+        position: relative;
+        display: inline-block;
+        padding: 1rem 1.75rem;
+        margin: 5.0rem;
+        border-radius: 0.75rem;
+        background: #fffdf7;
+        color: #2b2b2b;
+        font-weight: 600;
+    }
+
+    .sl-confetti::before,
+    .sl-confetti::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 8px;
+        background: transparent;
+        pointer-events: none;
+    }
+
+    .sl-confetti::before {
+        border-radius: 2px;
+        animation: sl-confetti-sway 3s ease-in-out infinite;
+        box-shadow:
+            -60px -50px 0 0 #f94144,
+            -20px -65px 0 0 #f9c74f,
+            30px -60px 0 0 #43aa8b,
+            70px -40px 0 0 #577590,
+            90px -5px 0 0 #f8961e,
+            80px 30px 0 0 #f94144,
+            40px 60px 0 0 #90be6d,
+            -10px 70px 0 0 #f3722c,
+            -55px 55px 0 0 #577590,
+            -85px 15px 0 0 #f9c74f,
+            -90px -15px 0 0 #43aa8b;
+    }
+
+    .sl-confetti::after {
+        border-radius: 50%;
+        animation: sl-confetti-sway 3.6s ease-in-out infinite reverse;
+        box-shadow:
+            -40px -75px 0 0 #43aa8b,
+            10px -80px 0 0 #f94144,
+            55px -65px 0 0 #f9c74f,
+            85px -25px 0 0 #f3722c,
+            85px 15px 0 0 #90be6d,
+            50px 50px 0 0 #577590,
+            5px 75px 0 0 #f8961e,
+            -45px 70px 0 0 #f94144,
+            -80px 40px 0 0 #43aa8b,
+            -95px 0px 0 0 #f9c74f;
+    }
+
+    @@keyframes sl-confetti-sway {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-4px) rotate(3deg); }
+    }
+</style>
