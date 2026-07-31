@@ -720,7 +720,7 @@ let f = class K {
   }
   /**
    * Returns the closest ancestor anchor (A tag) of the given element (including itself)
-   *
+   * 
    * @param element - element to check
    * @returns {HTMLAnchorElement | null}
    */
@@ -4286,7 +4286,7 @@ const qi = class Ki extends Wi {
    * Construct the instance
    *
    * @param params - popover params
-   * @param itemsRenderParams – popover item render params.
+   * @param itemsRenderParams – popover item render params.
    * The parameters that are not set by user via popover api but rather depend on technical implementation
    */
   constructor(e, t) {
@@ -4725,7 +4725,7 @@ let Vi = class extends Wi {
   /**
    * Handles displaying nested items for the item
    *
-   * @param item – item to show nested popover for
+   * @param item – item to show nested popover for
    */
   showNestedItems(e) {
     this.updateItemsAndHeader(e.children, e.title), this.history.push({
@@ -16110,4 +16110,4 @@ export {
   xe as SkrivLetPropertyEditorUIElement,
   Lg as default
 };
-//# sourceMappingURL=skrivlet-property-editor-ui.element-DSIqIxeP.js.map
+//# sourceMappingURL=skrivlet-property-editor-ui.element-61uwokiQ.js.map
