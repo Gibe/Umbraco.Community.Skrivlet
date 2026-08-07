@@ -143,3 +143,6 @@ _ReSharper.*
 [Oo]bj/
 Thumbs.db
 .agents
+
+demo/
+Umbraco.Community.Skrivlet.local.slnx
